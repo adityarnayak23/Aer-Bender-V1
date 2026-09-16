@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aer Bender V1 — Vision Flute Controller</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- MediaPipe Hands & Camera Utils (FaceMesh runs in isolated worker iframe) -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Spatial Floating Corner Navigation (Unobtrusive AR Canvas) -->
+    <header class="app-header spatial-nav-bar">
+      <!-- Top-Left Brand Pod -->
+      <div class="header-corner-pod header-left-pod">
+        <div class="brand">
+          <div class="logo-mark" title="Aer Bender V1">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="aerVortexGrad" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="50%" stop-color="#00f0ff"/>
+                  <stop offset="100%" stop-color="#818cf8"/>
+                </linearGradient>
+                <filter id="aerLogoGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="0.8" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+              </defs>
+              <!-- Outer orbital airflow ring -->
+              <circle cx="14" cy="14" r="12" stroke="url(#aerVortexGrad)" stroke-width="1.2" stroke-dasharray="12 3 4 3" opacity="0.45"/>
+              <!-- Tri-Spiral Air-Bending Vortex with 120° rotational symmetry -->
+              <g id="aerSpiralArm" filter="url(#aerLogoGlow)">
+                <path d="M 14 3.2 C 18.2 3.2 21.8 6.2 22.6 10.4 C 23.2 13.8 21.4 17.2 18.2 18.8 C 15.6 17.4 15.2 14.2 16.4 12.2 C 17.2 10.8 18.8 10.4 19.8 11.4" 
+                      stroke="url(#aerVortexGrad)" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                <path d="M 14 6.8 C 16.5 6.8 18.8 8.8 19.2 11.5" 
+                      stroke="#ffffff" stroke-width="0.85" stroke-linecap="round" opacity="0.75" fill="none"/>
+              </g>
+              <use href="#aerSpiralArm" transform="rotate(120, 14, 14)"/>
+              <use href="#aerSpiralArm" transform="rotate(240, 14, 14)"/>
+              <!-- Central Resonant Acoustic Core -->
+              <circle cx="14" cy="14" r="2.2" fill="url(#aerVortexGrad)"/>
+              <circle cx="14" cy="14" r="0.9" fill="#ffffff"/>
+            </svg>
+          </div>
+          <div class="brand-titles">
+            <h1 class="brand-name">Aer Bender V1</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top-Right Controls Pod -->
+      <div class="header-corner-pod header-right-pod">
+        <div class="header-controls">
+          <div class="record-group">
+            <select id="recordModeSelect" class="record-mode-select" title="Choose Recording Mode">
+              <option value="camera" selected>📷 Flute Video (Camera & Overlay)</option>
+              <option value="screen">🖥️ Whole Screen (Display & Audio)</option>
+            </select>
+            <button id="recordBtn" class="btn btn-record" title="Record Flute Performance Video with Synchronized Studio Audio">
+              <span class="rec-dot"></span> <span class="btn-text">📹 Record Video</span>
+            </button>
+          </div>
+          <span id="recTimer" class="rec-timer" style="display: none;">00:00</span>
+          <button id="electricFluteToggleBtn" class="btn btn-pill btn-electric" title="Toggle between Classic Acoustic Bamboo Flute and Electric Synth Flute (Shortcut: 'E')">
+            ⚡ Electric: Off
+          </button>
+          <button id="tanpuraToggleBtn" class="btn btn-pill">
+            🪕 Tanpura Drone: Off
+          </button>
+          <button id="headerLearnBtn" class="btn btn-pill btn-learn-pill" title="Interactive visual guide on how to play">
+            📖 How to Play
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="main-content">
+      <!-- Left Column: Camera Viewport & Swaras Strip -->
+      <section class="performance-panel">
+        <div class="card camera-card">
+          <div class="card-header camera-card-header">
+            <div class="title-with-tag">
+              <h3>Optical Tracking Viewport</h3>
+            </div>
+            <span class="pill-info camera-pill" id="opticalSensorPill">SYS.CAM // READY</span>
+          </div>
+          <div class="camera-container" id="cameraContainer">
+            <video id="webcamVideo" playsinline muted autoplay></video>
+            <!-- Center Camera Launch / Welcome Glass Card (Shown before camera starts) -->
+            <div class="camera-welcome-overlay" id="cameraWelcomeOverlay">
+              <div class="welcome-glass-card">
+                <h2 class="welcome-title">Aer Bender</h2>
+                <div class="welcome-actions">
+                  <button id="heroStartCameraBtn" class="btn btn-primary btn-hero" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                    Enable Camera to Play
+                  </button>
+                  <button id="learnToPlayBtn" class="learn-text-link" type="button">
+                    📖 Learn to Play
+                  </button>
+                </div>
+              </div>
+            </div>
+            <canvas id="trackingCanvas"></canvas>
+
+            <!-- Minimalist HUD Overlay on Camera -->
+            <div class="hud-overlay">
+
+              <!-- Head-Tilt Controlled Octave Segmented Bar -->
+              <div class="spatial-octave-bar mouth-octave-bar" id="spatialOctaveBar" title="Head Tilt Octave Control: Chin Down = Bass, Level = Mid, Chin Up = High">
+                <div class="octave-zone" id="zoneTara" data-octave="1">
+                  <span class="zone-tag">▲ HIGH</span>
+                  <span class="zone-sub">Tara</span>
+                </div>
+                <div class="octave-zone active" id="zoneMadhya" data-octave="0">
+                  <span class="zone-tag">◆ MID</span>
+                  <span class="zone-sub">Madhya</span>
+                </div>
+                <div class="octave-zone" id="zoneMandra" data-octave="-1">
+                  <span class="zone-tag">▼ BASS</span>
+                  <span class="zone-sub">Mandra</span>
+                </div>
+                <div class="mouth-aperture-meter" title="Live Head Pitch Tilt Meter: Chin Down = Low, Level = Mid, Chin Up = High">
+                  <div class="mouth-aperture-fill" id="mouthApertureFill" style="height: 50%;"></div>
+                </div>
+                <div class="flute-pos-cursor" id="flutePosCursor" style="top: 50%;"></div>
+              </div>
+
+              <!-- 7 Tone Holes Real-Time Diagram at Bottom of Camera -->
+              <div class="hud-holes-bar">
+                <div class="holes-hand-group">
+                  <div id="holesDiagram" class="holes-row">
+                    <!-- Populated by JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Camera Actions & Live Status -->
+          <div class="camera-toolbar">
+            <div class="toolbar-actions">
+              <button id="startCameraBtn" class="btn btn-primary" style="display: none !important;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                Start Camera
+              </button>
+              <button id="stopCameraBtn" class="btn btn-secondary" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                Pause
+              </button>
+            </div>
+            <div id="cameraStatus" class="camera-status">Enable camera to start playing</div>
+          </div>
+
+          <!-- Precision Calibration Controls -->
+          <div class="calibration-row">
+            <div class="calib-item">
+              <div class="calib-label-row">
+                <label for="fluteHeightSlider">Flute Level</label>
+                <span id="fluteHeightVal" class="calib-val">54%</span>
+              </div>
+              <input type="range" id="fluteHeightSlider" min="35" max="75" step="1" value="54" class="form-range">
+            </div>
+            <div class="calib-item">
+              <div class="calib-label-row">
+                <label for="sensitivitySlider">Finger Curl</label>
+                <span id="sensitivityVal" class="calib-val">1.30</span>
+              </div>
+              <input type="range" id="sensitivitySlider" min="1.15" max="1.55" step="0.02" value="1.30" class="form-range">
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Right Column: Minimalist Audio Studio & Controls -->
+      <section class="controls-panel">
+        <!-- Minimalist Audio Spectrum & Waveform -->
+        <div class="card visualizer-card">
+          <div class="card-header">
+            <div class="title-with-tag">
+              <span class="section-tag">02 //</span>
+              <h3>Harmonic Spectrum</h3>
+            </div>
+            <div class="card-header-actions">
+              <span class="pill-info">AUDIO.SPECTRUM // LIVE</span>
+              <button type="button" id="dockToggleBtn" class="dock-toggle-btn" title="Toggle Studio Controls Dock (Shortcut: 'H' or 'D')" aria-expanded="true">◫ Collapse</button>
+            </div>
+          </div>
+          <canvas id="visualizerCanvas" width="560" height="60"></canvas>
+        </div>
+
+        <!-- Active Swaras Recognized & Tap-to-Play Strip (Right Below Waves) -->
+        <div class="card swaras-section">
+          <div class="section-subhead">
+            <div class="title-with-tag">
+              <span class="section-tag">03 //</span>
+              <h3>Recognized Swaras & Fingering</h3>
+            </div>
+            <span class="hint">● Closed · ◐ Half · ○ Open · Janti: Double-bend</span>
+          </div>
+          <div id="swarasCardsContainer" class="swaras-grid">
+            <!-- Dynamically populated by JS -->
+          </div>
+        </div>
+
+        <!-- Studio Pitch, Octaves & Volume Rack -->
+        <div class="card studio-rack-card">
+          <div class="card-header">
+            <div class="title-with-tag">
+              <span class="section-tag">04 //</span>
+              <h3>Studio Tuning & Octaves</h3>
+            </div>
+            <span class="pill-info" id="timbreModeBadge" style="cursor: pointer;" title="Click to toggle Electric Flute Mode">Acoustic Engine</span>
+          </div>
+
+          <div class="rack-controls-grid">
+            <!-- Root Shruti -->
+            <div class="control-group">
+              <label for="kattaiSelect">Root Shruti (Sa)</label>
+              <select id="kattaiSelect" class="form-select">
+                <option value="1.5" selected>1.5 Kattai (C#4 - 277.2 Hz) [Aditya Flute Master]</option>
+              </select>
+            </div>
+
+            <!-- Octave Shift & Sthayi -->
+            <div class="control-group">
+              <label>Register & Octave</label>
+              <div class="octave-control-row">
+                <div class="octave-selector">
+                  <button id="octaveDownBtn" class="btn btn-sm">▼ -1</button>
+                  <span id="octaveDisplay" class="octave-num">0</span>
+                  <button id="octaveUpBtn" class="btn btn-sm">▲ +1</button>
+                </div>
+                <button id="overblowToggleBtn" class="btn btn-overblow">
+                  Madhya Sthayi
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mouth Octave Feedback Badges -->
+          <div class="octave-legend-row">
+            <div class="legend-item" id="legendTara">
+              <span class="legend-arrow">▲</span>
+              <span class="legend-title">More Open</span>
+              <span class="legend-desc">Tara (+1)</span>
+            </div>
+            <div class="legend-item active" id="legendMadhya">
+              <span class="legend-arrow">●</span>
+              <span class="legend-title">Little Open</span>
+              <span class="legend-desc">Madhya (0)</span>
+            </div>
+            <div class="legend-item" id="legendMandra">
+              <span class="legend-arrow">▼</span>
+              <span class="legend-title">Closed</span>
+              <span class="legend-desc">Mandra (-1)</span>
+            </div>
+          </div>
+
+          <div class="levels-grid">
+            <div class="control-group">
+              <div class="calib-label-row">
+                <label for="masterVolumeSlider">Flute Volume</label>
+              </div>
+              <input type="range" id="masterVolumeSlider" min="0" max="1" step="0.05" value="0.85" class="form-range">
+            </div>
+            <div class="control-group">
+              <div class="calib-label-row">
+                <label for="tanpuraVolumeSlider">Tanpura Drone</label>
+              </div>
+              <input type="range" id="tanpuraVolumeSlider" min="0" max="1" step="0.05" value="0.6" class="form-range">
+            </div>
+          </div>
+        </div>
+
+        <!-- Carnatic Raga & 16 Swarasthanas Builder Card (Bottom-Right Real Estate) -->
+        <div class="card raga-builder-card">
+          <div class="card-header raga-builder-header">
+            <div>
+              <div class="title-with-tag">
+                <span class="section-tag">05 //</span>
+                <h3>Carnatic Raga & 16 Swarasthanas</h3>
+              </div>
+              <div class="raga-scale-summary">
+                <span class="raga-name-badge" id="ragaNameBadge">Mayamalavagowla</span>
+                <span class="raga-notes-list" id="ragaNotesList">S · R₁ · G₃ · M₁ · P · D₁ · N₃</span>
+              </div>
+            </div>
+            <div class="raga-preset-dropdown-wrap">
+              <select id="ragaSelect" class="form-select raga-select" title="Choose a classical Carnatic Raga preset or create your own custom scale">
+                <option value="mayamalavagowla" selected>Mayamalavagowla (15th Melakarta)</option>
+                <option value="shankarabharanam">Shankarabharanam (29th Melakarta)</option>
+                <option value="kalyani">Kalyani (65th Melakarta)</option>
+                <option value="kharaharapriya">Kharaharapriya (22nd Melakarta)</option>
+                <option value="hanumatodi">Hanumatodi (8th Melakarta)</option>
+                <option value="mohanam">Mohanam (Audava: S R₂ G₃ P D₂)</option>
+                <option value="hamsadhwani">Hamsadhwani (Audava: S R₂ G₃ P N₃)</option>
+                <option value="hindolam">Hindolam (Audava: S G₂ M₁ D₁ N₂)</option>
+                <option value="custom">Custom Scale (Click notes to toggle)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 16 Swarasthanas Interactive Matrix -->
+          <div class="swarasthanas-matrix" id="swarasthanasMatrix">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- Carnatic Tala & Metronome Accompaniment (Fills Right Bottom Real Estate) -->
+        <div class="card tala-card">
+          <div class="card-header tala-card-header">
+            <div>
+              <div class="title-with-tag">
+                <span class="section-tag">06 //</span>
+                <h3>Carnatic Tala & Metronome</h3>
+              </div>
+              <span class="pill-info" id="talaAngasDisplay">1 Laghu (4) + 2 Dhrutams (2+2)</span>
+            </div>
+            <div class="tala-header-actions">
+              <button id="talaPlayBtn" class="btn btn-tala-play" title="Start / Stop Tala Metronome">
+                <span class="tala-icon" id="talaPlayIcon">▶</span> <span id="talaPlayText">Start Tala</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tala Selector & Tempo Bar -->
+          <div class="tala-controls-row">
+            <div class="tala-select-wrap">
+              <select id="talaSelect" class="form-select tala-select" title="Select Carnatic Tala">
+                <option value="adi" selected>Adi Tala (8 Beats · 4+2+2)</option>
+                <option value="rupaka">Rupaka Tala (3 Beats · 1+2)</option>
+                <option value="misra_chapu">Misra Chapu (7 Beats · 3+2+2)</option>
+                <option value="khanda_chapu">Khanda Chapu (5 Beats · 2+1+2)</option>
+                <option value="tisra_eka">Tisra Eka (3 Beats · 1 Laghu)</option>
+              </select>
+            </div>
+
+            <div class="tala-speed-group">
+              <button type="button" class="tala-speed-btn active" data-speed="1" title="1st Speed (Vilamba)">1x</button>
+              <button type="button" class="tala-speed-btn" data-speed="2" title="2nd Speed (Madhyama)">2x</button>
+            </div>
+
+            <div class="tala-bpm-group">
+              <button type="button" id="talaBpmDown" class="btn btn-tiny">-</button>
+              <span id="talaBpmDisplay" class="tala-bpm-num">75 BPM</span>
+              <button type="button" id="talaBpmUp" class="btn btn-tiny">+</button>
+            </div>
+          </div>
+
+          <!-- Live Visual Tala Beats Strip -->
+          <div class="tala-visual-strip">
+            <div class="tala-kriya-banner">
+              <span class="kriya-tag" id="talaCurrentKriya">Samam (Clap)</span>
+              <span class="akshara-counter" id="talaAksharaCounter">Beat 1 of 8</span>
+            </div>
+            <div class="tala-pips-row" id="talaPipsRow">
+              <!-- Populated dynamically by JS -->
+            </div>
+          </div>
+
+          <!-- Quick Practice Sanchara Phrases for Active Raga -->
+          <div class="tala-phrases-row">
+            <span class="phrases-label">Raga Phrases:</span>
+            <div class="phrases-chips" id="talaPhrasesChips">
+              <!-- Populated dynamically based on active raga -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Floating Studio Controls Expand Button (Shown when dock is collapsed) -->
+      <button type="button" id="floatingDockOpenBtn" class="floating-dock-open-btn" title="Expand Studio Controls (Shortcut: 'H' or 'D')">
+        ◫ Studio Controls
+      </button>
+    </main>
+  </div>
+
+    <!-- Learn to Play Visual Interactive Guide Modal -->
+    <div id="learnToPlayModal" class="learn-modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="learnModalTitle">
+      <div class="learn-modal-card">
+        <button id="closeLearnModalBtn" class="learn-modal-close" type="button" aria-label="Close Guide">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <div class="learn-modal-header">
+          <div class="learn-modal-badge">HOW TO PLAY</div>
+          <h2 id="learnModalTitle" class="learn-modal-title">Learn to Play Aer Bender</h2>
+          <p class="learn-modal-subtitle">Hold hands up to the flute • 2 fingers for Sa • See all notes below</p>
+        </div>
+
+        <div class="learn-sections-container">
+          <!-- Two Top Focus Cards: Hand Orientation & 2 Fingers for Sa -->
+          <div class="learn-focus-grid">
+            <!-- Focus Card 1: Which Hand -->
+            <div class="learn-focus-card hand-layout-card">
+              <div class="focus-badge">1. WHICH HAND</div>
+              <h3 class="focus-title">Left Hand Top, Right Hand Down</h3>
+              <div class="hand-visual-strip">
+                <div class="hand-side left-side">
+                  <span class="hand-tag">✋ LEFT HAND</span>
+                  <span class="hand-desc">Holes 1, 2, 3 (Near Mouth)</span>
+                  <div class="finger-pills">
+                    <span class="finger-pill">Index (1)</span>
+                    <span class="finger-pill">Middle (2)</span>
+                    <span class="finger-pill">Ring (3)</span>
+                  </div>
+                </div>
+                <div class="hand-divider">➔</div>
+                <div class="hand-side right-side">
+                  <span class="hand-tag">🤚 RIGHT HAND</span>
+                  <span class="hand-desc">Holes 4, 5, 6, 7 (Tube Body)</span>
+                  <div class="finger-pills">
+                    <span class="finger-pill">Index (4)</span>
+                    <span class="finger-pill">Middle (5)</span>
+                    <span class="finger-pill">Ring (6)</span>
+                    <span class="finger-pill">Pinky (7)</span>
+                  </div>
+                </div>
+              </div>
+              <p class="focus-note">Blow air at the circle (◎) with your lips and place fingers over the 7 holes.</p>
+            </div>
+
+            <!-- Focus Card 2: 2 Fingers for Sa -->
+            <div class="learn-focus-card sa-hero-card">
+              <div class="focus-badge highlight">2. START PLAYING</div>
+              <h3 class="focus-title">2 Fingers Down = SA (Saw)</h3>
+              <div class="sa-hero-illustration">
+                <svg viewBox="0 0 220 80" fill="none" class="sa-hero-svg">
+                  <!-- Flute Body -->
+                  <rect x="8" y="28" width="204" height="24" rx="12" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                  <!-- Mouth Blow Hole -->
+                  <circle cx="24" cy="40" r="7" stroke="#38bdf8" stroke-width="2" fill="rgba(56,189,248,0.2)"/>
+                  <circle cx="24" cy="40" r="3" fill="#38bdf8"/>
+                  <text x="24" y="66" font-size="9" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">LIPS (◎)</text>
+                  <!-- Hole 1 (Closed - Emerald) -->
+                  <circle cx="58" cy="40" r="8" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+                  <text x="58" y="44" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
+                  <!-- Hole 2 (Closed - Emerald) -->
+                  <circle cx="84" cy="40" r="8" fill="#10b981" stroke="#34d399" stroke-width="2"/>
+                  <text x="84" y="44" font-size="10" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
+                  <!-- Holes 3 to 7 (Open) -->
+                  <circle cx="110" cy="40" r="8" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                  <text x="110" y="44" font-size="9" fill="#94a3b8" text-anchor="middle">3</text>
+                  <circle cx="136" cy="40" r="8" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                  <text x="136" y="44" font-size="9" fill="#94a3b8" text-anchor="middle">4</text>
+                  <circle cx="160" cy="40" r="8" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                  <text x="160" y="44" font-size="9" fill="#94a3b8" text-anchor="middle">5</text>
+                  <circle cx="182" cy="40" r="8" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                  <text x="182" y="44" font-size="9" fill="#94a3b8" text-anchor="middle">6</text>
+                  <circle cx="202" cy="40" r="8" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                  <text x="202" y="44" font-size="9" fill="#94a3b8" text-anchor="middle">7</text>
+                  <!-- 2 Fingers Indicator Bracket -->
+                  <path d="M 52 18 L 52 12 L 90 12 L 90 18" stroke="#10b981" stroke-width="1.5" fill="none"/>
+                  <text x="71" y="8" font-size="9" font-weight="bold" fill="#10b981" text-anchor="middle">2 FINGERS (LEFT)</text>
+                </svg>
+              </div>
+              <p class="focus-note">Cover <strong>Holes 1 & 2</strong> with your left index & middle finger to immediately sound the fundamental note <strong>Sa (C4)</strong>!</p>
+            </div>
+          </div>
+
+          <!-- Section: All Notes Once (Fingering Chart) -->
+          <div class="learn-notes-chart-section">
+            <div class="chart-header">
+              <div class="chart-header-left">
+                <span class="focus-badge">3. ALL NOTES ONCE</span>
+                <h3 class="focus-title">All 7 Swaras Fingering Chart</h3>
+              </div>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="dot-legend closed"></span> Closed (Finger Down)</span>
+                <span class="legend-item"><span class="dot-legend open"></span> Open (Finger Up)</span>
+              </div>
+            </div>
+
+            <div class="swaras-table-wrapper">
+              <table class="swaras-table">
+                <thead>
+                  <tr>
+                    <th>Swara</th>
+                    <th>Note</th>
+                    <th colspan="3" class="col-hand col-left-hand">Left Hand (1 - 3)</th>
+                    <th colspan="4" class="col-hand col-right-hand">Right Hand (4 - 7)</th>
+                    <th>How to Play</th>
+                  </tr>
+                  <tr class="sub-hole-row">
+                    <th></th>
+                    <th></th>
+                    <th class="hole-num">H1</th>
+                    <th class="hole-num">H2</th>
+                    <th class="hole-num">H3</th>
+                    <th class="hole-num">H4</th>
+                    <th class="hole-num">H5</th>
+                    <th class="hole-num">H6</th>
+                    <th class="hole-num">H7</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="row-highlight-sa">
+                    <td class="swara-name"><span class="swara-badge sa-badge">Sa</span></td>
+                    <td class="note-key">C4</td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction"><strong>2 fingers:</strong> Close Holes 1 & 2 (Left Hand)</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge ri-badge">Ri</span></td>
+                    <td class="note-key">D4</td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction">Lift middle finger; keep Hole 1 closed</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge ga-badge">Ga</span></td>
+                    <td class="note-key">E4</td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction">All 7 holes open (natural air breeze)</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge ma-badge">Ma</span></td>
+                    <td class="note-key">F4</td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td class="note-instruction">Close Holes 2 to 7 (Left 2, 3 + Right all 4)</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge pa-badge">Pa</span></td>
+                    <td class="note-key">G4</td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction">Left hand all 3 + Right index & middle (5 closed)</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge dha-badge">Dha</span></td>
+                    <td class="note-key">A4</td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction">Left hand all 3 + Right index (4 closed)</td>
+                  </tr>
+                  <tr>
+                    <td class="swara-name"><span class="swara-badge ni-badge">Ni</span></td>
+                    <td class="note-key">B4</td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot closed">●</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td><span class="hole-dot open">○</span></td>
+                    <td class="note-instruction">Left hand all 3 closed; Right hand open</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="octave-tip-bar">
+              <span class="tip-icon">✨</span>
+              <span class="tip-text"><strong>Tilt Head for Octaves:</strong> Tilt chin up for <strong>High (Tara)</strong>, level for <strong>Mid (Madhya)</strong>, chin down for <strong>Bass (Mandra)</strong>.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Start Playing CTA -->
+        <div class="learn-modal-actions">
+          <button id="learnModalStartBtn" class="btn btn-primary btn-learn-cta" type="button">
+            Got it, Let's Play! 🪈
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <!-- Isolated FaceMesh Worker Iframe (prevents Emscripten WASM allocator collision) -->
+  <iframe id="facemeshWorker" src="facemesh-worker.html" style="display:none;width:0;height:0;border:none;" aria-hidden="true"></iframe>
+
+  <!-- Scripts -->
+  <script src="src/swaras-data.js"></script>
+  <script src="src/flute-audio.js"></script>
+  <script src="src/carnatic-flute-tracker.js"></script>
+  <script src="src/mic-breath-detector.js"></script>
+  <script src="src/flute-video-recorder.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>

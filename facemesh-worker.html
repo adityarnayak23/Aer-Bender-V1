@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Air Flute FaceMesh Worker</title>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+</head>
+<body style="margin:0;padding:0;overflow:hidden;background:transparent;">
+<script>
+  let faceMesh = null;
+  let isReady = false;
+
+  function initFaceMesh() {
+    if (!window.FaceMesh) {
+      setTimeout(initFaceMesh, 100);
+      return;
+    }
+    try {
+      faceMesh = new window.FaceMesh({
+        locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
+      });
+      faceMesh.setOptions({
+        maxNumFaces: 1,
+        refineLandmarks: false,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+      faceMesh.onResults((results) => {
+        window.parent.postMessage({
+          type: 'FACEMESH_RESULTS',
+          multiFaceLandmarks: results && results.multiFaceLandmarks ? results.multiFaceLandmarks : []
+        }, '*');
+      });
+      isReady = true;
+      window.parent.postMessage({ type: 'FACEMESH_READY' }, '*');
+    } catch (err) {
+      console.error('Isolated FaceMesh init error:', err);
+    }
+  }
+
+  window.addEventListener('message', async (event) => {
+    const data = event.data;
+    if (!data) return;
+
+    if (data.type === 'PROCESS_FRAME' && isReady && faceMesh) {
+      try {
+        await faceMesh.send({ image: data.bitmap });
+      } catch (err) {
+        // Frame dropped or WebGL busy
+      } finally {
+        if (data.bitmap && typeof data.bitmap.close === 'function') {
+          data.bitmap.close();
+        }
+        window.parent.postMessage({ type: 'FACEMESH_FRAME_DONE' }, '*');
+      }
+    }
+  });
+
+  initFaceMesh();
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "aer-bender",
+  "version": "1.0.0",
+  "description": "Aer Bender V1 — Optical AI Vision Flute Controller",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/verify-revert-fonts-neon-buttons-and-learn-guide.js"
+  },
+  "keywords": [
+    "aer-bender",
+    "flute",
+    "mediapipe",
+    "computer-vision",
+    "web-audio",
+    "carnatic"
+  ],
+  "author": "Aditya Nayak",
+  "license": "MIT"
+}

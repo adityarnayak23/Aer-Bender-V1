@@ -1,0 +1,191 @@
+{
+  "sa": {
+    "file": "audio/samples/sa.wav",
+    "name": "Madhya Sa",
+    "loopStart": 0.25020408163265306,
+    "loopEnd": 1.0409297052154196,
+    "duration": 1.28,
+    "targetFreq": 565.2,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "bass_ma": {
+    "file": "audio/samples/bass_ma.wav",
+    "name": "Mandra Ma",
+    "loopStart": 0.3000453514739229,
+    "loopEnd": 0.8253061224489796,
+    "duration": 1.14,
+    "targetFreq": 184.24,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "bass_pa": {
+    "file": "audio/samples/bass_pa.wav",
+    "name": "Mandra Pa",
+    "loopStart": 0.3022448979591837,
+    "loopEnd": 1.3126530612244898,
+    "duration": 1.44,
+    "targetFreq": 207.27,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "bass_dha": {
+    "file": "audio/samples/bass_dha.wav",
+    "name": "Mandra Da",
+    "loopStart": 0.3762585034013605,
+    "loopEnd": 1.0478004535147392,
+    "duration": 1.36,
+    "targetFreq": 230.3,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "bass_ni": {
+    "file": "audio/samples/bass_ni.wav",
+    "name": "Mandra Ni",
+    "loopStart": 0.3667800453514739,
+    "loopEnd": 1.0292517006802722,
+    "duration": 1.22,
+    "targetFreq": 543.7,
+    "source": "Aditya Original GarageBand Master (Harmonically Matched to Sa Levels)"
+  },
+  "ri": {
+    "file": "audio/samples/ri.wav",
+    "name": "Madhya Ri",
+    "loopStart": 0.3559637188208617,
+    "loopEnd": 1.1648526077097505,
+    "duration": 1.4,
+    "targetFreq": 621.81,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ga": {
+    "file": "audio/samples/ga.wav",
+    "name": "Madhya Ga",
+    "loopStart": 0.37909297052154195,
+    "loopEnd": 1.1689795918367347,
+    "duration": 1.4,
+    "targetFreq": 690.9,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ma": {
+    "file": "audio/samples/ma.wav",
+    "name": "Madhya Ma",
+    "loopStart": 0.30403628117913833,
+    "loopEnd": 1.166281179138322,
+    "duration": 1.48,
+    "targetFreq": 736.96,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "pa": {
+    "file": "audio/samples/pa.wav",
+    "name": "Madhya Pa",
+    "loopStart": 0.3709750566893424,
+    "loopEnd": 1.1019954648526078,
+    "duration": 1.38,
+    "targetFreq": 829.08,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "dha": {
+    "file": "audio/samples/dha.wav",
+    "name": "Madhya Da",
+    "loopStart": 0.2599319727891157,
+    "loopEnd": 1.1121541950113378,
+    "duration": 1.4,
+    "targetFreq": 921.2,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ni": {
+    "file": "audio/samples/ni.wav",
+    "name": "Madhya Ni",
+    "loopStart": 0.3205442176870748,
+    "loopEnd": 1.223219954648526,
+    "duration": 1.38,
+    "targetFreq": 1036.35,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "sa_high": {
+    "file": "audio/samples/sa_high.wav",
+    "name": "Tara Sa",
+    "loopStart": 0.3218140589569161,
+    "loopEnd": 1.1046938775510204,
+    "duration": 1.42,
+    "targetFreq": 1105.44,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ri_high": {
+    "file": "audio/samples/ri_high.wav",
+    "name": "Tara Ri",
+    "loopStart": 0.36122448979591837,
+    "loopEnd": 1.0699092970521542,
+    "duration": 1.32,
+    "targetFreq": 1243.62,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ga_high": {
+    "file": "audio/samples/ga_high.wav",
+    "name": "Tara Ga",
+    "loopStart": 0.31723356009070297,
+    "loopEnd": 1.0898412698412698,
+    "duration": 1.3,
+    "targetFreq": 1381.8,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "ma_high": {
+    "file": "audio/samples/ma_high.wav",
+    "name": "Tara Ma",
+    "loopStart": 0.36648526077097504,
+    "loopEnd": 1.1617233560090703,
+    "duration": 1.44,
+    "targetFreq": 1473.92,
+    "source": "Aditya Original GarageBand Master (Zero-Crossing Phase-Locked Loop)"
+  },
+  "bass_sa": {
+    "file": "audio/samples/bass_sa.wav",
+    "name": "Mandra Sa",
+    "loopStart": 0.25020408163265306,
+    "loopEnd": 1.0409297052154196,
+    "duration": 1.28,
+    "targetFreq": 565.2,
+    "source": "Aditya Master (Lower octave Sa matched to mid octave Sa for technical purpose)"
+  },
+  "bass_ri": {
+    "file": "audio/samples/bass_ri.wav",
+    "name": "Mandra Ri",
+    "loopStart": 0.3559637188208617,
+    "loopEnd": 1.1648526077097505,
+    "duration": 1.4,
+    "targetFreq": 621.81,
+    "source": "Aditya Master (Lower octave Ri matched to mid octave Ri for technical purpose)"
+  },
+  "bass_ga": {
+    "file": "audio/samples/bass_ga.wav",
+    "name": "Mandra Ga",
+    "loopStart": 0.37909297052154195,
+    "loopEnd": 1.1689795918367347,
+    "duration": 1.4,
+    "targetFreq": 690.9,
+    "source": "Aditya Master (Lower octave Ga matched to mid octave Ga for technical purpose)"
+  },
+  "pa_high": {
+    "file": "audio/samples/pa_high.wav",
+    "name": "Tara Pa",
+    "loopStart": 0.37746031746031744,
+    "loopEnd": 0.8819727891156462,
+    "duration": 1.056,
+    "targetFreq": 829.08,
+    "source": "Aditya Master (Derived from pa up 1 octave, anti-aliased full length)"
+  },
+  "dha_high": {
+    "file": "audio/samples/dha_high.wav",
+    "name": "Tara Da",
+    "loopStart": 0.21807256235827666,
+    "loopEnd": 0.7891609977324263,
+    "duration": 1.126,
+    "targetFreq": 921.2,
+    "source": "Aditya Master (Derived from dha up 1 octave, anti-aliased full length)"
+  },
+  "ni_high": {
+    "file": "audio/samples/ni_high.wav",
+    "name": "Tara Ni",
+    "loopStart": 0.3003401360544218,
+    "loopEnd": 0.8296145124716553,
+    "duration": 1.141,
+    "targetFreq": 1036.35,
+    "source": "Aditya Master (Derived from ni up 1 octave, anti-aliased full length)"
+  }
+}
