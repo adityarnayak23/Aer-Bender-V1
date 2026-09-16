@@ -1753,121 +1753,39 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Giant Luminous Elliptical Floor Pedestal on which the Flute Levitates
-    // (Rendered on the floor beneath the flute from our 3D perspective POV with vibrant brighter octave colors)
+    // 1a-0. Giant Celestial Spherical Aura using exact Flute Octave Palette
+    // Flute Octaves: Tara (#fb923c Orange), Madhya (#e2e8f0 Studio Pearl), Mandra (#818cf8 Indigo)
     if (isHovering) {
       const midX = (pStart.x + pEnd.x) * 0.5;
       const midY = (pStart.y + pEnd.y) * 0.5;
-      const floorY = (this.fluteY * height) + 64 * scale; // Floor plane situated directly beneath the hovering flute
-      const floorRadiusX = Math.max(width * 0.44, 340 * scale); // Wide horizontal span
-      const perspectiveScaleY = 0.24; // Elliptical perspective compression from our POV
-      const pulse = 0.58 + Math.sin(now * 0.0024) * 0.16; // Vibrant bright breathing radiance
+      const sphereRadius = Math.max(width * 0.28, 220 * scale);
+      const spherePulse = 0.42 + Math.sin(now * 0.002) * 0.12;
 
-      // 1a-0A. Ambient Ground Bloom (Broad soft luminous floor reflection)
-      ctx.save();
-      ctx.translate(midX, floorY);
-      ctx.scale(1.0, perspectiveScaleY);
-
-      const ambientGrad = ctx.createRadialGradient(0, 0, 16 * scale, 0, 0, floorRadiusX * 1.18);
-      ambientGrad.addColorStop(0, `rgba(255, 165, 30, ${pulse * 0.45})`);
-      ambientGrad.addColorStop(0.35, `rgba(129, 140, 248, ${pulse * 0.35})`);
-      ambientGrad.addColorStop(0.70, `rgba(99, 102, 241, ${pulse * 0.15})`);
-      ambientGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
-
-      ctx.fillStyle = ambientGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 1.18, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // 1a-0B. Primary Glowing Elliptical Pedestal (Vivid, Bright Flute Octave Radiance)
-      ctx.save();
-      ctx.translate(midX, floorY);
-      ctx.scale(1.0, perspectiveScaleY);
-
-      let coreBright = `rgba(255, 255, 255, ${pulse * 0.95})`; // Brilliant Luminous White Core
-      let taraBright = `rgba(255, 145, 0, ${pulse * 0.90})`;   // Vivid Bright Tara Orange (#ff9100)
-      let madhyaBright = `rgba(251, 146, 60, ${pulse * 0.72})`; // Warm Glowing Amber (#fb923c)
-      let mandraBright = `rgba(129, 140, 248, ${pulse * 0.68})`; // Electric Mandra Indigo (#818cf8)
-      let outerIndigo = `rgba(99, 102, 241, ${pulse * 0.32})`;   // Deep Violet (#6366f1)
+      let coreColor = `rgba(251, 146, 60, ${spherePulse * 0.48})`;     // Tara: Apple System Orange (#fb923c)
+      let midColor = `rgba(226, 232, 240, ${spherePulse * 0.32})`;      // Madhya: Studio Pearl White (#e2e8f0)
+      let outerColor = `rgba(129, 140, 248, ${spherePulse * 0.40})`;    // Mandra: Apple System Indigo (#818cf8)
 
       if (this.currentOctave === 1) {
-        taraBright = `rgba(255, 140, 0, ${pulse * 0.98})`;
-        madhyaBright = `rgba(254, 215, 170, ${pulse * 0.85})`;
-        mandraBright = `rgba(234, 88, 12, ${pulse * 0.55})`;
+        coreColor = `rgba(251, 146, 60, ${spherePulse * 0.58})`;
+        midColor = `rgba(254, 215, 170, ${spherePulse * 0.36})`;
+        outerColor = `rgba(234, 88, 12, ${spherePulse * 0.22})`;
       } else if (this.currentOctave === -1) {
-        mandraBright = `rgba(129, 140, 248, ${pulse * 0.98})`;
-        taraBright = `rgba(168, 85, 247, ${pulse * 0.75})`;
-        outerIndigo = `rgba(79, 70, 229, ${pulse * 0.45})`;
+        coreColor = `rgba(129, 140, 248, ${spherePulse * 0.58})`;
+        midColor = `rgba(192, 132, 252, ${spherePulse * 0.36})`;
+        outerColor = `rgba(99, 102, 241, ${spherePulse * 0.25})`;
       }
 
-      const floorGrad = ctx.createRadialGradient(0, 0, 10 * scale, 0, 0, floorRadiusX);
-      floorGrad.addColorStop(0.00, coreBright);
-      floorGrad.addColorStop(0.14, taraBright);
-      floorGrad.addColorStop(0.38, madhyaBright);
-      floorGrad.addColorStop(0.62, mandraBright);
-      floorGrad.addColorStop(0.82, outerIndigo);
-      floorGrad.addColorStop(1.00, 'rgba(6, 9, 16, 0)');
+      const orbGrad = ctx.createRadialGradient(midX, midY, 14 * scale, midX, midY, sphereRadius);
+      orbGrad.addColorStop(0, coreColor);
+      orbGrad.addColorStop(0.28, midColor);
+      orbGrad.addColorStop(0.56, outerColor);
+      orbGrad.addColorStop(0.80, `rgba(99, 102, 241, ${spherePulse * 0.12})`);
+      orbGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
 
-      ctx.fillStyle = floorGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 1a-0C. Concentric Futuristic Perspective Rings on the Floor
-      // Inner Tara ring
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 0.28, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 180, 50, ${pulse * 0.80})`;
-      ctx.lineWidth = 2.2 * scale;
-      ctx.stroke();
-
-      // Mid Madhya ring (Pearl White)
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 0.52, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${pulse * 0.70})`;
-      ctx.lineWidth = 1.8 * scale;
-      ctx.stroke();
-
-      // Outer Mandra ring (Indigo)
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 0.78, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(129, 140, 248, ${pulse * 0.60})`;
-      ctx.lineWidth = 1.6 * scale;
-      ctx.stroke();
-
-      ctx.restore();
-
-      // 1a-0D. Upward Levitation Light Shimmer (Connecting Floor Pedestal to Flute Underside)
       ctx.save();
-      const beamGrad = ctx.createLinearGradient(0, floorY, 0, midY);
-      beamGrad.addColorStop(0, `rgba(251, 146, 60, ${pulse * 0.30})`);
-      beamGrad.addColorStop(0.45, `rgba(129, 140, 248, ${pulse * 0.18})`);
-      beamGrad.addColorStop(1, 'rgba(129, 140, 248, 0)');
-
-      const fluteHalfW = Math.abs(pEnd.x - pStart.x) * 0.52;
-      ctx.fillStyle = beamGrad;
+      ctx.fillStyle = orbGrad;
       ctx.beginPath();
-      ctx.moveTo(midX - floorRadiusX * 0.55, floorY);
-      ctx.lineTo(midX - fluteHalfW, midY + tubeRadius * 1.2);
-      ctx.lineTo(midX + fluteHalfW, midY + tubeRadius * 1.2);
-      ctx.lineTo(midX + floorRadiusX * 0.55, floorY);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
-
-      // 1a-0E. Flute Ground Ambient Occlusion / Levitating Floor Shadow
-      ctx.save();
-      ctx.translate(midX, floorY);
-      ctx.scale(1.0, perspectiveScaleY);
-      const shadowW = fluteHalfW * 0.95;
-      const shadowAlpha = 0.38 - (levitationFloat / (4.5 * scale)) * 0.08;
-      const shadowGrad = ctx.createRadialGradient(0, 0, 8 * scale, 0, 0, shadowW);
-      shadowGrad.addColorStop(0, `rgba(6, 8, 18, ${shadowAlpha})`);
-      shadowGrad.addColorStop(1, 'rgba(6, 8, 18, 0)');
-      ctx.fillStyle = shadowGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, shadowW, 0, Math.PI * 2);
+      ctx.arc(midX, midY, sphereRadius, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }

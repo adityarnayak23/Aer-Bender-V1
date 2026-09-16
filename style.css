@@ -712,46 +712,44 @@ body {
   transform: translate(-50%, -48%) scale(0.95);
 }
 
-/* Giant Luminous Elliptical Floor Aura beneath Levitating Flute */
-/* Floor projection perspective with bright flute octave colors: Tara (#ff9100), Madhya (#e2e8f0), Mandra (#818cf8) */
+/* Giant Celestial Spherical Aura around Levitating Landing Element */
 .welcome-sphere-aura {
   position: absolute;
-  top: calc(50% + 240px);
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(620px, 74vw, 1060px);
-  height: clamp(140px, 16vw, 240px);
+  width: clamp(420px, 46vw, 640px);
+  height: clamp(420px, 46vw, 640px);
   border-radius: 50%;
   background: radial-gradient(
-    ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.92) 0%,     /* Specular White Core */
-    rgba(255, 145, 0, 0.82) 16%,      /* Vivid Bright Tara Orange (#ff9100) */
-    rgba(251, 146, 60, 0.68) 36%,     /* Glowing Amber (#fb923c) */
-    rgba(129, 140, 248, 0.62) 58%,    /* Electric Mandra Indigo (#818cf8) */
-    rgba(99, 102, 241, 0.28) 76%,     /* Deep Violet (#6366f1) */
-    transparent 88%
+    circle at 50% 50%,
+    rgba(251, 146, 60, 0.44) 0%,     /* Tara: High Octave Sunset Orange (#fb923c) */
+    rgba(226, 232, 240, 0.28) 26%,   /* Madhya: Mid Octave Studio Pearl White (#e2e8f0) */
+    rgba(129, 140, 248, 0.40) 54%,   /* Mandra: Bass Octave Velvet Indigo (#818cf8) */
+    rgba(99, 102, 241, 0.14) 74%,    /* Outer resonance */
+    transparent 86%
   );
-  filter: blur(44px);
+  filter: blur(52px);
   pointer-events: none;
   z-index: -1;
-  animation: celestialFloorAura 6s ease-in-out infinite alternate;
+  animation: celestialSphereAura 7s ease-in-out infinite alternate;
 }
 
-@keyframes celestialFloorAura {
+@keyframes celestialSphereAura {
   0% {
-    transform: translate(-50%, -50%) scale(0.92, 0.88);
-    opacity: 0.82;
-    filter: blur(38px);
+    transform: translate(-50%, -50%) scale(0.90) rotate(0deg);
+    opacity: 0.72;
+    filter: blur(44px);
   }
   50% {
-    transform: translate(-50%, -50%) scale(1.08, 1.10);
-    opacity: 1.0;
-    filter: blur(48px);
+    transform: translate(-50%, -50%) scale(1.10) rotate(90deg);
+    opacity: 0.95;
+    filter: blur(58px);
   }
   100% {
-    transform: translate(-50%, -50%) scale(0.95, 0.92);
-    opacity: 0.88;
-    filter: blur(40px);
+    transform: translate(-50%, -50%) scale(0.96) rotate(180deg);
+    opacity: 0.80;
+    filter: blur(48px);
   }
 }
 
