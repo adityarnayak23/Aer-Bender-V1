@@ -1753,56 +1753,56 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Subtle Holographic Elliptical Floor Pedestal beneath Levitating Flute
-    // (Positioned strictly on the distant floor plane beneath the flute; NO light shed onto flute)
+    // 1a-0. Luminous Elliptical Floor Pedestal beneath Levitating Flute
+    // (Radiant floor dais with vibrant octave colors reflecting physically off the flute)
     if (isHovering) {
       const midX = (pStart.x + pEnd.x) * 0.5;
-      const floorY = (this.fluteY * height) + 120 * scale; // Distant floor plane well beneath the hovering flute
-      const floorRadiusX = Math.min(width * 0.38, 280 * scale); // Controlled horizontal span
-      const perspectiveScaleY = 0.11; // Flat perspective disc compression from our POV
-      const pulse = 0.55 + Math.sin(now * 0.0020) * 0.10; // Gentle subtle breathing
+      const floorY = (this.fluteY * height) + 108 * scale; // Floor plane situated beneath the hovering flute
+      const floorRadiusX = Math.max(width * 0.44, 340 * scale); // Expansive horizontal span
+      const perspectiveScaleY = 0.13; // Elegant flat perspective disc from our POV
+      const pulse = 0.70 + Math.sin(now * 0.0024) * 0.16; // Vibrant radiant breathing
 
-      // 1a-0A. Ambient Ground Bloom (Very subtle, soft ground reflection only)
+      // 1a-0A. Radiant Ambient Ground Bloom (Expansive soft floor illumination)
       ctx.save();
       ctx.translate(midX, floorY);
       ctx.scale(1.0, perspectiveScaleY);
 
-      const ambientGrad = ctx.createRadialGradient(0, 0, 10 * scale, 0, 0, floorRadiusX * 1.15);
-      ambientGrad.addColorStop(0, `rgba(255, 145, 0, ${pulse * 0.12})`);
-      ambientGrad.addColorStop(0.40, `rgba(129, 140, 248, ${pulse * 0.09})`);
-      ambientGrad.addColorStop(0.75, `rgba(99, 102, 241, ${pulse * 0.04})`);
+      const ambientGrad = ctx.createRadialGradient(0, 0, 12 * scale, 0, 0, floorRadiusX * 1.20);
+      ambientGrad.addColorStop(0, `rgba(255, 155, 30, ${pulse * 0.38})`);
+      ambientGrad.addColorStop(0.36, `rgba(129, 140, 248, ${pulse * 0.28})`);
+      ambientGrad.addColorStop(0.72, `rgba(99, 102, 241, ${pulse * 0.12})`);
       ambientGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
 
       ctx.fillStyle = ambientGrad;
       ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 1.15, 0, Math.PI * 2);
+      ctx.arc(0, 0, floorRadiusX * 1.20, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
 
-      // 1a-0B. Primary Elliptical Floor Pedestal (Subtle, refined floor aura with flute octave colors)
+      // 1a-0B. Primary Glowing Elliptical Floor Pedestal (Vibrant, bright flute octave radiance)
       ctx.save();
       ctx.translate(midX, floorY);
       ctx.scale(1.0, perspectiveScaleY);
 
-      let coreBright = `rgba(255, 255, 255, ${pulse * 0.32})`;  // Soft luminous core
-      let taraBright = `rgba(255, 145, 0, ${pulse * 0.28})`;    // Subtle Tara Orange
-      let madhyaBright = `rgba(251, 146, 60, ${pulse * 0.20})`;  // Gentle Amber
-      let mandraBright = `rgba(129, 140, 248, ${pulse * 0.18})`; // Electric Mandra Indigo
-      let outerIndigo = `rgba(99, 102, 241, ${pulse * 0.08})`;   // Soft Violet Edge
+      let coreBright = `rgba(255, 255, 255, ${pulse * 0.92})`;  // Brilliant Specular White Core
+      let taraBright = `rgba(255, 145, 0, ${pulse * 0.85})`;    // Radiant Bright Tara Orange (#ff9100)
+      let madhyaBright = `rgba(251, 146, 60, ${pulse * 0.68})`; // Warm Glowing Amber (#fb923c)
+      let mandraBright = `rgba(129, 140, 248, ${pulse * 0.62})`; // Electric Mandra Indigo (#818cf8)
+      let outerIndigo = `rgba(99, 102, 241, ${pulse * 0.28})`;   // Deep Royal Violet (#6366f1)
 
       if (this.currentOctave === 1) {
-        taraBright = `rgba(255, 145, 0, ${pulse * 0.36})`;
-        madhyaBright = `rgba(254, 215, 170, ${pulse * 0.25})`;
+        taraBright = `rgba(255, 140, 0, ${pulse * 0.96})`;
+        madhyaBright = `rgba(254, 215, 170, ${pulse * 0.84})`;
       } else if (this.currentOctave === -1) {
-        mandraBright = `rgba(129, 140, 248, ${pulse * 0.35})`;
-        outerIndigo = `rgba(79, 70, 229, ${pulse * 0.14})`;
+        mandraBright = `rgba(129, 140, 248, ${pulse * 0.95})`;
+        outerIndigo = `rgba(79, 70, 229, ${pulse * 0.42})`;
       }
 
       const floorGrad = ctx.createRadialGradient(0, 0, 8 * scale, 0, 0, floorRadiusX);
       floorGrad.addColorStop(0.00, coreBright);
-      floorGrad.addColorStop(0.18, taraBright);
-      floorGrad.addColorStop(0.42, madhyaBright);
-      floorGrad.addColorStop(0.68, mandraBright);
+      floorGrad.addColorStop(0.16, taraBright);
+      floorGrad.addColorStop(0.40, madhyaBright);
+      floorGrad.addColorStop(0.66, mandraBright);
       floorGrad.addColorStop(0.85, outerIndigo);
       floorGrad.addColorStop(1.00, 'rgba(6, 9, 16, 0)');
 
@@ -1811,38 +1811,38 @@ class CarnaticFluteTracker {
       ctx.arc(0, 0, floorRadiusX, 0, Math.PI * 2);
       ctx.fill();
 
-      // 1a-0C. Concentric Futuristic Hairline Perspective Rings on Floor Pad
+      // 1a-0C. Concentric Futuristic Perspective Rings on Floor Pad
       // Inner Tara ring
       ctx.beginPath();
       ctx.arc(0, 0, floorRadiusX * 0.28, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 165, 30, ${pulse * 0.32})`;
-      ctx.lineWidth = 1.0 * scale;
+      ctx.strokeStyle = `rgba(255, 180, 50, ${pulse * 0.75})`;
+      ctx.lineWidth = 1.6 * scale;
       ctx.stroke();
 
       // Mid Madhya ring (Pearl White)
       ctx.beginPath();
       ctx.arc(0, 0, floorRadiusX * 0.52, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255, 255, 255, ${pulse * 0.24})`;
-      ctx.lineWidth = 1.0 * scale;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${pulse * 0.65})`;
+      ctx.lineWidth = 1.4 * scale;
       ctx.stroke();
 
       // Outer Mandra ring (Indigo)
       ctx.beginPath();
       ctx.arc(0, 0, floorRadiusX * 0.78, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(129, 140, 248, ${pulse * 0.20})`;
-      ctx.lineWidth = 1.0 * scale;
+      ctx.strokeStyle = `rgba(129, 140, 248, ${pulse * 0.55})`;
+      ctx.lineWidth = 1.2 * scale;
       ctx.stroke();
 
       ctx.restore();
 
       // 1a-0D. Flute Ground Ambient Occlusion / Levitating Floor Shadow
-      // Soft grounded occlusion on the floor pad beneath the hovering flute
+      // Grounded shadow on the floor pad beneath the hovering flute emphasizing floating height
       ctx.save();
       ctx.translate(midX, floorY);
       ctx.scale(1.0, perspectiveScaleY);
       const fluteHalfW = Math.abs(pEnd.x - pStart.x) * 0.50;
       const shadowW = fluteHalfW * 0.90;
-      const shadowAlpha = 0.28 - (levitationFloat / (4.5 * scale)) * 0.06;
+      const shadowAlpha = 0.40 - (levitationFloat / (4.5 * scale)) * 0.08;
       const shadowGrad = ctx.createRadialGradient(0, 0, 6 * scale, 0, 0, shadowW);
       shadowGrad.addColorStop(0, `rgba(4, 6, 12, ${shadowAlpha})`);
       shadowGrad.addColorStop(1, 'rgba(4, 6, 12, 0)');
@@ -1900,6 +1900,44 @@ class CarnaticFluteTracker {
     ctx.lineTo(pEnd.x + nx * undersideOffset, pEnd.y + ny * undersideOffset);
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
     ctx.lineWidth = 2.0 * scale;
+    ctx.stroke();
+
+    // ==============================================================
+    // 1d-2. OPTICAL UNDERSIDE FLOOR REFLECTION (Bounce Light Reflecting Off the Flute)
+    // Physically projects the reflection of the bright floor lights onto the curved obsidian belly:
+    // Tara Orange reflection near headjoint (pStart), Luminous Pearl White at mid-span, Mandra Indigo reflection near foot (pEnd)
+    // ==============================================================
+    const rimReflectionOffset = tubeRadius - 0.9 * scale;
+    const reflPulse = isHovering ? (0.70 + Math.sin(now * 0.0024) * 0.16) : 0.45;
+
+    // A. Diffuse Subsurface Bounce Wash along the lower glass curvature
+    const diffuseReflectionGrad = ctx.createLinearGradient(pStart.x, pStart.y, pEnd.x, pEnd.y);
+    diffuseReflectionGrad.addColorStop(0.00, `rgba(255, 145, 0, ${reflPulse * 0.42})`);   // Tara Orange sheen
+    diffuseReflectionGrad.addColorStop(0.28, `rgba(251, 146, 60, ${reflPulse * 0.36})`);
+    diffuseReflectionGrad.addColorStop(0.50, `rgba(255, 255, 255, ${reflPulse * 0.48})`); // Madhya White sheen
+    diffuseReflectionGrad.addColorStop(0.76, `rgba(129, 140, 248, ${reflPulse * 0.38})`); // Mandra Indigo sheen
+    diffuseReflectionGrad.addColorStop(1.00, `rgba(99, 102, 241, ${reflPulse * 0.30})`);
+
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * (tubeRadius - 2.6 * scale), pStart.y + ny * (tubeRadius - 2.6 * scale));
+    ctx.lineTo(pEnd.x + nx * (tubeRadius - 2.6 * scale), pEnd.y + ny * (tubeRadius - 2.6 * scale));
+    ctx.strokeStyle = diffuseReflectionGrad;
+    ctx.lineWidth = 3.6 * scale;
+    ctx.stroke();
+
+    // B. Sharp Specular Fresnel Underside Edge (Direct optical reflection catching the floor dais)
+    const specularRimGrad = ctx.createLinearGradient(pStart.x, pStart.y, pEnd.x, pEnd.y);
+    specularRimGrad.addColorStop(0.00, `rgba(255, 160, 30, ${reflPulse * 0.88})`);  // Crisp Tara edge
+    specularRimGrad.addColorStop(0.25, `rgba(255, 210, 120, ${reflPulse * 0.78})`);
+    specularRimGrad.addColorStop(0.50, `rgba(255, 255, 255, ${reflPulse * 0.95})`); // Brilliant Specular White reflection
+    specularRimGrad.addColorStop(0.75, `rgba(165, 180, 252, ${reflPulse * 0.82})`);
+    specularRimGrad.addColorStop(1.00, `rgba(129, 140, 248, ${reflPulse * 0.80})`); // Crisp Mandra edge
+
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * rimReflectionOffset, pStart.y + ny * rimReflectionOffset);
+    ctx.lineTo(pEnd.x + nx * rimReflectionOffset, pEnd.y + ny * rimReflectionOffset);
+    ctx.strokeStyle = specularRimGrad;
+    ctx.lineWidth = 1.8 * scale;
     ctx.stroke();
 
     // ==============================================================
@@ -2168,6 +2206,14 @@ class CarnaticFluteTracker {
     ctx.lineWidth = 1.2 * scale;
     ctx.stroke();
 
+    // Underside crown rim catchlight reflecting bright Tara orange floor illumination
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * (tubeRadius * 0.30), pStart.y + ny * (tubeRadius * 0.30));
+    ctx.lineTo(pStart.x + nx * tubeRadius, pStart.y + ny * tubeRadius);
+    ctx.strokeStyle = `rgba(255, 185, 60, ${reflPulse * 0.92})`;
+    ctx.lineWidth = 2.4 * scale;
+    ctx.stroke();
+
     // Coin-knurl crown shoulder line
     ctx.beginPath();
     ctx.moveTo(pStart.x + ux * (2.2 * scale) - nx * (tubeRadius * 0.90), pStart.y + uy * (2.2 * scale) - ny * (tubeRadius * 0.90));
@@ -2185,6 +2231,14 @@ class CarnaticFluteTracker {
     ctx.moveTo(pEnd.x - nx * tubeRadius, pEnd.y - ny * tubeRadius);
     ctx.lineTo(pEnd.x + nx * tubeRadius, pEnd.y + ny * tubeRadius);
     ctx.strokeStyle = isEmbouchureActive ? getRingOctaveColor(0.95) : 'rgba(148, 163, 184, 0.75)';
+    ctx.lineWidth = 2.4 * scale;
+    ctx.stroke();
+
+    // Underside foot exit rim catchlight reflecting bright Mandra indigo floor illumination
+    ctx.beginPath();
+    ctx.moveTo(pEnd.x + nx * (tubeRadius * 0.30), pEnd.y + ny * (tubeRadius * 0.30));
+    ctx.lineTo(pEnd.x + nx * tubeRadius, pEnd.y + ny * tubeRadius);
+    ctx.strokeStyle = `rgba(165, 180, 252, ${reflPulse * 0.90})`;
     ctx.lineWidth = 2.4 * scale;
     ctx.stroke();
 
@@ -2216,6 +2270,14 @@ class CarnaticFluteTracker {
       ctx.lineTo(tPos.x + nx * (tubeRadius * 0.90), tPos.y + ny * (tubeRadius * 0.90));
       ctx.strokeStyle = isEmbouchureActive ? getRingGleamColor() : 'rgba(255, 255, 255, 0.60)';
       ctx.lineWidth = 0.8 * scale;
+      ctx.stroke();
+
+      // Underside rim catchlight reflecting bright floor lights
+      ctx.beginPath();
+      ctx.moveTo(tPos.x + nx * (tubeRadius * 0.35), tPos.y + ny * (tubeRadius * 0.35));
+      ctx.lineTo(tPos.x + nx * tubeRadius, tPos.y + ny * tubeRadius);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${reflPulse * 0.88})`;
+      ctx.lineWidth = 1.8 * scale;
       ctx.stroke();
 
       // Subtle dark recessed relief grooves framing ring (zero orange!)
@@ -2330,6 +2392,23 @@ class CarnaticFluteTracker {
     );
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
     ctx.lineWidth = 1.1 * scale;
+    ctx.stroke();
+
+    // Luminous underside catchlight on lip plate apron reflecting floor illumination
+    ctx.beginPath();
+    ctx.moveTo(pWingL.x + nx * (0.8 * scale), pWingL.y + ny * (0.8 * scale));
+    qCurve(
+      blowPos.x - ux * (plateHL * 0.65) + nx * (lowerReach * 0.92),
+      blowPos.y - uy * (plateHL * 0.65) + ny * (lowerReach * 0.92),
+      pLowMid.x + nx * (0.8 * scale), pLowMid.y + ny * (0.8 * scale)
+    );
+    qCurve(
+      blowPos.x + ux * (plateHL * 0.65) + nx * (lowerReach * 0.92),
+      blowPos.y + uy * (plateHL * 0.65) + ny * (lowerReach * 0.92),
+      pWingR.x + nx * (0.8 * scale), pWingR.y + ny * (0.8 * scale)
+    );
+    ctx.strokeStyle = `rgba(255, 180, 50, ${reflPulse * 0.70})`;
+    ctx.lineWidth = 1.2 * scale;
     ctx.stroke();
 
     // Specular highlight ridge along the upper shoulder
