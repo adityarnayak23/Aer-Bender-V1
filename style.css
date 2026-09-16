@@ -592,8 +592,8 @@ body {
 }
 
 #zoneTara.active {
-  border-color: rgba(56, 189, 248, 0.6);
-  background: rgba(56, 189, 248, 0.22);
+  border-color: rgba(249, 115, 22, 0.6);
+  background: rgba(249, 115, 22, 0.22);
 }
 
 #zoneMadhya.active {
@@ -602,8 +602,8 @@ body {
 }
 
 #zoneMandra.active {
-  border-color: rgba(245, 158, 11, 0.6);
-  background: rgba(245, 158, 11, 0.22);
+  border-color: rgba(59, 130, 246, 0.6);
+  background: rgba(59, 130, 246, 0.22);
 }
 
 .mouth-aperture-meter {
@@ -712,8 +712,8 @@ body {
   transform: translate(-50%, -48%) scale(0.95);
 }
 
-/* Faint Pearl / Ivory White Floor Aura beneath Levitating Flute */
-/* Anchored to floor plane; serene acoustic pearl radiance */
+/* Octave Resonance Floor Aura beneath Levitating Flute */
+/* Anchored to floor plane; projects Tara (Coral) -> Madhya (Emerald Teal) -> Mandra (Royal Blue) */
 .welcome-sphere-aura {
   position: absolute;
   top: calc(50% + 260px);
@@ -724,26 +724,29 @@ body {
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgba(255, 253, 245, 0.42) 0%,      /* Faint Ivory White Core */
-    rgba(250, 248, 242, 0.26) 30%,     /* Soft Pearl */
-    rgba(241, 245, 249, 0.12) 60%,     /* Translucent Alabaster */
-    transparent 80%
+    rgba(249, 115, 22, 0.45) 0%,       /* Tara Sthayi: Fiery Coral Orange Core */
+    rgba(251, 146, 60, 0.32) 22%,      /* Tara overtone */
+    rgba(16, 185, 129, 0.30) 44%,      /* Madhya Sthayi: Luminous Emerald Teal */
+    rgba(6, 182, 212, 0.22) 64%,       /* Madhya Cyan overtone */
+    rgba(59, 130, 246, 0.26) 80%,      /* Mandra Sthayi: Royal Blue */
+    rgba(79, 70, 229, 0.14) 92%,       /* Deep Indigo */
+    transparent 100%
   );
-  filter: blur(32px);
+  filter: blur(34px);
   pointer-events: none;
   z-index: -1;
-  opacity: 0.50;
+  opacity: 0.55;
   animation: celestialFloorAura 6s ease-in-out infinite alternate;
 }
 
 @keyframes celestialFloorAura {
   0% {
     transform: translate(-50%, -50%) scale(0.96, 0.92);
-    opacity: 0.42;
+    opacity: 0.48;
   }
   100% {
     transform: translate(-50%, -50%) scale(1.04, 1.06);
-    opacity: 0.58;
+    opacity: 0.62;
   }
 }
 

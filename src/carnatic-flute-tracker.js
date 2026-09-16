@@ -1753,84 +1753,113 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Cymatics Acoustic Standing Wave Resonance Field (Faint Pearl & Ivory White)
-    // (Acoustic Chladni standing wave rings pulsating on the floor beneath the flute at root Sa 277.18 Hz)
+    // 1a-0. Cymatics Acoustic Standing Wave Resonance Field
+    // (Floor dais projecting the 3 Sthayi Octaves as shown in scientific mockup: Tara Coral -> Madhya Emerald/Teal -> Mandra Royal Blue)
     if (isHovering) {
       const midX = (pStart.x + pEnd.x) * 0.5;
       const floorY = (this.fluteY * height) + 110 * scale; // Ground plane situated beneath the hovering flute
       const floorRadiusX = Math.max(width * 0.42, 330 * scale);
       const perspectiveScaleY = 0.14; // Horizontal perspective disc from our POV
-      const pulse = 0.65 + Math.sin(now * 0.0024) * 0.14; // Gentle harmonic breathing
+      const pulse = 0.68 + Math.sin(now * 0.0024) * 0.14; // Gentle harmonic breathing
       const wavePhase = now * 0.0028;
 
-      ctx.save();
-      ctx.translate(midX, floorY);
-      ctx.scale(1.0, perspectiveScaleY);
+      if (typeof ctx.translate === 'function' && typeof ctx.scale === 'function') {
+        ctx.save();
+        ctx.translate(midX, floorY);
+        ctx.scale(1.0, perspectiveScaleY);
 
-      // 1a-0A. Faint Pearl / Ivory Ambient Floor Bloom
-      const ambientGrad = ctx.createRadialGradient(0, 0, 10 * scale, 0, 0, floorRadiusX * 1.15);
-      ambientGrad.addColorStop(0.00, `rgba(255, 253, 245, ${pulse * 0.28})`); // Faint ivory white core
-      ambientGrad.addColorStop(0.35, `rgba(250, 248, 242, ${pulse * 0.16})`); // Soft pearl
-      ambientGrad.addColorStop(0.70, `rgba(241, 245, 249, ${pulse * 0.06})`); // Translucent alabaster
-      ambientGrad.addColorStop(1.00, 'rgba(6, 9, 16, 0)');
-
-      ctx.fillStyle = ambientGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, floorRadiusX * 1.15, 0, Math.PI * 2);
-      ctx.fill();
-
-      // 1a-0B. Concentric Chladni Standing Wave Rings (Harmonic overtone nodes in pearl/ivory)
-      // 6 Mathematical harmonic rings vibrating at acoustic ratios
-      const ringDistances = [0.14, 0.28, 0.45, 0.64, 0.82, 1.00];
-      ringDistances.forEach((distFrac, idx) => {
-        const baseR = floorRadiusX * distFrac;
-        const pts = 80;
-        ctx.beginPath();
-        for (let p = 0; p <= pts; p++) {
-          const theta = (p / pts) * Math.PI * 2;
-          // Harmonic undulating nodal ripple
-          const harmonic = Math.sin(theta * 6 + wavePhase + idx * 0.8) * (1.8 * scale + idx * 0.4 * scale);
-          const rad = baseR + harmonic;
-          const px = Math.cos(theta) * rad;
-          const py = Math.sin(theta) * rad;
-          if (p === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
+        // 1a-0A. Ambient Floor Bloom mapped to Mockup Octaves:
+        // Tara Coral Orange (inner) -> Madhya Emerald Teal (mid) -> Mandra Royal Blue/Indigo (outer)
+        if (typeof ctx.createRadialGradient === 'function') {
+          const ambientGrad = ctx.createRadialGradient(0, 0, 8 * scale, 0, 0, floorRadiusX * 1.18);
+          ambientGrad.addColorStop(0.00, `rgba(249, 115, 22, ${pulse * 0.38})`);  // Tara Sthayi: Fiery Coral Orange
+          ambientGrad.addColorStop(0.22, `rgba(251, 146, 60, ${pulse * 0.30})`);
+          ambientGrad.addColorStop(0.44, `rgba(16, 185, 129, ${pulse * 0.28})`);  // Madhya Sthayi: Emerald Teal Green
+          ambientGrad.addColorStop(0.68, `rgba(6, 182, 212, ${pulse * 0.22})`);   // Madhya Cyan overtone
+          ambientGrad.addColorStop(0.82, `rgba(59, 130, 246, ${pulse * 0.26})`);  // Mandra Sthayi: Royal Blue
+          ambientGrad.addColorStop(0.94, `rgba(79, 70, 229, ${pulse * 0.14})`);   // Deep Indigo
+          ambientGrad.addColorStop(1.00, 'rgba(6, 9, 16, 0)');
+          ctx.fillStyle = ambientGrad;
+        } else {
+          ctx.fillStyle = 'rgba(249, 115, 22, 0.2)';
         }
-        ctx.closePath();
 
-        const ringAlpha = (idx === 1 || idx === 2)
-          ? pulse * 0.65
-          : (idx === 0 ? pulse * 0.75 : pulse * (0.50 - idx * 0.06));
-
-        ctx.strokeStyle = `rgba(255, 252, 245, ${ringAlpha})`; // Faint Ivory White
-        ctx.lineWidth = (idx === 1 ? 1.6 : (idx === 0 ? 1.4 : 1.0)) * scale;
-        ctx.stroke();
-      });
-
-      // 1a-0C. Radial Acoustic Nodal Spokes (8 sacred geometry quadrant lines)
-      for (let k = 0; k < 8; k++) {
-        const theta = (k / 8) * Math.PI * 2;
         ctx.beginPath();
-        ctx.moveTo(Math.cos(theta) * (floorRadiusX * 0.10), Math.sin(theta) * (floorRadiusX * 0.10));
-        ctx.lineTo(Math.cos(theta) * (floorRadiusX * 0.98), Math.sin(theta) * (floorRadiusX * 0.98));
-        ctx.strokeStyle = `rgba(248, 250, 252, ${pulse * 0.18})`; // Delicate pearl hairline
-        ctx.lineWidth = 0.8 * scale;
-        ctx.stroke();
+        ctx.arc(0, 0, floorRadiusX * 1.18, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 1a-0B. Concentric Chladni Standing Wave Rings (Harmonic overtone nodes mapped to Mockup Octaves)
+        // 6 Mathematical harmonic rings vibrating at acoustic ratios
+        const ringDistances = [0.14, 0.28, 0.45, 0.64, 0.82, 1.00];
+        ringDistances.forEach((distFrac, idx) => {
+          const baseR = floorRadiusX * distFrac;
+          const pts = 80;
+          // Higher wavenumber for high-register Tara, medium for Madhya, broad for Mandra
+          const waveFreq = idx < 2 ? 8 : (idx < 4 ? 6 : 4);
+          ctx.beginPath();
+          for (let p = 0; p <= pts; p++) {
+            const theta = (p / pts) * Math.PI * 2;
+            const harmonic = Math.sin(theta * waveFreq + wavePhase + idx * 0.8) * (1.8 * scale + idx * 0.35 * scale);
+            const rad = baseR + harmonic;
+            const px = Math.cos(theta) * rad;
+            const py = Math.sin(theta) * rad;
+            if (p === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          }
+          if (typeof ctx.closePath === 'function') ctx.closePath();
+
+          let ringColor;
+          let ringAlpha;
+          if (idx < 2) {
+            // Tier 1 (Inner): TARA STHAYI (Fiery Coral / Sunset Orange - high frequency)
+            ringAlpha = idx === 0 ? pulse * 0.85 : pulse * 0.75;
+            ringColor = idx === 0 ? `rgba(249, 115, 22, ${ringAlpha})` : `rgba(251, 146, 60, ${ringAlpha})`;
+            ctx.lineWidth = 1.6 * scale;
+          } else if (idx < 4) {
+            // Tier 2 (Mid): MADHYA STHAYI (Emerald Teal / Cyan - balanced frequency)
+            ringAlpha = idx === 2 ? pulse * 0.70 : pulse * 0.60;
+            ringColor = idx === 2 ? `rgba(16, 185, 129, ${ringAlpha})` : `rgba(6, 182, 212, ${ringAlpha})`;
+            ctx.lineWidth = 1.3 * scale;
+          } else {
+            // Tier 3 (Outer): MANDRA STHAYI (Royal Blue / Electric Indigo - fundamental bass)
+            ringAlpha = idx === 4 ? pulse * 0.62 : pulse * 0.48;
+            ringColor = idx === 4 ? `rgba(59, 130, 246, ${ringAlpha})` : `rgba(99, 102, 241, ${ringAlpha})`;
+            ctx.lineWidth = 1.1 * scale;
+          }
+
+          ctx.strokeStyle = ringColor;
+          ctx.stroke();
+        });
+
+        // 1a-0C. Radial Acoustic Nodal Spokes (8 sacred geometry quadrant lines linking octaves)
+        for (let k = 0; k < 8; k++) {
+          const theta = (k / 8) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(theta) * (floorRadiusX * 0.10), Math.sin(theta) * (floorRadiusX * 0.10));
+          ctx.lineTo(Math.cos(theta) * (floorRadiusX * 0.98), Math.sin(theta) * (floorRadiusX * 0.98));
+          ctx.strokeStyle = `rgba(148, 163, 184, ${pulse * 0.22})`; // Delicate silver hairline
+          ctx.lineWidth = 0.8 * scale;
+          ctx.stroke();
+        }
+
+        // 1a-0D. Ground Ambient Occlusion Shadow beneath Levitating Flute
+        const fluteHalfW = Math.abs(pEnd.x - pStart.x) * 0.50;
+        const shadowW = fluteHalfW * 0.90;
+        const shadowAlpha = 0.40 - (levitationFloat / (4.5 * scale)) * 0.08;
+        if (typeof ctx.createRadialGradient === 'function') {
+          const shadowGrad = ctx.createRadialGradient(0, 0, 6 * scale, 0, 0, shadowW);
+          shadowGrad.addColorStop(0, `rgba(4, 6, 12, ${shadowAlpha})`);
+          shadowGrad.addColorStop(1, 'rgba(4, 6, 12, 0)');
+          ctx.fillStyle = shadowGrad;
+        } else {
+          ctx.fillStyle = `rgba(4, 6, 12, ${shadowAlpha})`;
+        }
+        ctx.beginPath();
+        ctx.arc(0, 0, shadowW, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
       }
-
-      // 1a-0D. Ground Ambient Occlusion Shadow beneath Levitating Flute
-      const fluteHalfW = Math.abs(pEnd.x - pStart.x) * 0.50;
-      const shadowW = fluteHalfW * 0.90;
-      const shadowAlpha = 0.38 - (levitationFloat / (4.5 * scale)) * 0.08;
-      const shadowGrad = ctx.createRadialGradient(0, 0, 6 * scale, 0, 0, shadowW);
-      shadowGrad.addColorStop(0, `rgba(4, 6, 12, ${shadowAlpha})`);
-      shadowGrad.addColorStop(1, 'rgba(4, 6, 12, 0)');
-      ctx.fillStyle = shadowGrad;
-      ctx.beginPath();
-      ctx.arc(0, 0, shadowW, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
     }
 
     // 1a. Ambient Occlusion Drop Shadow
