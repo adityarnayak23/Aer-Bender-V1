@@ -749,6 +749,20 @@ document.addEventListener('DOMContentLoaded', () => {
     tracker.stop();
     state.isCameraRunning = false;
     audio.stopVoice();
+
+    // User requirement: Pause button should pause the tanpura too
+    if (audio.tanpuraActive) {
+      audio.toggleTanpura(false);
+      if (tanpuraToggleBtn) {
+        tanpuraToggleBtn.classList.remove('active');
+        tanpuraToggleBtn.innerHTML = '🪕 Tanpura Drone: Off';
+      }
+    }
+
+    if (talaState && talaState.isPlaying) {
+      stopTala();
+    }
+
     stopCameraBtn.style.display = "none";
     startCameraBtn.style.display = "none";
     startCameraBtn.disabled = false;
@@ -759,11 +773,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // Sensitivity Slider
-  sensitivitySlider.addEventListener('input', (e) => {
-    const val = parseFloat(e.target.value);
-    sensitivityVal.textContent = val.toFixed(2);
-    tracker.setCurlThreshold(val);
-  });
+  if (sensitivitySlider) {
+    sensitivitySlider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      if (sensitivityVal) sensitivityVal.textContent = val.toFixed(2);
+      tracker.setCurlThreshold(val);
+    });
+  }
 
   // Flute Height Slider
   if (fluteHeightSlider) {
@@ -783,32 +799,40 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Kattai Selection
-  kattaiSelect.addEventListener('change', (e) => {
-    audio.setKattai(e.target.value);
-    if (state.currentSwara) {
-      audio.playSwara(state.currentSwara);
-    }
-  });
+  if (kattaiSelect) {
+    kattaiSelect.addEventListener('change', (e) => {
+      audio.setKattai(e.target.value);
+      if (state.currentSwara) {
+        audio.playSwara(state.currentSwara);
+      }
+    });
+  }
 
   // Octave Shift Buttons
-  octaveDownBtn.addEventListener('click', () => {
-    if (audio.octaveShift > -1) {
-      handleOctaveChanged(audio.octaveShift - 1, true);
-    }
-  });
+  if (octaveDownBtn) {
+    octaveDownBtn.addEventListener('click', () => {
+      if (audio.octaveShift > -1) {
+        handleOctaveChanged(audio.octaveShift - 1, true);
+      }
+    });
+  }
 
-  octaveUpBtn.addEventListener('click', () => {
-    if (audio.octaveShift < 1) {
-      handleOctaveChanged(audio.octaveShift + 1, true);
-    }
-  });
+  if (octaveUpBtn) {
+    octaveUpBtn.addEventListener('click', () => {
+      if (audio.octaveShift < 1) {
+        handleOctaveChanged(audio.octaveShift + 1, true);
+      }
+    });
+  }
 
   // Sthayi Cycle Button: Mandra (-1) -> Madhya (0) -> Tara (1) -> Mandra (-1)
-  overblowToggleBtn.addEventListener('click', () => {
-    let nextOctave = audio.octaveShift + 1;
-    if (nextOctave > 1) nextOctave = -1;
-    handleOctaveChanged(nextOctave, true);
-  });
+  if (overblowToggleBtn) {
+    overblowToggleBtn.addEventListener('click', () => {
+      let nextOctave = audio.octaveShift + 1;
+      if (nextOctave > 1) nextOctave = -1;
+      handleOctaveChanged(nextOctave, true);
+    });
+  }
 
   // Direct Click Listeners for Side Guide and HUD Zones
   if (legendMandra) legendMandra.addEventListener('click', () => handleOctaveChanged(-1, true));
@@ -819,57 +843,58 @@ document.addEventListener('DOMContentLoaded', () => {
   if (zoneTara) zoneTara.addEventListener('click', () => handleOctaveChanged(1, true));
 
   // Master Volume
-  masterVolumeSlider.addEventListener('input', (e) => {
-    if (audio.masterGain) {
-      audio.masterGain.gain.setValueAtTime(parseFloat(e.target.value), audio.ctx.currentTime);
-    }
-  });
+  if (masterVolumeSlider) {
+    masterVolumeSlider.addEventListener('input', (e) => {
+      if (audio.masterGain) {
+        audio.masterGain.gain.setValueAtTime(parseFloat(e.target.value), audio.ctx.currentTime);
+      }
+    });
+  }
 
-  // ⚡ Electric Flute Mode Toggle
-  function updateElectricModeUI(isElectric) {
+  // ⚡ Electric vs. 🪈 Carnatic 2-Button Switch (Electric default)
+  const modeElectricBtn = document.getElementById('modeElectricBtn');
+  const modeCarnaticBtn = document.getElementById('modeCarnaticBtn');
+
+  function setTimbreMode(isElectric) {
+    audio.resume();
     state.isElectricMode = isElectric;
-    if (electricFluteToggleBtn) {
+    audio.setElectricMode(isElectric);
+
+    if (modeElectricBtn && modeCarnaticBtn) {
       if (isElectric) {
-        electricFluteToggleBtn.classList.add('active');
-        electricFluteToggleBtn.innerHTML = '⚡ Mode: Electric (Switch to Carnatic)';
-        electricFluteToggleBtn.setAttribute('aria-pressed', 'true');
+        modeElectricBtn.classList.add('active');
+        modeElectricBtn.setAttribute('aria-pressed', 'true');
+        modeCarnaticBtn.classList.remove('active');
+        modeCarnaticBtn.setAttribute('aria-pressed', 'false');
       } else {
-        electricFluteToggleBtn.classList.remove('active');
-        electricFluteToggleBtn.innerHTML = '🪈 Mode: Carnatic (Switch to Electric)';
-        electricFluteToggleBtn.setAttribute('aria-pressed', 'false');
+        modeCarnaticBtn.classList.add('active');
+        modeCarnaticBtn.setAttribute('aria-pressed', 'true');
+        modeElectricBtn.classList.remove('active');
+        modeElectricBtn.setAttribute('aria-pressed', 'false');
       }
     }
     if (timbreModeBadge) {
-      if (isElectric) {
-        timbreModeBadge.classList.add('electric-active');
-        timbreModeBadge.textContent = '⚡ Electric Flute';
-      } else {
-        timbreModeBadge.classList.remove('electric-active');
-        timbreModeBadge.textContent = 'Acoustic Engine';
-      }
+      timbreModeBadge.classList.toggle('electric-active', isElectric);
+      timbreModeBadge.textContent = isElectric ? '⚡ Electric Flute' : 'Acoustic Engine';
     }
   }
 
   function toggleElectricMode() {
-    audio.resume();
-    const isElectric = audio.toggleElectricMode();
-    updateElectricModeUI(isElectric);
+    setTimbreMode(!state.isElectricMode);
   }
 
-  if (electricFluteToggleBtn) {
-    electricFluteToggleBtn.addEventListener('click', () => {
-      toggleElectricMode();
-    });
+  if (modeElectricBtn) {
+    modeElectricBtn.addEventListener('click', () => setTimbreMode(true));
   }
-
+  if (modeCarnaticBtn) {
+    modeCarnaticBtn.addEventListener('click', () => setTimbreMode(false));
+  }
   if (timbreModeBadge) {
-    timbreModeBadge.addEventListener('click', () => {
-      toggleElectricMode();
-    });
+    timbreModeBadge.addEventListener('click', () => toggleElectricMode());
   }
 
   // Set default Electric mode UI state
-  updateElectricModeUI(true);
+  setTimbreMode(true);
 
   // Tanpura Drone Toggle
   tanpuraToggleBtn.addEventListener('click', () => {

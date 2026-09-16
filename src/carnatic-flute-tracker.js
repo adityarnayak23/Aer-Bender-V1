@@ -1742,25 +1742,27 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Ethereal Hovering Ambient Aura / Dim Glow (Subtle celestial levitation glow)
-    const glowPulse = isHovering ? (0.16 + Math.sin(now * 0.002) * 0.06) : 0.10;
-    // Outer wide soft aura
-    ctx.beginPath();
-    ctx.moveTo(pStart.x, pStart.y);
-    ctx.lineTo(pEnd.x, pEnd.y);
-    ctx.strokeStyle = `rgba(148, 163, 184, ${glowPulse * 0.55})`;
-    ctx.lineWidth = (tubeRadius * 2) + 24 * scale;
-    ctx.lineCap = 'round';
-    ctx.stroke();
+    // 1a-0. Giant Celestial Spherical Aura (Huge glowing sphere with deep aura)
+    if (isHovering) {
+      const midX = (pStart.x + pEnd.x) * 0.5;
+      const midY = (pStart.y + pEnd.y) * 0.5;
+      const sphereRadius = Math.max(width * 0.28, 220 * scale);
+      const spherePulse = 0.40 + Math.sin(now * 0.002) * 0.12;
 
-    // Inner brighter aura
-    ctx.beginPath();
-    ctx.moveTo(pStart.x, pStart.y);
-    ctx.lineTo(pEnd.x, pEnd.y);
-    ctx.strokeStyle = `rgba(186, 215, 248, ${glowPulse})`;
-    ctx.lineWidth = (tubeRadius * 2) + 10 * scale;
-    ctx.lineCap = 'round';
-    ctx.stroke();
+      const orbGrad = ctx.createRadialGradient(midX, midY, 14 * scale, midX, midY, sphereRadius);
+      orbGrad.addColorStop(0, `rgba(56, 189, 248, ${spherePulse})`);
+      orbGrad.addColorStop(0.32, `rgba(147, 51, 234, ${spherePulse * 0.65})`);
+      orbGrad.addColorStop(0.60, `rgba(6, 182, 212, ${spherePulse * 0.32})`);
+      orbGrad.addColorStop(0.82, `rgba(204, 255, 0, ${spherePulse * 0.12})`);
+      orbGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
+
+      ctx.save();
+      ctx.fillStyle = orbGrad;
+      ctx.beginPath();
+      ctx.arc(midX, midY, sphereRadius, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
 
     // 1a. Ambient Occlusion Drop Shadow
     const shadowOffset = 4.5 * scale;
