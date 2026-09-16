@@ -27,7 +27,7 @@ class FluteAudioEngine {
     this.isOverblown = false;
     this.allowedSwaraIds = null;
     this.isJazzMode = false;
-    this.isElectricMode = false;
+    this.isElectricMode = true;
     this.activeElectricVoice = null;
     this.electricDistortionCurve = null;
 

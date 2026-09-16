@@ -484,7 +484,7 @@ body {
   background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
 }
 
-/* Spatial Glass Octave Bar */
+/* Spatial Glass Octave Bar — Anchored securely on Left side so studio controls NEVER overlap */
 .spatial-octave-bar,
 .vertical-octave-bar {
   pointer-events: auto;
@@ -492,23 +492,23 @@ body {
   flex-direction: column;
   align-items: stretch;
   position: absolute;
-  top: 58px;
-  right: calc(clamp(340px, 28vw, 420px) + 20px);
-  background: rgba(10, 14, 24, 0.68);
+  top: 76px;
+  left: 18px;
+  background: rgba(10, 14, 24, 0.72);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 14px;
   padding: 4px;
   gap: 3px;
   user-select: none;
-  z-index: 20;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
-  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 25;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 20px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease;
 }
 
 .main-content.dock-collapsed .spatial-octave-bar {
-  right: 16px;
+  left: 18px;
 }
 
 .octave-zone {
@@ -809,24 +809,7 @@ body {
 }
 
 .camera-status {
-  font-size: 13px !important;
-  font-weight: 500 !important;
-  color: rgba(226, 232, 240, 0.95) !important;
-  font-family: var(--font-mono) !important;
-  letter-spacing: 0.2px !important;
-  flex: 1;
-  min-width: 240px;
-  line-height: 1.35;
-  transition: opacity 0.25s ease;
-}
-
-.camera-status.status-ready {
-  color: #38bdf8 !important;
-  text-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
-}
-
-.camera-status.status-error {
-  color: var(--accent-rose) !important;
+  display: none !important;
 }
 
 /* Calibration Controls Dock (Bottom-Left Floating Glass Pod) */
@@ -2305,4 +2288,202 @@ body {
 #learnModalStartBtn:active {
   transform: translate(2px, 2px) !important;
   box-shadow: 1px 1px 0px #000000 !important;
+}
+
+/* ========================================================================= */
+/* INTERACTIVE ANIMATED SCALE WALKTHROUGH                                    */
+/* ========================================================================= */
+.learn-animated-scale-section {
+  background: rgba(15, 22, 38, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.anim-scale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.anim-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.anim-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.btn-anim-toggle {
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-anim-toggle:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+}
+
+.btn-anim-toggle.active {
+  background: rgba(16, 185, 129, 0.16);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: #34d399;
+}
+
+/* 7 Swara Selector Tabs */
+.scale-swara-tabs {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 650px) {
+  .scale-swara-tabs {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.swara-tab {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.swara-tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.swara-tab.active {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38bdf8;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.swara-tab .tab-swara {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.swara-tab .tab-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.swara-tab .tab-fingers {
+  font-size: 9px;
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* Animated Stage Banner */
+.scale-flute-stage {
+  background: rgba(2, 6, 17, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.scale-action-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.anim-swara-pill {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 800;
+  background: #10b981;
+  color: #052e16;
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.anim-swara-desc {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  line-height: 1.35;
+}
+
+.flute-diagram-container {
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.scale-interactive-flute-svg {
+  width: 100%;
+  max-width: 740px;
+  height: auto;
+  display: block;
+}
+
+/* Animated Pressing Finger Transition */
+.anim-pressing-finger {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  transform: translateY(-16px);
+  opacity: 0.3;
+}
+
+.anim-pressing-finger.finger-down {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+.anim-hole-node.active-closed .hole-disc-fill {
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.7));
+}
+
+.anim-hole-node .hole-disc-fill {
+  transition: opacity 0.2s ease;
 }

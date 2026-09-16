@@ -166,20 +166,20 @@ script.runInThisContext();
 // --- 1. Testing Engine Initialization & Default Mode ---
 console.log('--- 1. Testing Engine Initialization & Default Mode ---');
 const engine = new global.FluteAudioEngine();
-assert.strictEqual(engine.isElectricMode, false, 'Default mode must be Acoustic (isElectricMode = false)');
+assert.strictEqual(engine.isElectricMode, true, 'Default mode must be Electric (isElectricMode = true)');
 engine.init();
 assert.ok(engine.isInitialized, 'Audio engine successfully initialized');
-console.log('✅ PASS: FluteAudioEngine defaults to Acoustic Venu mode');
+console.log('✅ PASS: FluteAudioEngine defaults to Electric mode');
 
 // --- 2. Testing Electric Mode Toggle ---
 console.log('\n--- 2. Testing Electric Mode Toggle ---');
 const toggled1 = engine.toggleElectricMode();
-assert.strictEqual(toggled1, true, 'toggleElectricMode() must toggle to true');
-assert.strictEqual(engine.isElectricMode, true, 'isElectricMode must be true');
+assert.strictEqual(toggled1, false, 'toggleElectricMode() must toggle to false (Carnatic/Acoustic)');
+assert.strictEqual(engine.isElectricMode, false, 'isElectricMode must be false');
 
 const toggled2 = engine.toggleElectricMode();
-assert.strictEqual(toggled2, false, 'toggleElectricMode() must toggle back to false');
-assert.strictEqual(engine.isElectricMode, false, 'isElectricMode must be false');
+assert.strictEqual(toggled2, true, 'toggleElectricMode() must toggle back to true (Electric)');
+assert.strictEqual(engine.isElectricMode, true, 'isElectricMode must be true');
 
 engine.setElectricMode(true);
 assert.strictEqual(engine.isElectricMode, true, 'setElectricMode(true) must set electric mode');

@@ -68,8 +68,8 @@
             </button>
           </div>
           <span id="recTimer" class="rec-timer" style="display: none;">00:00</span>
-          <button id="electricFluteToggleBtn" class="btn btn-pill btn-electric" title="Toggle between Classic Acoustic Bamboo Flute and Electric Synth Flute (Shortcut: 'E')">
-            ⚡ Electric: Off
+          <button id="electricFluteToggleBtn" class="btn btn-pill btn-electric active" title="Currently in Electric Synth Mode. Click to switch to Classic Carnatic Acoustic Flute (Shortcut: 'E')">
+            ⚡ Mode: Electric (Switch to Carnatic)
           </button>
           <button id="tanpuraToggleBtn" class="btn btn-pill">
             🪕 Tanpura Drone: Off
@@ -82,7 +82,7 @@
     </header>
 
     <!-- Main Workspace Grid -->
-    <main class="main-content">
+    <main class="main-content dock-collapsed">
       <!-- Left Column: Camera Viewport & Swaras Strip -->
       <section class="performance-panel">
         <div class="card camera-card">
@@ -157,7 +157,6 @@
                 Pause
               </button>
             </div>
-            <div id="cameraStatus" class="camera-status">Enable camera to start playing</div>
           </div>
 
           <!-- Precision Calibration Controls -->
@@ -182,7 +181,7 @@
       </section>
 
       <!-- Right Column: Minimalist Audio Studio & Controls -->
-      <section class="controls-panel">
+      <section class="controls-panel dock-collapsed">
         <!-- Minimalist Audio Spectrum & Waveform -->
         <div class="card visualizer-card">
           <div class="card-header">
@@ -192,7 +191,7 @@
             </div>
             <div class="card-header-actions">
               <span class="pill-info">AUDIO.SPECTRUM // LIVE</span>
-              <button type="button" id="dockToggleBtn" class="dock-toggle-btn" title="Toggle Studio Controls Dock (Shortcut: 'H' or 'D')" aria-expanded="true">◫ Collapse</button>
+              <button type="button" id="dockToggleBtn" class="dock-toggle-btn active" title="Toggle Studio Controls Dock (Shortcut: 'H' or 'D')" aria-expanded="false">◫ Expand</button>
             </div>
           </div>
           <canvas id="visualizerCanvas" width="560" height="60"></canvas>
@@ -468,11 +467,187 @@
             </div>
           </div>
 
-          <!-- Section: All Notes Once (Fingering Chart) -->
+          <!-- Section 3: Interactive Animated Scale Walkthrough (Super Easy for Beginners) -->
+          <div class="learn-animated-scale-section">
+            <div class="anim-scale-header">
+              <div class="anim-header-left">
+                <span class="focus-badge highlight">3. VISUAL ANIMATED SCALE</span>
+                <h3 class="anim-title">How to Play Sa, Ri, Ga, Ma, Pa, Dha, Ni</h3>
+              </div>
+              <div class="anim-header-actions">
+                <button type="button" id="scaleAnimAutoBtn" class="btn-anim-toggle active" title="Automatically step through all 7 notes">
+                  <span class="anim-play-icon">⏸</span> <span class="anim-toggle-text">Pause Animation</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 7 Clickable Swara Selector Tabs -->
+            <div class="scale-swara-tabs" id="scaleSwaraTabs">
+              <button type="button" class="swara-tab active" data-swara="sa" data-note="C4" data-color="#38bdf8">
+                <span class="tab-swara">Sa</span>
+                <span class="tab-note">C4</span>
+                <span class="tab-fingers">2 fingers</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="ri" data-note="D4" data-color="#2dd4bf">
+                <span class="tab-swara">Ri</span>
+                <span class="tab-note">D4</span>
+                <span class="tab-fingers">1 finger</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="ga" data-note="E4" data-color="#4ade80">
+                <span class="tab-swara">Ga</span>
+                <span class="tab-note">E4</span>
+                <span class="tab-fingers">All open</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="ma" data-note="F4" data-color="#facc15">
+                <span class="tab-swara">Ma</span>
+                <span class="tab-note">F4</span>
+                <span class="tab-fingers">6 fingers</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="pa" data-note="G4" data-color="#fb923c">
+                <span class="tab-swara">Pa</span>
+                <span class="tab-note">G4</span>
+                <span class="tab-fingers">5 fingers</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="dha" data-note="A4" data-color="#f43f5e">
+                <span class="tab-swara">Dha</span>
+                <span class="tab-note">A4</span>
+                <span class="tab-fingers">4 fingers</span>
+              </button>
+              <button type="button" class="swara-tab" data-swara="ni" data-note="B4" data-color="#c084fc">
+                <span class="tab-swara">Ni</span>
+                <span class="tab-note">B4</span>
+                <span class="tab-fingers">3 fingers</span>
+              </button>
+            </div>
+
+            <!-- Animated Flute Stage with Finger Press Action -->
+            <div class="scale-flute-stage" id="scaleFluteStage">
+              <!-- Animated Instruction Banner -->
+              <div class="scale-action-banner" id="scaleActionBanner">
+                <span class="anim-swara-pill" id="scaleSwaraPill">SA (C4)</span>
+                <span class="anim-swara-desc" id="scaleSwaraDesc">Cover first 2 holes with Left Index & Middle finger</span>
+              </div>
+
+              <!-- Animated Visual Flute Graphic with Interactive Holes & Fingers -->
+              <div class="flute-diagram-container">
+                <svg viewBox="0 0 740 140" class="scale-interactive-flute-svg" id="scaleFluteSvg">
+                  <!-- Flute Tube Body -->
+                  <rect x="20" y="55" width="700" height="32" rx="16" fill="rgba(10, 15, 28, 0.85)" stroke="rgba(255, 255, 255, 0.22)" stroke-width="2"/>
+                  <!-- Flute Inner Glow Stream -->
+                  <line x1="30" y1="71" x2="710" y2="71" stroke="rgba(56, 189, 248, 0.25)" stroke-width="14" stroke-linecap="round"/>
+
+                  <!-- Mouth Blow Hole (◎) -->
+                  <g class="anim-blow-hole-group" transform="translate(65, 71)">
+                    <circle cx="0" cy="0" r="13" fill="rgba(6, 9, 16, 0.95)" stroke="#38bdf8" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="6" fill="#38bdf8" class="pulse-blow-core"/>
+                    <!-- Lips Airflow Waves -->
+                    <path d="M -18 -26 Q -10 -8 0 0" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
+                    <path d="M 0 -30 Q 0 -12 0 0" stroke="#00f0ff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.9"/>
+                    <text x="0" y="32" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">BLOW (◎)</text>
+                  </g>
+
+                  <!-- Left Hand Group Bracket -->
+                  <path d="M 175 42 L 175 36 L 335 36 L 335 42" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.6"/>
+                  <text x="255" y="30" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-display)">✋ LEFT HAND (Holes 1, 2, 3)</text>
+
+                  <!-- Right Hand Group Bracket -->
+                  <path d="M 405 42 L 405 36 L 655 36 L 655 42" stroke="#c084fc" stroke-width="1.5" fill="none" opacity="0.6"/>
+                  <text x="530" y="30" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">🤚 RIGHT HAND (Holes 4, 5, 6, 7)</text>
+
+                  <!-- 7 Animated Holes with Physical Finger Down/Up Animation -->
+                  <!-- Hole 1 (Left Index) -->
+                  <g class="anim-hole-node active-closed" id="holeNode1" transform="translate(195, 71)">
+                    <g class="anim-pressing-finger finger-down" id="finger1">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="1"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H1</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Idx</text>
+                  </g>
+
+                  <!-- Hole 2 (Left Middle) -->
+                  <g class="anim-hole-node active-closed" id="holeNode2" transform="translate(255, 71)">
+                    <g class="anim-pressing-finger finger-down" id="finger2">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="1"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H2</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Mid</text>
+                  </g>
+
+                  <!-- Hole 3 (Left Ring) -->
+                  <g class="anim-hole-node" id="holeNode3" transform="translate(315, 71)">
+                    <g class="anim-pressing-finger" id="finger3">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H3</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Rng</text>
+                  </g>
+
+                  <!-- Hole 4 (Right Index) -->
+                  <g class="anim-hole-node" id="holeNode4" transform="translate(425, 71)">
+                    <g class="anim-pressing-finger" id="finger4">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H4</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Idx</text>
+                  </g>
+
+                  <!-- Hole 5 (Right Middle) -->
+                  <g class="anim-hole-node" id="holeNode5" transform="translate(485, 71)">
+                    <g class="anim-pressing-finger" id="finger5">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H5</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Mid</text>
+                  </g>
+
+                  <!-- Hole 6 (Right Ring) -->
+                  <g class="anim-hole-node" id="holeNode6" transform="translate(545, 71)">
+                    <g class="anim-pressing-finger" id="finger6">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H6</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Rng</text>
+                  </g>
+
+                  <!-- Hole 7 (Right Pinky) -->
+                  <g class="anim-hole-node" id="holeNode7" transform="translate(605, 71)">
+                    <g class="anim-pressing-finger" id="finger7">
+                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
+                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    </g>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
+                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H7</text>
+                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Pnk</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: All Notes Reference Chart -->
           <div class="learn-notes-chart-section">
             <div class="chart-header">
               <div class="chart-header-left">
-                <span class="focus-badge">3. ALL NOTES ONCE</span>
+                <span class="focus-badge">4. ALL NOTES ONCE</span>
                 <h3 class="focus-title">All 7 Swaras Fingering Chart</h3>
               </div>
               <div class="chart-legend">

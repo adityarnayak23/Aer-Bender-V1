@@ -62,6 +62,7 @@ class CarnaticFluteTracker {
     // Finger curl sensitivity threshold
     this.curlThreshold = 1.35;
     this.swapHands = false;
+    this.isPanelCollapsed = true; // Studio controls collapsed by default
 
     // Single Gently Tilted Visual Flute Line across screen:
     // Reasonable ergonomic flute tilt (~12° downward slope to the right)

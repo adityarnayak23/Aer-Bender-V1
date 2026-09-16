@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     currentSwara: null,
     octave: 0,
     isJazzMode: false,
-    isElectricMode: false,
+    isElectricMode: true,
     recordTimerInterval: null,
     recSeconds: 0,
     activeRagaKey: 'mayamalavagowla',
@@ -709,69 +709,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Alternating beginner instructions (lips, Sa, 2 fingers to start, octave tilt)
-  // No star ("✨"), no complex technical jargon ("Embouchure")
-  let instructionTickerTimer = null;
-  let currentTipIndex = 0;
-  let isLipsAligned = false;
-
-  const defaultTips = [
-    'Place lips at the Blow Hole (◎) to start blowing air',
-    'Cover first 2 holes with 2 fingers to start playing Sa',
-    'Lift fingers one by one to climb notes: Ri • Ga • Ma • Pa',
-    'Tilt chin down for Bass notes, level for Mid, chin up for High'
-  ];
-
-  const alignedTips = [
-    'Lips aligned! Cover first 2 holes with 2 fingers to play Sa',
-    'Lift fingers one by one to climb notes: Ri • Ga • Ma • Pa',
-    'Tilt chin up for High octave, down for Bass'
-  ];
-
-  function updateInstructionStatus(instant = false) {
-    if (!cameraStatusEl) return;
-    const tips = isLipsAligned ? alignedTips : defaultTips;
-    const nextTip = tips[currentTipIndex % tips.length];
-
-    if (instant) {
-      cameraStatusEl.textContent = nextTip;
-      cameraStatusEl.className = isLipsAligned ? 'camera-status status-ready' : 'camera-status';
-      cameraStatusEl.style.opacity = '1';
-    } else {
-      cameraStatusEl.style.opacity = '0';
-      setTimeout(() => {
-        cameraStatusEl.textContent = nextTip;
-        cameraStatusEl.className = isLipsAligned ? 'camera-status status-ready' : 'camera-status';
-        cameraStatusEl.style.opacity = '1';
-      }, 200);
-    }
-  }
-
-  function startInstructionTicker() {
-    stopInstructionTicker();
-    updateInstructionStatus(true);
-    instructionTickerTimer = setInterval(() => {
-      currentTipIndex++;
-      updateInstructionStatus(false);
-    }, 4000);
-  }
-
-  function stopInstructionTicker() {
-    if (instructionTickerTimer) {
-      clearInterval(instructionTickerTimer);
-      instructionTickerTimer = null;
-    }
-  }
-
   // Handle Blow Hole Alignment from FaceMesh
+  let isLipsAligned = false;
   function handleEmbouchureChanged(data) {
     if (!data) return;
-    const wasAligned = isLipsAligned;
     isLipsAligned = Boolean(data.isAligned);
-    if (wasAligned !== isLipsAligned) {
-      currentTipIndex = 0;
-      updateInstructionStatus(false);
-    }
   }
 
   // Camera Buttons
@@ -780,6 +722,15 @@ document.addEventListener('DOMContentLoaded', () => {
     startCameraBtn.disabled = true;
     startCameraBtn.textContent = 'Starting AI Camera...';
 
+    // Auto-start Tanpura drone by default when camera starts
+    if (!audio.tanpuraActive) {
+      audio.toggleTanpura(true);
+      if (tanpuraToggleBtn) {
+        tanpuraToggleBtn.classList.add('active');
+        tanpuraToggleBtn.innerHTML = '🪕 Tanpura: Active';
+      }
+    }
+
     try {
       await tracker.init();
       state.isCameraRunning = true;
@@ -787,7 +738,6 @@ document.addEventListener('DOMContentLoaded', () => {
       stopCameraBtn.style.display = "inline-flex";
       const cameraWelcomeOverlay = document.getElementById("cameraWelcomeOverlay");
       if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.add("hidden");
-      startInstructionTicker();
     } catch (err) {
       startCameraBtn.disabled = false;
       startCameraBtn.textContent = 'Start Camera Tracking';
@@ -796,7 +746,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   stopCameraBtn.addEventListener('click', () => {
-    stopInstructionTicker();
     tracker.stop();
     state.isCameraRunning = false;
     audio.stopVoice();
@@ -804,10 +753,6 @@ document.addEventListener('DOMContentLoaded', () => {
     startCameraBtn.style.display = "none";
     startCameraBtn.disabled = false;
     startCameraBtn.textContent = "Start Camera Tracking";
-    if (cameraStatusEl) {
-      cameraStatusEl.textContent = 'Enable camera to start playing';
-      cameraStatusEl.className = 'camera-status';
-    }
     const cameraWelcomeOverlay = document.getElementById("cameraWelcomeOverlay");
     if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.remove("hidden");
   });
@@ -886,11 +831,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (electricFluteToggleBtn) {
       if (isElectric) {
         electricFluteToggleBtn.classList.add('active');
-        electricFluteToggleBtn.innerHTML = '⚡ Electric: On';
+        electricFluteToggleBtn.innerHTML = '⚡ Mode: Electric (Switch to Carnatic)';
         electricFluteToggleBtn.setAttribute('aria-pressed', 'true');
       } else {
         electricFluteToggleBtn.classList.remove('active');
-        electricFluteToggleBtn.innerHTML = '⚡ Electric: Off';
+        electricFluteToggleBtn.innerHTML = '🪈 Mode: Carnatic (Switch to Electric)';
         electricFluteToggleBtn.setAttribute('aria-pressed', 'false');
       }
     }
@@ -922,6 +867,9 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleElectricMode();
     });
   }
+
+  // Set default Electric mode UI state
+  updateElectricModeUI(true);
 
   // Tanpura Drone Toggle
   tanpuraToggleBtn.addEventListener('click', () => {
@@ -1086,22 +1034,236 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Learn to Play Modal Handlers
+  // Learn to Play Modal & Visual Animated Scale Walkthrough Handlers
   const learnToPlayModal = document.getElementById("learnToPlayModal");
   const learnToPlayBtn = document.getElementById("learnToPlayBtn");
   const headerLearnBtn = document.getElementById("headerLearnBtn");
   const closeLearnModalBtn = document.getElementById("closeLearnModalBtn");
   const learnModalStartBtn = document.getElementById("learnModalStartBtn");
 
+  const scaleSwaraTabsContainer = document.getElementById("scaleSwaraTabs");
+  const scaleAnimAutoBtn = document.getElementById("scaleAnimAutoBtn");
+  const scaleSwaraPill = document.getElementById("scaleSwaraPill");
+  const scaleSwaraDesc = document.getElementById("scaleSwaraDesc");
+
+  const SCALE_NOTES_DATA = [
+    {
+      swaraKey: "sa",
+      swaraId: "sa",
+      title: "SA (C4)",
+      note: "C4",
+      holes: [true, true, false, false, false, false, false],
+      color: "#38bdf8",
+      desc: "Cover first 2 holes with Left Index & Middle finger. Foundation note of Indian music!"
+    },
+    {
+      swaraKey: "ri",
+      swaraId: "ri2",
+      title: "RI (D4)",
+      note: "D4",
+      holes: [true, false, false, false, false, false, false],
+      color: "#2dd4bf",
+      desc: "Lift Left Middle finger; keep only Hole 1 closed with Left Index finger."
+    },
+    {
+      swaraKey: "ga",
+      swaraId: "ga3",
+      title: "GA (E4)",
+      note: "E4",
+      holes: [false, false, false, false, false, false, false],
+      color: "#4ade80",
+      desc: "Lift all fingers! All 7 holes open for a light, breezy Gandharam resonance."
+    },
+    {
+      swaraKey: "ma",
+      swaraId: "ma1",
+      title: "MA (F4)",
+      note: "F4",
+      holes: [false, true, true, true, true, true, true],
+      color: "#facc15",
+      desc: "Close Holes 2 to 7 (Left Hand Middle & Ring + Right Hand all 4 fingers closed)."
+    },
+    {
+      swaraKey: "pa",
+      swaraId: "pa",
+      title: "PA (G4)",
+      note: "G4",
+      holes: [true, true, true, true, true, false, false],
+      color: "#fb923c",
+      desc: "Close Holes 1 to 5 (Left Hand all 3 closed + Right Hand Index & Middle closed)."
+    },
+    {
+      swaraKey: "dha",
+      swaraId: "dha2",
+      title: "DHA (A4)",
+      note: "A4",
+      holes: [true, true, true, true, false, false, false],
+      color: "#f43f5e",
+      desc: "Close Holes 1 to 4 (Left Hand all 3 closed + Right Hand Index closed)."
+    },
+    {
+      swaraKey: "ni",
+      swaraId: "ni3",
+      title: "NI (B4)",
+      note: "B4",
+      holes: [true, true, true, false, false, false, false],
+      color: "#c084fc",
+      desc: "Close Holes 1 to 3 (Left Hand all 3 closed; all Right Hand fingers lifted)."
+    }
+  ];
+
+  let currentScaleIndex = 0;
+  let scaleAnimationTimer = null;
+  let isScaleAutoPlaying = true;
+  let previewStopTimer = null;
+
+  function renderScaleNote(index, playSound = false) {
+    if (index < 0 || index >= SCALE_NOTES_DATA.length) return;
+    currentScaleIndex = index;
+    const noteData = SCALE_NOTES_DATA[index];
+
+    // 1. Update Tabs
+    if (scaleSwaraTabsContainer) {
+      const tabs = scaleSwaraTabsContainer.querySelectorAll('.swara-tab');
+      tabs.forEach((tab, idx) => {
+        if (idx === index) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+    }
+
+    // 2. Update Description Banner
+    if (scaleSwaraPill) {
+      scaleSwaraPill.textContent = noteData.title;
+      scaleSwaraPill.style.background = noteData.color;
+      scaleSwaraPill.style.color = '#020617';
+      scaleSwaraPill.style.boxShadow = `0 0 16px ${noteData.color}66`;
+    }
+    if (scaleSwaraDesc) {
+      scaleSwaraDesc.textContent = noteData.desc;
+    }
+
+    // 3. Update Holes & Pressing Fingers
+    noteData.holes.forEach((isClosed, hIdx) => {
+      const holeNum = hIdx + 1;
+      const holeEl = document.getElementById(`holeNode${holeNum}`);
+      const fingerEl = document.getElementById(`finger${holeNum}`);
+      if (holeEl) {
+        if (isClosed) {
+          holeEl.classList.add('active-closed');
+          const fill = holeEl.querySelector('.hole-disc-fill');
+          if (fill) {
+            fill.setAttribute('opacity', '1');
+            fill.setAttribute('fill', noteData.color);
+          }
+        } else {
+          holeEl.classList.remove('active-closed');
+          const fill = holeEl.querySelector('.hole-disc-fill');
+          if (fill) fill.setAttribute('opacity', '0');
+        }
+      }
+      if (fingerEl) {
+        if (isClosed) {
+          fingerEl.classList.add('finger-down');
+        } else {
+          fingerEl.classList.remove('finger-down');
+        }
+      }
+    });
+
+    // 4. Play Preview Sound (if requested and audio engine ready)
+    if (playSound && audio) {
+      try {
+        const swaraObj = window.SwarasData && window.SwarasData.SWARA_BY_ID
+          ? (window.SwarasData.SWARA_BY_ID[noteData.swaraId] || window.SwarasData.SWARA_BY_ID[noteData.swaraKey])
+          : null;
+        if (swaraObj) {
+          if (previewStopTimer) {
+            clearTimeout(previewStopTimer);
+            previewStopTimer = null;
+          }
+          audio.playSwara(swaraObj);
+          previewStopTimer = setTimeout(() => {
+            if (!state.isCameraRunning) {
+              audio.stopVoice();
+            }
+          }, 1100);
+        }
+      } catch (err) {
+        // Silently catch unresumed audio context
+      }
+    }
+  }
+
+  function startScaleAnimation() {
+    stopScaleAnimation();
+    isScaleAutoPlaying = true;
+    updateScaleAutoBtnUI();
+    scaleAnimationTimer = setInterval(() => {
+      const nextIdx = (currentScaleIndex + 1) % SCALE_NOTES_DATA.length;
+      renderScaleNote(nextIdx, true);
+    }, 1800);
+  }
+
+  function stopScaleAnimation() {
+    if (scaleAnimationTimer) {
+      clearInterval(scaleAnimationTimer);
+      scaleAnimationTimer = null;
+    }
+    isScaleAutoPlaying = false;
+    updateScaleAutoBtnUI();
+  }
+
+  function updateScaleAutoBtnUI() {
+    if (!scaleAnimAutoBtn) return;
+    if (isScaleAutoPlaying) {
+      scaleAnimAutoBtn.classList.add('active');
+      scaleAnimAutoBtn.innerHTML = '<span class="anim-play-icon">⏸</span> <span class="anim-toggle-text">Pause Animation</span>';
+    } else {
+      scaleAnimAutoBtn.classList.remove('active');
+      scaleAnimAutoBtn.innerHTML = '<span class="anim-play-icon">▶</span> <span class="anim-toggle-text">Auto Play Scale</span>';
+    }
+  }
+
+  if (scaleAnimAutoBtn) {
+    scaleAnimAutoBtn.addEventListener('click', () => {
+      audio.resume();
+      if (isScaleAutoPlaying) {
+        stopScaleAnimation();
+      } else {
+        startScaleAnimation();
+      }
+    });
+  }
+
+  if (scaleSwaraTabsContainer) {
+    const tabs = scaleSwaraTabsContainer.querySelectorAll('.swara-tab');
+    tabs.forEach((tab, idx) => {
+      tab.addEventListener('click', () => {
+        audio.resume();
+        stopScaleAnimation(); // pause so user can inspect this specific note
+        renderScaleNote(idx, true);
+      });
+    });
+  }
+
   const openLearnModal = () => {
     if (learnToPlayModal) {
       learnToPlayModal.classList.remove("hidden");
+      renderScaleNote(currentScaleIndex, false);
+      startScaleAnimation();
     }
   };
 
   const closeLearnModal = () => {
     if (learnToPlayModal) {
       learnToPlayModal.classList.add("hidden");
+      stopScaleAnimation();
+      if (!state.isCameraRunning) {
+        audio.stopVoice();
+      }
     }
   };
 
@@ -1123,6 +1285,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target === learnToPlayModal) closeLearnModal();
     });
   }
+
+  // Initialize first note visual state
+  renderScaleNote(0, false);
 
   // Initialize instant canvas guide on load
   if (tracker && typeof tracker.initCanvasPreview === "function") {
