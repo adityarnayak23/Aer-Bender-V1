@@ -1753,25 +1753,83 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Giant Celestial Spherical Aura (Huge glowing sphere with deep aura)
+    // 1a-0. Cymatics Acoustic Standing Wave Resonance Field (Faint Pearl & Ivory White)
+    // (Acoustic Chladni standing wave rings pulsating on the floor beneath the flute at root Sa 277.18 Hz)
     if (isHovering) {
       const midX = (pStart.x + pEnd.x) * 0.5;
-      const midY = (pStart.y + pEnd.y) * 0.5;
-      const sphereRadius = Math.max(width * 0.28, 220 * scale);
-      const spherePulse = 0.40 + Math.sin(now * 0.002) * 0.12;
-
-      const orbGrad = ctx.createRadialGradient(midX, midY, 14 * scale, midX, midY, sphereRadius);
-      orbGrad.addColorStop(0, `rgba(56, 189, 248, ${spherePulse})`);
-      orbGrad.addColorStop(0.32, `rgba(147, 51, 234, ${spherePulse * 0.65})`);
-      orbGrad.addColorStop(0.60, `rgba(6, 182, 212, ${spherePulse * 0.32})`);
-      orbGrad.addColorStop(0.82, `rgba(204, 255, 0, ${spherePulse * 0.12})`);
-      orbGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
+      const floorY = (this.fluteY * height) + 110 * scale; // Ground plane situated beneath the hovering flute
+      const floorRadiusX = Math.max(width * 0.42, 330 * scale);
+      const perspectiveScaleY = 0.14; // Horizontal perspective disc from our POV
+      const pulse = 0.65 + Math.sin(now * 0.0024) * 0.14; // Gentle harmonic breathing
+      const wavePhase = now * 0.0028;
 
       ctx.save();
-      ctx.fillStyle = orbGrad;
+      ctx.translate(midX, floorY);
+      ctx.scale(1.0, perspectiveScaleY);
+
+      // 1a-0A. Faint Pearl / Ivory Ambient Floor Bloom
+      const ambientGrad = ctx.createRadialGradient(0, 0, 10 * scale, 0, 0, floorRadiusX * 1.15);
+      ambientGrad.addColorStop(0.00, `rgba(255, 253, 245, ${pulse * 0.28})`); // Faint ivory white core
+      ambientGrad.addColorStop(0.35, `rgba(250, 248, 242, ${pulse * 0.16})`); // Soft pearl
+      ambientGrad.addColorStop(0.70, `rgba(241, 245, 249, ${pulse * 0.06})`); // Translucent alabaster
+      ambientGrad.addColorStop(1.00, 'rgba(6, 9, 16, 0)');
+
+      ctx.fillStyle = ambientGrad;
       ctx.beginPath();
-      ctx.arc(midX, midY, sphereRadius, 0, Math.PI * 2);
+      ctx.arc(0, 0, floorRadiusX * 1.15, 0, Math.PI * 2);
       ctx.fill();
+
+      // 1a-0B. Concentric Chladni Standing Wave Rings (Harmonic overtone nodes in pearl/ivory)
+      // 6 Mathematical harmonic rings vibrating at acoustic ratios
+      const ringDistances = [0.14, 0.28, 0.45, 0.64, 0.82, 1.00];
+      ringDistances.forEach((distFrac, idx) => {
+        const baseR = floorRadiusX * distFrac;
+        const pts = 80;
+        ctx.beginPath();
+        for (let p = 0; p <= pts; p++) {
+          const theta = (p / pts) * Math.PI * 2;
+          // Harmonic undulating nodal ripple
+          const harmonic = Math.sin(theta * 6 + wavePhase + idx * 0.8) * (1.8 * scale + idx * 0.4 * scale);
+          const rad = baseR + harmonic;
+          const px = Math.cos(theta) * rad;
+          const py = Math.sin(theta) * rad;
+          if (p === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+
+        const ringAlpha = (idx === 1 || idx === 2)
+          ? pulse * 0.65
+          : (idx === 0 ? pulse * 0.75 : pulse * (0.50 - idx * 0.06));
+
+        ctx.strokeStyle = `rgba(255, 252, 245, ${ringAlpha})`; // Faint Ivory White
+        ctx.lineWidth = (idx === 1 ? 1.6 : (idx === 0 ? 1.4 : 1.0)) * scale;
+        ctx.stroke();
+      });
+
+      // 1a-0C. Radial Acoustic Nodal Spokes (8 sacred geometry quadrant lines)
+      for (let k = 0; k < 8; k++) {
+        const theta = (k / 8) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(theta) * (floorRadiusX * 0.10), Math.sin(theta) * (floorRadiusX * 0.10));
+        ctx.lineTo(Math.cos(theta) * (floorRadiusX * 0.98), Math.sin(theta) * (floorRadiusX * 0.98));
+        ctx.strokeStyle = `rgba(248, 250, 252, ${pulse * 0.18})`; // Delicate pearl hairline
+        ctx.lineWidth = 0.8 * scale;
+        ctx.stroke();
+      }
+
+      // 1a-0D. Ground Ambient Occlusion Shadow beneath Levitating Flute
+      const fluteHalfW = Math.abs(pEnd.x - pStart.x) * 0.50;
+      const shadowW = fluteHalfW * 0.90;
+      const shadowAlpha = 0.38 - (levitationFloat / (4.5 * scale)) * 0.08;
+      const shadowGrad = ctx.createRadialGradient(0, 0, 6 * scale, 0, 0, shadowW);
+      shadowGrad.addColorStop(0, `rgba(4, 6, 12, ${shadowAlpha})`);
+      shadowGrad.addColorStop(1, 'rgba(4, 6, 12, 0)');
+      ctx.fillStyle = shadowGrad;
+      ctx.beginPath();
+      ctx.arc(0, 0, shadowW, 0, Math.PI * 2);
+      ctx.fill();
+
       ctx.restore();
     }
 
@@ -1790,7 +1848,7 @@ class CarnaticFluteTracker {
     ctx.beginPath();
     ctx.moveTo(pStart.x, pStart.y);
     ctx.lineTo(pEnd.x, pEnd.y);
-    ctx.strokeStyle = 'rgba(12, 16, 26, 0.82)';
+    ctx.strokeStyle = 'rgba(12, 16, 26, 0.88)';
     ctx.lineWidth = tubeRadius * 2;
     ctx.lineCap = 'butt';
     ctx.stroke();
@@ -1800,7 +1858,7 @@ class CarnaticFluteTracker {
     ctx.beginPath();
     ctx.moveTo(pStart.x, pStart.y);
     ctx.lineTo(pEnd.x, pEnd.y);
-    ctx.strokeStyle = 'rgba(6, 9, 16, 0.88)';
+    ctx.strokeStyle = 'rgba(6, 9, 16, 0.94)';
     ctx.lineWidth = boreRadius * 2;
     ctx.lineCap = 'butt';
     ctx.stroke();
@@ -1811,7 +1869,7 @@ class CarnaticFluteTracker {
     ctx.beginPath();
     ctx.moveTo(pStart.x - nx * specularOffset, pStart.y - ny * specularOffset);
     ctx.lineTo(pEnd.x - nx * specularOffset, pEnd.y - ny * specularOffset);
-    ctx.strokeStyle = isEmbouchureActive ? 'rgba(255, 255, 255, 0.38)' : 'rgba(255, 255, 255, 0.18)';
+    ctx.strokeStyle = (isHovering || isEmbouchureActive) ? 'rgba(255, 255, 255, 0.42)' : 'rgba(255, 255, 255, 0.20)';
     ctx.lineWidth = 1.6 * scale;
     ctx.stroke();
 
@@ -1822,6 +1880,29 @@ class CarnaticFluteTracker {
     ctx.lineTo(pEnd.x + nx * undersideOffset, pEnd.y + ny * undersideOffset);
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.65)';
     ctx.lineWidth = 2.0 * scale;
+    ctx.stroke();
+
+    // ==============================================================
+    // 1d-2. OPTICAL UNDERSIDE FLOOR REFLECTION (Faint Pearl / Ivory White Reflection)
+    // Projects faint pearl/ivory white illumination along the curved obsidian glass underside
+    // ==============================================================
+    const rimReflectionOffset = tubeRadius - 0.9 * scale;
+    const reflPulse = isHovering ? (0.68 + Math.sin(now * 0.0024) * 0.14) : 0.40;
+
+    // A. Soft diffuse subsurface ivory glow along lower glass wall
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * (tubeRadius - 2.5 * scale), pStart.y + ny * (tubeRadius - 2.5 * scale));
+    ctx.lineTo(pEnd.x + nx * (tubeRadius - 2.5 * scale), pEnd.y + ny * (tubeRadius - 2.5 * scale));
+    ctx.strokeStyle = `rgba(255, 253, 245, ${reflPulse * 0.28})`; // Faint ivory glow
+    ctx.lineWidth = 3.4 * scale;
+    ctx.stroke();
+
+    // B. Sharp specular Fresnel underside rim reflection (pure luminous pearl white)
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * rimReflectionOffset, pStart.y + ny * rimReflectionOffset);
+    ctx.lineTo(pEnd.x + nx * rimReflectionOffset, pEnd.y + ny * rimReflectionOffset);
+    ctx.strokeStyle = `rgba(255, 252, 246, ${reflPulse * 0.85})`; // Pearl specular edge
+    ctx.lineWidth = 1.6 * scale;
     ctx.stroke();
 
     // ==============================================================
@@ -2090,6 +2171,14 @@ class CarnaticFluteTracker {
     ctx.lineWidth = 1.2 * scale;
     ctx.stroke();
 
+    // Faint pearl / ivory white underside crown catchlight
+    ctx.beginPath();
+    ctx.moveTo(pStart.x + nx * (tubeRadius * 0.35), pStart.y + ny * (tubeRadius * 0.35));
+    ctx.lineTo(pStart.x + nx * tubeRadius, pStart.y + ny * tubeRadius);
+    ctx.strokeStyle = `rgba(255, 252, 245, ${reflPulse * 0.88})`;
+    ctx.lineWidth = 2.4 * scale;
+    ctx.stroke();
+
     // Coin-knurl crown shoulder line
     ctx.beginPath();
     ctx.moveTo(pStart.x + ux * (2.2 * scale) - nx * (tubeRadius * 0.90), pStart.y + uy * (2.2 * scale) - ny * (tubeRadius * 0.90));
@@ -2107,6 +2196,14 @@ class CarnaticFluteTracker {
     ctx.moveTo(pEnd.x - nx * tubeRadius, pEnd.y - ny * tubeRadius);
     ctx.lineTo(pEnd.x + nx * tubeRadius, pEnd.y + ny * tubeRadius);
     ctx.strokeStyle = isEmbouchureActive ? getRingOctaveColor(0.95) : 'rgba(148, 163, 184, 0.75)';
+    ctx.lineWidth = 2.4 * scale;
+    ctx.stroke();
+
+    // Faint pearl / ivory white underside foot exit rim catchlight
+    ctx.beginPath();
+    ctx.moveTo(pEnd.x + nx * (tubeRadius * 0.35), pEnd.y + ny * (tubeRadius * 0.35));
+    ctx.lineTo(pEnd.x + nx * tubeRadius, pEnd.y + ny * tubeRadius);
+    ctx.strokeStyle = `rgba(255, 252, 245, ${reflPulse * 0.88})`;
     ctx.lineWidth = 2.4 * scale;
     ctx.stroke();
 
@@ -2138,6 +2235,14 @@ class CarnaticFluteTracker {
       ctx.lineTo(tPos.x + nx * (tubeRadius * 0.90), tPos.y + ny * (tubeRadius * 0.90));
       ctx.strokeStyle = isEmbouchureActive ? getRingGleamColor() : 'rgba(255, 255, 255, 0.60)';
       ctx.lineWidth = 0.8 * scale;
+      ctx.stroke();
+
+      // Faint pearl / ivory white underside ring catchlight
+      ctx.beginPath();
+      ctx.moveTo(tPos.x + nx * (tubeRadius * 0.35), tPos.y + ny * (tubeRadius * 0.35));
+      ctx.lineTo(tPos.x + nx * tubeRadius, tPos.y + ny * tubeRadius);
+      ctx.strokeStyle = `rgba(255, 253, 246, ${reflPulse * 0.85})`;
+      ctx.lineWidth = 1.8 * scale;
       ctx.stroke();
 
       // Subtle dark recessed relief grooves framing ring (zero orange!)
@@ -2252,6 +2357,23 @@ class CarnaticFluteTracker {
     );
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
     ctx.lineWidth = 1.1 * scale;
+    ctx.stroke();
+
+    // Faint pearl / ivory white underside catchlight on lip plate apron
+    ctx.beginPath();
+    ctx.moveTo(pWingL.x + nx * (0.8 * scale), pWingL.y + ny * (0.8 * scale));
+    qCurve(
+      blowPos.x - ux * (plateHL * 0.65) + nx * (lowerReach * 0.92),
+      blowPos.y - uy * (plateHL * 0.65) + ny * (lowerReach * 0.92),
+      pLowMid.x + nx * (0.8 * scale), pLowMid.y + ny * (0.8 * scale)
+    );
+    qCurve(
+      blowPos.x + ux * (plateHL * 0.65) + nx * (lowerReach * 0.92),
+      blowPos.y + uy * (plateHL * 0.65) + ny * (lowerReach * 0.92),
+      pWingR.x + nx * (0.8 * scale), pWingR.y + ny * (0.8 * scale)
+    );
+    ctx.strokeStyle = `rgba(255, 252, 245, ${reflPulse * 0.65})`;
+    ctx.lineWidth = 1.2 * scale;
     ctx.stroke();
 
     // Specular highlight ridge along the upper shoulder
