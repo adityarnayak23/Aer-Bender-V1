@@ -712,46 +712,38 @@ body {
   transform: translate(-50%, -48%) scale(0.95);
 }
 
-/* Giant Luminous Elliptical Floor Aura beneath Levitating Flute */
-/* Floor projection perspective with bright flute octave colors: Tara (#ff9100), Madhya (#e2e8f0), Mandra (#818cf8) */
+/* Subtle Ambient Elliptical Floor Aura beneath Levitating Flute */
+/* Anchored strictly to floor without shedding glare upward; flute is the complete focus */
 .welcome-sphere-aura {
   position: absolute;
-  top: calc(50% + 240px);
+  top: calc(50% + 280px);
   left: 50%;
   transform: translate(-50%, -50%);
-  width: clamp(620px, 74vw, 1060px);
-  height: clamp(140px, 16vw, 240px);
+  width: clamp(380px, 46vw, 640px);
+  height: clamp(40px, 6vw, 75px);
   border-radius: 50%;
   background: radial-gradient(
     ellipse at 50% 50%,
-    rgba(255, 255, 255, 0.92) 0%,     /* Specular White Core */
-    rgba(255, 145, 0, 0.82) 16%,      /* Vivid Bright Tara Orange (#ff9100) */
-    rgba(251, 146, 60, 0.68) 36%,     /* Glowing Amber (#fb923c) */
-    rgba(129, 140, 248, 0.62) 58%,    /* Electric Mandra Indigo (#818cf8) */
-    rgba(99, 102, 241, 0.28) 76%,     /* Deep Violet (#6366f1) */
-    transparent 88%
+    rgba(255, 145, 0, 0.18) 0%,      /* Subtle Tara Orange */
+    rgba(251, 146, 60, 0.12) 35%,     /* Subtle Amber */
+    rgba(129, 140, 248, 0.08) 65%,    /* Subtle Indigo */
+    transparent 80%
   );
-  filter: blur(44px);
+  filter: blur(24px);
   pointer-events: none;
   z-index: -1;
+  opacity: 0.35;
   animation: celestialFloorAura 6s ease-in-out infinite alternate;
 }
 
 @keyframes celestialFloorAura {
   0% {
-    transform: translate(-50%, -50%) scale(0.92, 0.88);
-    opacity: 0.82;
-    filter: blur(38px);
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.08, 1.10);
-    opacity: 1.0;
-    filter: blur(48px);
+    transform: translate(-50%, -50%) scale(0.96, 0.92);
+    opacity: 0.28;
   }
   100% {
-    transform: translate(-50%, -50%) scale(0.95, 0.92);
-    opacity: 0.88;
-    filter: blur(40px);
+    transform: translate(-50%, -50%) scale(1.04, 1.05);
+    opacity: 0.40;
   }
 }
 
