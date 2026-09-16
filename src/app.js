@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Camera Controls
   const startCameraBtn = document.getElementById('startCameraBtn');
   const stopCameraBtn = document.getElementById('stopCameraBtn');
+  const heroStartCameraBtn = document.getElementById('heroStartCameraBtn');
   const cameraStatusEl = document.getElementById('cameraStatus');
 
   // Sensitivity & Flute Height Sliders
@@ -717,59 +718,77 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Camera Buttons
-  startCameraBtn.addEventListener('click', async () => {
-    audio.resume();
-    startCameraBtn.disabled = true;
-    startCameraBtn.textContent = 'Starting AI Camera...';
-
-    // Auto-start Tanpura drone by default when camera starts
-    if (!audio.tanpuraActive) {
-      audio.toggleTanpura(true);
-      if (tanpuraToggleBtn) {
-        tanpuraToggleBtn.classList.add('active');
-        tanpuraToggleBtn.innerHTML = '🪕 Tanpura: Active';
+  if (startCameraBtn) {
+    startCameraBtn.addEventListener('click', async () => {
+      audio.resume();
+      startCameraBtn.disabled = true;
+      startCameraBtn.textContent = 'Starting AI Camera...';
+      if (heroStartCameraBtn) {
+        heroStartCameraBtn.disabled = true;
+        heroStartCameraBtn.innerHTML = '<span class="loading-spinner"></span> Starting AI Camera...';
       }
-    }
 
-    try {
-      await tracker.init();
-      state.isCameraRunning = true;
-      startCameraBtn.style.display = "none";
-      stopCameraBtn.style.display = "inline-flex";
+      // Auto-start Tanpura drone by default when camera starts
+      if (!audio.tanpuraActive) {
+        audio.toggleTanpura(true);
+        if (tanpuraToggleBtn) {
+          tanpuraToggleBtn.classList.add('active');
+          tanpuraToggleBtn.innerHTML = '🪕 Tanpura: Active';
+        }
+      }
+
+      try {
+        await tracker.init();
+        state.isCameraRunning = true;
+        startCameraBtn.style.display = "none";
+        if (stopCameraBtn) stopCameraBtn.style.display = "inline-flex";
+        const cameraWelcomeOverlay = document.getElementById("cameraWelcomeOverlay");
+        if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.add("hidden");
+      } catch (err) {
+        startCameraBtn.disabled = false;
+        startCameraBtn.textContent = 'Start Camera Tracking';
+        if (heroStartCameraBtn) {
+          heroStartCameraBtn.disabled = false;
+          heroStartCameraBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Enable Camera to Play`;
+        }
+        alert('Camera error: ' + (err.message || err));
+      }
+    });
+  }
+
+  if (stopCameraBtn) {
+    stopCameraBtn.addEventListener('click', () => {
+      tracker.stop();
+      state.isCameraRunning = false;
+      audio.stopVoice();
+
+      // User requirement: Pause button should pause the tanpura too
+      if (audio.tanpuraActive) {
+        audio.toggleTanpura(false);
+        if (tanpuraToggleBtn) {
+          tanpuraToggleBtn.classList.remove('active');
+          tanpuraToggleBtn.innerHTML = '🪕 Tanpura Drone: Off';
+        }
+      }
+
+      if (talaState && talaState.isPlaying) {
+        stopTala();
+      }
+
+      stopCameraBtn.style.display = "none";
+      if (startCameraBtn) {
+        startCameraBtn.style.display = "none";
+        startCameraBtn.disabled = false;
+        startCameraBtn.textContent = "Start Camera Tracking";
+      }
+      if (heroStartCameraBtn) {
+        heroStartCameraBtn.disabled = false;
+        heroStartCameraBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg> Enable Camera to Play`;
+      }
       const cameraWelcomeOverlay = document.getElementById("cameraWelcomeOverlay");
-      if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.add("hidden");
-    } catch (err) {
-      startCameraBtn.disabled = false;
-      startCameraBtn.textContent = 'Start Camera Tracking';
-      alert('Camera error: ' + (err.message || err));
-    }
-  });
-
-  stopCameraBtn.addEventListener('click', () => {
-    tracker.stop();
-    state.isCameraRunning = false;
-    audio.stopVoice();
-
-    // User requirement: Pause button should pause the tanpura too
-    if (audio.tanpuraActive) {
-      audio.toggleTanpura(false);
-      if (tanpuraToggleBtn) {
-        tanpuraToggleBtn.classList.remove('active');
-        tanpuraToggleBtn.innerHTML = '🪕 Tanpura Drone: Off';
-      }
-    }
-
-    if (talaState && talaState.isPlaying) {
-      stopTala();
-    }
-
-    stopCameraBtn.style.display = "none";
-    startCameraBtn.style.display = "none";
-    startCameraBtn.disabled = false;
-    startCameraBtn.textContent = "Start Camera Tracking";
-    const cameraWelcomeOverlay = document.getElementById("cameraWelcomeOverlay");
-    if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.remove("hidden");
-  });
+      if (cameraWelcomeOverlay) cameraWelcomeOverlay.classList.remove("hidden");
+    });
+  }
 
 
   // Sensitivity Slider
@@ -855,8 +874,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const modeElectricBtn = document.getElementById('modeElectricBtn');
   const modeCarnaticBtn = document.getElementById('modeCarnaticBtn');
 
-  function setTimbreMode(isElectric) {
-    audio.resume();
+  function setTimbreMode(isElectric, shouldResumeAudio = true) {
+    if (shouldResumeAudio) {
+      audio.resume();
+    }
     state.isElectricMode = isElectric;
     audio.setElectricMode(isElectric);
 
@@ -893,26 +914,30 @@ document.addEventListener('DOMContentLoaded', () => {
     timbreModeBadge.addEventListener('click', () => toggleElectricMode());
   }
 
-  // Set default Electric mode UI state
-  setTimbreMode(true);
+  // Set default Electric mode UI state (skip audio resume on load)
+  setTimbreMode(true, false);
 
   // Tanpura Drone Toggle
-  tanpuraToggleBtn.addEventListener('click', () => {
-    audio.resume();
-    const willBeActive = !audio.tanpuraActive;
-    audio.toggleTanpura(willBeActive);
-    if (willBeActive) {
-      tanpuraToggleBtn.classList.add('active');
-      tanpuraToggleBtn.innerHTML = '🪕 Tanpura: Active';
-    } else {
-      tanpuraToggleBtn.classList.remove('active');
-      tanpuraToggleBtn.innerHTML = '🪕 Tanpura Drone: Off';
-    }
-  });
+  if (tanpuraToggleBtn) {
+    tanpuraToggleBtn.addEventListener('click', () => {
+      audio.resume();
+      const willBeActive = !audio.tanpuraActive;
+      audio.toggleTanpura(willBeActive);
+      if (willBeActive) {
+        tanpuraToggleBtn.classList.add('active');
+        tanpuraToggleBtn.innerHTML = '🪕 Tanpura: Active';
+      } else {
+        tanpuraToggleBtn.classList.remove('active');
+        tanpuraToggleBtn.innerHTML = '🪕 Tanpura Drone: Off';
+      }
+    });
+  }
 
-  tanpuraVolumeSlider.addEventListener('input', (e) => {
-    audio.setTanpuraVolume(parseFloat(e.target.value));
-  });
+  if (tanpuraVolumeSlider) {
+    tanpuraVolumeSlider.addEventListener('input', (e) => {
+      audio.setTanpuraVolume(parseFloat(e.target.value));
+    });
+  }
 
 
   const recordModeSelect = document.getElementById('recordModeSelect');
@@ -937,20 +962,20 @@ document.addEventListener('DOMContentLoaded', () => {
     getOctave: () => state.octave,
     onStateChange: ({ status, downloadReady, error }) => {
       if (status === 'stopped' || status === 'cancelled' || status === 'error') {
-        recordBtn.classList.remove('recording');
+        if (recordBtn) recordBtn.classList.remove('recording');
         updateRecordBtnLabel();
         if (recordModeSelect) recordModeSelect.disabled = false;
         if (state.recordTimerInterval) {
           clearInterval(state.recordTimerInterval);
           state.recordTimerInterval = null;
         }
-        recTimerEl.style.display = 'none';
+        if (recTimerEl) recTimerEl.style.display = 'none';
       }
 
       if (status === 'cancelled' && cameraStatusEl) {
         cameraStatusEl.textContent = 'Recording cancelled.';
         setTimeout(() => {
-          if (state.isCameraRunning) {
+          if (state.isCameraRunning && cameraStatusEl) {
             cameraStatusEl.textContent = 'Tracking active! Place hands on the silver dots.';
           }
         }, 2500);
@@ -961,10 +986,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (downloadReady && cameraStatusEl) {
-        const modeDesc = (videoRecorder.mode === 'camera') ? 'Flute performance video' : 'Screen performance video';
+        const modeDesc = (videoRecorder && videoRecorder.mode === 'camera') ? 'Flute performance video' : 'Screen performance video';
         cameraStatusEl.textContent = `📹 ${modeDesc} saved! Download started.`;
         setTimeout(() => {
-          if (state.isCameraRunning) {
+          if (state.isCameraRunning && cameraStatusEl) {
             cameraStatusEl.textContent = 'Tracking active! Place hands on the silver dots.';
           }
         }, 3500);
@@ -973,61 +998,66 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Performance Recording (Flute Camera Viewport or Whole Screen)
-  recordBtn.addEventListener('click', async () => {
-    if (audio && typeof audio.resume === 'function') {
-      try {
-        await audio.resume();
-      } catch (e) {}
-    }
+  if (recordBtn) {
+    recordBtn.addEventListener('click', async () => {
+      if (audio && typeof audio.resume === 'function') {
+        try {
+          await audio.resume();
+        } catch (e) {}
+      }
 
-    const mode = recordModeSelect ? recordModeSelect.value : 'camera';
+      const mode = recordModeSelect ? recordModeSelect.value : 'camera';
 
-    // Auto-start camera if in camera mode and not yet running
-    if (mode === 'camera' && !state.isCameraRunning && !videoRecorder.isRecording) {
-      try {
-        if (cameraStatusEl) cameraStatusEl.textContent = 'Starting camera for performance recording...';
-        startCameraBtn.click();
-      } catch (e) {}
-    }
+      // Auto-start camera if in camera mode and not yet running
+      if (mode === 'camera' && !state.isCameraRunning && videoRecorder && !videoRecorder.isRecording) {
+        try {
+          if (cameraStatusEl) cameraStatusEl.textContent = 'Starting camera for performance recording...';
+          if (startCameraBtn) startCameraBtn.click();
+        } catch (e) {}
+      }
 
-    if (!videoRecorder.isRecording) {
-      if (recordModeSelect) recordModeSelect.disabled = true;
-      const ok = await videoRecorder.start(mode);
-      if (ok) {
-        recordBtn.classList.add('recording');
-        recordBtn.innerHTML = '<span class="rec-dot"></span> <span class="btn-text">⏹ Stop & Save</span>';
-        state.recSeconds = 0;
-        recTimerEl.textContent = '00:00';
-        recTimerEl.style.display = 'inline-block';
-        if (cameraStatusEl) {
-          const desc = (mode === 'camera') ? 'flute performance video' : 'screen performance';
-          cameraStatusEl.textContent = `📹 Recording ${desc}... Click "Stop & Save" when done.`;
+      if (videoRecorder && !videoRecorder.isRecording) {
+        if (recordModeSelect) recordModeSelect.disabled = true;
+        const ok = await videoRecorder.start(mode);
+        if (ok) {
+          recordBtn.classList.add('recording');
+          recordBtn.innerHTML = '<span class="rec-dot"></span> <span class="btn-text">⏹ Stop & Save</span>';
+          state.recSeconds = 0;
+          if (recTimerEl) {
+            recTimerEl.textContent = '00:00';
+            recTimerEl.style.display = 'inline-block';
+          }
+          if (cameraStatusEl) {
+            const desc = (mode === 'camera') ? 'flute performance video' : 'screen performance';
+            cameraStatusEl.textContent = `📹 Recording ${desc}... Click "Stop & Save" when done.`;
+          }
+          state.recordTimerInterval = setInterval(() => {
+            state.recSeconds++;
+            const mins = String(Math.floor(state.recSeconds / 60)).padStart(2, '0');
+            const secs = String(state.recSeconds % 60).padStart(2, '0');
+            if (recTimerEl) recTimerEl.textContent = `${mins}:${secs}`;
+          }, 1000);
+        } else {
+          if (recordModeSelect) recordModeSelect.disabled = false;
+          updateRecordBtnLabel();
         }
-        state.recordTimerInterval = setInterval(() => {
-          state.recSeconds++;
-          const mins = String(Math.floor(state.recSeconds / 60)).padStart(2, '0');
-          const secs = String(state.recSeconds % 60).padStart(2, '0');
-          recTimerEl.textContent = `${mins}:${secs}`;
-        }, 1000);
-      } else {
-        if (recordModeSelect) recordModeSelect.disabled = false;
+      } else if (videoRecorder) {
+        videoRecorder.stop();
+        recordBtn.classList.remove('recording');
         updateRecordBtnLabel();
+        if (recordModeSelect) recordModeSelect.disabled = false;
+        if (state.recordTimerInterval) {
+          clearInterval(state.recordTimerInterval);
+          state.recordTimerInterval = null;
+        }
+        if (recTimerEl) recTimerEl.style.display = 'none';
       }
-    } else {
-      videoRecorder.stop();
-      recordBtn.classList.remove('recording');
-      updateRecordBtnLabel();
-      if (recordModeSelect) recordModeSelect.disabled = false;
-      if (state.recordTimerInterval) {
-        clearInterval(state.recordTimerInterval);
-        state.recordTimerInterval = null;
-      }
-      recTimerEl.style.display = 'none';
-    }
-  });
+    });
+  }
 
   // Studio Controls Dock Toggle (Unobtrusive Spatial AR Mode)
   const dockToggleBtn = document.getElementById('dockToggleBtn');
+  const floatingDockOpenBtn = document.getElementById('floatingDockOpenBtn');
   const controlsPanelEl = document.querySelector('.controls-panel');
   const mainContentEl = document.querySelector('.main-content');
 
@@ -1050,12 +1080,16 @@ document.addEventListener('DOMContentLoaded', () => {
   if (dockToggleBtn) {
     dockToggleBtn.addEventListener("click", toggleControlsDock);
   }
+  if (floatingDockOpenBtn) {
+    floatingDockOpenBtn.addEventListener('click', toggleControlsDock);
+  }
 
   // Hero Start Camera button
-  const heroStartCameraBtn = document.getElementById("heroStartCameraBtn");
   if (heroStartCameraBtn) {
     heroStartCameraBtn.addEventListener("click", () => {
-      startCameraBtn.click();
+      if (startCameraBtn) {
+        startCameraBtn.click();
+      }
     });
   }
 
@@ -1323,10 +1357,6 @@ document.addEventListener('DOMContentLoaded', () => {
       tracker.initCanvasPreview();
     }
   });
-  const floatingDockOpenBtn = document.getElementById('floatingDockOpenBtn');
-  if (floatingDockOpenBtn) {
-    floatingDockOpenBtn.addEventListener('click', toggleControlsDock);
-  }
 
   // Keyboard Shortcuts (S, R, G, M, P, D, N, Space for octave shift, J for Janti, V for Video Rec, H/D for Dock)
   let lastKeyTime = 0;

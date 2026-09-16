@@ -182,6 +182,17 @@ class CarnaticFluteTracker {
         return;
       }
       if (this.canvasCtx && this.canvasElement && this.canvasElement.width > 0) {
+        if (this.canvasElement.clientWidth > 0 && this.canvasElement.clientHeight > 0) {
+          const dpr = (typeof window !== "undefined" && window.devicePixelRatio) ? Math.max(2, window.devicePixelRatio) : 2;
+          const targetW = Math.round(this.canvasElement.clientWidth * dpr);
+          const targetH = Math.round(this.canvasElement.clientHeight * dpr);
+          if (Math.abs(this.canvasElement.width - targetW) > 4 || Math.abs(this.canvasElement.height - targetH) > 4) {
+            this.canvasElement.width = targetW;
+            this.canvasElement.height = targetH;
+            this.canvasCtx.imageSmoothingEnabled = true;
+            this.canvasCtx.imageSmoothingQuality = 'high';
+          }
+        }
         this.canvasCtx.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
         this.renderCleanOverlay(this.canvasCtx, null, null, [false, false, false, false, false, false, false], this.canvasElement.width, this.canvasElement.height);
       }
