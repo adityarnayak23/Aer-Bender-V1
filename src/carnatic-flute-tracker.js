@@ -1753,33 +1753,18 @@ class CarnaticFluteTracker {
     const boreRadius = 6.0 * scale;   // Inner hole diameter = 12.0 * scale (increased radius where air flows)
     // Translucent glass margin above = 3.0 * scale, below = 3.0 * scale (completely uniform!)
 
-    // 1a-0. Giant Celestial Spherical Aura using exact Flute Octave Palette
-    // Flute Octaves: Tara (#fb923c Orange), Madhya (#e2e8f0 Studio Pearl), Mandra (#818cf8 Indigo)
+    // 1a-0. Giant Celestial Spherical Aura (Huge glowing sphere with deep aura)
     if (isHovering) {
       const midX = (pStart.x + pEnd.x) * 0.5;
       const midY = (pStart.y + pEnd.y) * 0.5;
       const sphereRadius = Math.max(width * 0.28, 220 * scale);
-      const spherePulse = 0.42 + Math.sin(now * 0.002) * 0.12;
-
-      let coreColor = `rgba(251, 146, 60, ${spherePulse * 0.48})`;     // Tara: Apple System Orange (#fb923c)
-      let midColor = `rgba(226, 232, 240, ${spherePulse * 0.32})`;      // Madhya: Studio Pearl White (#e2e8f0)
-      let outerColor = `rgba(129, 140, 248, ${spherePulse * 0.40})`;    // Mandra: Apple System Indigo (#818cf8)
-
-      if (this.currentOctave === 1) {
-        coreColor = `rgba(251, 146, 60, ${spherePulse * 0.58})`;
-        midColor = `rgba(254, 215, 170, ${spherePulse * 0.36})`;
-        outerColor = `rgba(234, 88, 12, ${spherePulse * 0.22})`;
-      } else if (this.currentOctave === -1) {
-        coreColor = `rgba(129, 140, 248, ${spherePulse * 0.58})`;
-        midColor = `rgba(192, 132, 252, ${spherePulse * 0.36})`;
-        outerColor = `rgba(99, 102, 241, ${spherePulse * 0.25})`;
-      }
+      const spherePulse = 0.40 + Math.sin(now * 0.002) * 0.12;
 
       const orbGrad = ctx.createRadialGradient(midX, midY, 14 * scale, midX, midY, sphereRadius);
-      orbGrad.addColorStop(0, coreColor);
-      orbGrad.addColorStop(0.28, midColor);
-      orbGrad.addColorStop(0.56, outerColor);
-      orbGrad.addColorStop(0.80, `rgba(99, 102, 241, ${spherePulse * 0.12})`);
+      orbGrad.addColorStop(0, `rgba(56, 189, 248, ${spherePulse})`);
+      orbGrad.addColorStop(0.32, `rgba(147, 51, 234, ${spherePulse * 0.65})`);
+      orbGrad.addColorStop(0.60, `rgba(6, 182, 212, ${spherePulse * 0.32})`);
+      orbGrad.addColorStop(0.82, `rgba(204, 255, 0, ${spherePulse * 0.12})`);
       orbGrad.addColorStop(1, 'rgba(6, 9, 16, 0)');
 
       ctx.save();
