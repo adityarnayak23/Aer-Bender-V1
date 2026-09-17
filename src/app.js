@@ -917,7 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (timbreModeBadge) {
       timbreModeBadge.classList.add('electric-active');
-      timbreModeBadge.textContent = '⚡ Electric Flute';
+      timbreModeBadge.textContent = '⚡';
     }
   }
 
