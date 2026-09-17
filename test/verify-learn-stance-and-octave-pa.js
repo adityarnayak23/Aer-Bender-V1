@@ -60,20 +60,19 @@ assert(html.includes('PALM FACES YOU'), 'Left wrist inward turn indicator presen
 assert(html.includes('PALM FACES FORWARD'), 'Right hand forward reach indicator present');
 assert(html.includes('Pinky Up'), 'Left pinky up tag present');
 assert(html.includes('anim-air-jet'), 'Air jet stream from lips present');
-assert(html.includes('anim-air-rebound') && html.includes('anim-cork-vortex-loop'), 'Air rebound wave and cork vortex loop present');
-assert(html.includes('REBOUNDS FROM CLOSED END'), 'Text callout for closed-end rebound present');
-assert(!html.includes('SPLITS OVER TOP'), 'Zero air coming out of the flute into room');
-assert(css.includes('.anim-cork-vortex-loop') && css.includes('.anim-air-rebound'), 'CSS animations for air rebound and cork vortex present');
-console.log('✔ Step 1 upper-half body stance & Idea 3 cork rebound dynamics verified.');
+assert(html.includes('anim-air-split-top'), 'Air split stream over top rim present');
+assert(html.includes('anim-air-rebound'), 'Air rebound wave surging off inner bore wall present');
+assert(html.includes('SPLITS OVER TOP'), 'Text callout for top split present');
+assert(html.includes('REBOUNDS OFF INNER WALL'), 'Text callout for bore rebound present');
+assert(css.includes('.anim-air-split-top') && css.includes('.anim-air-rebound'), 'CSS animations for air split & rebound present');
+console.log('✔ Step 1 upper-half body stance & air rebound dynamics verified.');
 
-// 5. Realistic Embouchure & Closed-End Cork Rebound in Tracker Canvas (Zero External Air)
-console.log('\n5. Checking Embouchure Air Strike & Closed-End Cork Rebound in Canvas Tracker...');
+// 5. Realistic Embouchure in Tracker Canvas
+console.log('\n5. Checking Embouchure Air Strike, Split, & Rebound in Canvas Tracker...');
 assert(trackerJs.includes('// Dynamic Acoustic Air Jet Strike, Split & Rebound Dynamics'), 'Tracker includes dynamic acoustic air jet strike & rebound');
-assert(trackerJs.includes('IDEA 3: Cork Cavity Aerodynamic Vortex Loop'), 'Tracker specifies Idea 3 cork cavity loop');
-assert(trackerJs.includes('corkStopX') && trackerJs.includes('corkStopY'), 'Tracker computes closed cork stopper coordinates');
-assert(trackerJs.includes('180° Vortex Loop around cork wall'), 'Tracker draws internal 180 deg vortex loop');
-assert(!trackerJs.includes('Top Split Stream: Aerodynamic wake curling over the top into the room'), 'Tracker has zero air coming out into the room');
-console.log('✔ Canvas tracker Idea 3 cork cavity rebound verified.');
+assert(trackerJs.includes('Top Split Stream: Aerodynamic wake curling over the top'), 'Tracker draws top split wake');
+assert(trackerJs.includes('strikes bottom bore wall & REBOUNDS'), 'Tracker draws chimney plunge & bore floor rebound');
+console.log('✔ Canvas tracker acoustic air dynamics verified.');
 
 // 6. Step 3: Zero Scroll
 console.log('\n6. Checking Step 3 Zero Scroll...');
