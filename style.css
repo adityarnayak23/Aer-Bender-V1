@@ -3043,19 +3043,44 @@ body {
 .step-illustration-container {
   background: #070c18 !important;
   border: 2px solid #000000 !important;
-  box-shadow: 3px 3px 0px #000000 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
   border-radius: 10px !important;
-  padding: 10px 14px;
+  padding: 8px 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+.step1-visual-canvas {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid #182238;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
+}
+
+.step1-base-img {
+  width: 100%;
+  height: auto;
+  max-height: 440px;
+  object-fit: contain;
+  display: block;
 }
 
 .step-flute-posture-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
   max-width: 860px;
-  height: auto;
-  max-height: 250px;
+  pointer-events: none;
 }
 
 /* Embouchure breath wave animations */
