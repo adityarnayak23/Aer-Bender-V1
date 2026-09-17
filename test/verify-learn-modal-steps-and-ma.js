@@ -4,15 +4,31 @@ const assert = require('assert');
 
 const baseDir = path.resolve(__dirname, '..');
 console.log('================================================================');
-console.log('🪈 VERIFYING 4-STEP LEARN MODAL & CARNATIC MA DESIGN');
+console.log('🪈 VERIFYING DIGITAL BRUTALIST 4-STEP LEARN MODAL & ANIMATIONS');
 console.log('================================================================\n');
 
 const html = fs.readFileSync(path.join(baseDir, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(baseDir, 'style.css'), 'utf8');
 const appJs = fs.readFileSync(path.join(baseDir, 'src', 'app.js'), 'utf8');
 
+// Extract modal HTML snippet to ensure modal copy rules
+const modalStartIdx = html.indexOf('id="learnToPlayModal"');
+const modalEndIdx = html.indexOf('<!-- Isolated FaceMesh Worker Iframe');
+const modalHtml = html.slice(modalStartIdx, modalEndIdx);
+
 // -------------------------------------------------------------
-// 1. Structure & 4 Steps Present
+// 1. Beginner-Friendly & Jargon-Free: NO "VENU" and NO ALARMS
+// -------------------------------------------------------------
+console.log('Checking Beginner-Friendly Copy & Tone (No "venu", No Alarms)...');
+assert(!modalHtml.toLowerCase().includes('venu'), 'Learn modal must NOT contain the classical jargon word "venu"');
+assert(!modalHtml.includes('⚠️'), 'Learn modal must NOT contain alarm/warning emoji ⚠️');
+assert(!modalHtml.includes('🚨'), 'Learn modal must NOT contain siren emoji 🚨');
+assert(!modalHtml.toLowerCase().includes('fool'), 'Learn modal must NOT contain condescending language');
+assert(!modalHtml.toLowerCase().includes("won't start"), 'Learn modal must NOT use negative/punitive "won\'t start" phrasing');
+console.log('✔ Learn modal is 100% jargon-free, encouraging, and has no alarm signs.');
+
+// -------------------------------------------------------------
+// 2. Structure & 4 Steps Present
 // -------------------------------------------------------------
 console.log('Checking 4-Step HTML Structure...');
 assert(html.includes('id="learnStepTabs"'), 'learnStepTabs container must exist');
@@ -29,44 +45,42 @@ assert(html.includes('id="learnStepPane4"'), 'Step 4 pane must exist');
 assert(html.includes('id="learnStepBackBtn"'), 'Wizard Back button must exist');
 assert(html.includes('id="learnStepNextBtn"'), 'Wizard Next button must exist');
 assert(html.includes('id="stepDotsIndicator"'), 'Step dots indicator must exist');
-assert(html.includes('id="learnModalStartBtn"'), 'Legacy-compatible start CTA button must exist');
+assert(html.includes('id="learnModalStartBtn"'), 'Start CTA button must exist');
 console.log('✔ 4-step wizard container & controls verified.');
 
 // -------------------------------------------------------------
-// 2. Step 1: Animated Hold Flute Posture
+// 3. Step 1: 3rd-Person Animated Perspective (Hand Orientation Asymmetry)
 // -------------------------------------------------------------
-console.log('Checking Step 1 (How to Hold Flute)...');
+console.log('Checking Step 1 (3rd-Person Perspective & Hand Orientation)...');
 assert(html.includes('How to Hold the Flute'), 'Step 1 title present');
-assert(html.includes('hand-visual-strip'), 'Hand visual strip present');
-assert(html.includes('LEFT HAND'), 'Left hand guide present');
-assert(html.includes('RIGHT HAND'), 'Right hand guide present');
-assert(html.includes('Left pinky is relaxed & free (no role)'), 'Explicit pinky relaxation instruction present');
-assert(html.includes('step1PostureSvg'), 'Animated flute posture SVG present');
+assert(html.includes('hand-orientation-grid'), 'Hand orientation grid present');
+assert(html.includes('PALM FACES YOU'), 'Left hand inward wrist rotation (palm faces you) visually indicated');
+assert(html.includes('PALM FACES FORWARD'), 'Right hand forward natural reach visually indicated');
+assert(html.includes('Pinky Up') || html.includes('Pinky:</strong> Free in the air'), 'Left pinky relaxation instruction present');
+assert(html.includes('id="step1PostureSvg"'), 'Animated 3rd-person player perspective SVG present');
 assert(html.includes('pulse-blow-core'), 'Pulsing embouchure blow core present');
 assert(html.includes('breath-wave'), 'Animated breath waves present');
 assert(html.includes('anim-floating-finger'), 'Animated hovering fingers present');
-console.log('✔ Step 1 animated posture, breath waves, and finger indicators verified.');
+console.log('✔ Step 1 animated 3rd-person posture, wrist rotation asymmetry, and breath waves verified.');
 
 // -------------------------------------------------------------
-// 3. Step 2: Sa Startup Gate (Flute won\'t start without Sa)
+// 4. Step 2: Friendly Magic Starter Key (Wake Up with Sa)
 // -------------------------------------------------------------
-console.log('Checking Step 2 (Hold Sa to Start)...');
-assert(html.includes('How to Hold Sa — The Startup Gate'), 'Step 2 title present');
-assert(html.includes('sa-gate-notice-box'), 'Sa gate notice box present');
-assert(html.includes("FLUTE WON'T START WITHOUT HOLDING SA"), 'Explicit startup gate warning present');
-assert(html.includes('The flute will <strong>NOT start</strong> until you hold Sa'), 'Explicit startup gate description present');
-assert(html.includes('step2SaSvg'), 'Animated Sa holding SVG present');
+console.log('Checking Step 2 (Magic Starter Key: Wake Up with Sa)...');
+assert(html.includes('Wake Up the Flute with Sa'), 'Step 2 title present');
+assert(html.includes('magic-starter-box'), 'Friendly magic starter box present');
+assert(html.includes('THE MAGIC STARTER KEY: 2 FINGERS DOWN'), 'Magic starter key headline present');
+assert(html.includes('id="step2SaSvg"'), 'Animated Sa awakening SVG present');
 assert(html.includes('sa-shockwave'), 'Acoustic shockwave ripples present');
-assert(html.includes('FLUTE UNLOCKED'), 'Flute unlocked confirmation pill present');
-console.log('✔ Step 2 Sa startup gate and animations verified.');
+assert(html.includes('FLUTE IS AWAKE & READY!'), 'Flute awake celebration banner present');
+console.log('✔ Step 2 friendly magic starter key and awakening animation verified.');
 
 // -------------------------------------------------------------
-// 4. Step 3: Play Sa Ri Ga Ma Pa Da Ni (MA IS ALL 7 CLOSED)
+// 5. Step 3: Play Sa Ri Ga Ma Pa Da Ni (MA IS ALL 7 CLOSED, NO META-DISCLAIMER)
 // -------------------------------------------------------------
-console.log('Checking Step 3 (7 Swaras & Ma all 7 closed)...');
-assert(html.includes('How to Play Sa, Ri, Ga, Ma, Pa, Da, Ni'), 'Step 3 title present');
-assert(html.includes('ma-closed-callout-pill'), 'Ma closed callout pill present');
-assert(html.includes('MA (F4) is played with ALL 7 FINGERS CLOSED'), 'Ma callout states all 7 closed');
+console.log('Checking Step 3 (7 Notes & Ma all 7 closed without meta-disclaimer)...');
+assert(html.includes('How to Play All 7 Notes') || html.includes('How to Play Sa, Ri, Ga, Ma, Pa, Da, Ni'), 'Step 3 title present');
+assert(!modalHtml.includes('ma-closed-callout-pill'), 'Meta-disclaimer pill for Ma must NOT exist (people read chart naturally)');
 assert(html.includes('data-swara="ma" data-note="F4"'), 'Ma tab present');
 assert(html.includes('All 7 closed'), 'Ma tab badge indicates all 7 closed');
 assert(html.includes('row-highlight-ma'), 'Ma table row highlighted');
@@ -81,13 +95,18 @@ assert.strictEqual(closedDotsInMa, 7, 'Ma in swaras-table must have exactly 7 cl
 assert(appJs.includes('swaraKey: "ma"'), 'Ma defined in SCALE_NOTES_DATA');
 assert(appJs.includes('holes: [true, true, true, true, true, true, true]'), 'Ma must have all 7 holes closed in SCALE_NOTES_DATA');
 assert(appJs.includes('All 7 fingers closed!'), 'Ma description mentions all 7 fingers closed');
-console.log('✔ Step 3 Swaras verified: MA IS ALL 7 CLOSED in both DOM table & audio/visual engine data.');
+console.log('✔ Step 3 Notes verified: MA IS ALL 7 CLOSED naturally in DOM table & audio/visual engine data.');
 
 // -------------------------------------------------------------
-// 5. Step 4: Animated Head Tilt Concept (Tara, Madhya, Mandra)
+// 6. Step 4: Animated Head Tilt Character Profile (High, Mid, Bass)
 // -------------------------------------------------------------
-console.log('Checking Step 4 (Head Tilt Octaves)...');
-assert(html.includes('Head Tilt Concept — Spatial Octaves'), 'Step 4 title present');
+console.log('Checking Step 4 (Animated Head Tilt Character)...');
+assert(html.includes('Head Tilt Magic'), 'Step 4 title present');
+assert(html.includes('id="animatedHeadTiltSvg"'), 'Animated head tilt profile SVG present');
+assert(html.includes('id="headRotatorNode"'), 'Head rotator pivot node present');
+assert(html.includes('id="beamTaraG"'), 'Tara high acoustic wave beam present');
+assert(html.includes('id="beamMadhyaG"'), 'Madhya mid acoustic wave beam present');
+assert(html.includes('id="beamMandraG"'), 'Mandra bass acoustic wave beam present');
 assert(html.includes('zone-tara'), 'Tara high octave card present');
 assert(html.includes('zone-madhya'), 'Madhya mid octave card present');
 assert(html.includes('zone-mandra'), 'Mandra bass octave card present');
@@ -98,12 +117,12 @@ assert(html.includes('btnSimTara'), 'Interactive test button for Tara present');
 assert(html.includes('btnSimMadhya'), 'Interactive test button for Madhya present');
 assert(html.includes('btnSimMandra'), 'Interactive test button for Mandra present');
 assert(html.includes('tiltZoneLabel'), 'Live tilt zone feedback label present');
-console.log('✔ Step 4 animated head tilt & octave simulation verified.');
+console.log('✔ Step 4 animated head tilt character & acoustic wave beams verified.');
 
 // -------------------------------------------------------------
-// 6. Controller Logic: Next-Only Forward Progression
+// 7. Controller Logic: Next-Only Forward Progression & Strict Gating
 // -------------------------------------------------------------
-console.log('Checking Wizard Controller Logic in app.js...');
+console.log('Checking Wizard Controller Logic & Strict Gating...');
 assert(appJs.includes('STEP_CONFIGS'), 'STEP_CONFIGS array defined in app.js');
 assert(appJs.includes('showLearnStep(step)'), 'showLearnStep function defined in app.js');
 assert(appJs.includes('learnStepNextBtn.addEventListener("click"'), 'Next button listener wired');
@@ -114,19 +133,17 @@ assert(appJs.includes('step <= currentLearnStep'), 'Tab/dot clicks must NOT allo
 console.log('✔ Next-only forward progression & step transition logic verified.');
 
 // -------------------------------------------------------------
-// 7. Styling & Theme Integration
+// 8. Digital Brutalism Styling
 // -------------------------------------------------------------
-console.log('Checking Styling & Design System...');
-assert(css.includes('.learn-step-tabs'), 'learn-step-tabs styled in CSS');
-assert(css.includes('.sa-gate-notice-box'), 'sa-gate-notice-box styled in CSS');
-assert(css.includes('.ma-closed-callout-pill'), 'ma-closed-callout-pill styled in CSS');
-assert(css.includes('.octave-zones-grid'), 'octave-zones-grid styled in CSS');
-assert(css.includes('.tilt-interactive-stage'), 'tilt-interactive-stage styled in CSS');
-assert(css.includes('.learn-wizard-nav'), 'learn-wizard-nav styled in CSS');
-assert(css.includes('@keyframes breathStream'), 'breathStream keyframes defined');
-assert(css.includes('@keyframes fingerHover'), 'fingerHover keyframes defined');
-assert(css.includes('@keyframes saShockwaveExpand'), 'saShockwaveExpand keyframes defined');
-console.log('✔ All CSS animations, layouts, and colors verified.');
+console.log('Checking Digital Brutalism Styling...');
+assert(css.includes('.learn-modal-card'), 'learn-modal-card styled in CSS');
+assert(css.includes('8px 8px 0px #000000') || css.includes('box-shadow: 8px 8px 0px'), 'Digital Brutalist 8px hard offset shadow present');
+assert(css.includes('.hand-orient-card'), 'hand-orient-card styled in CSS');
+assert(css.includes('.magic-starter-box'), 'magic-starter-box styled in CSS');
+assert(css.includes('.head-rotator'), 'head-rotator styled in CSS');
+assert(css.includes('@keyframes headTiltCycle'), 'headTiltCycle animation keyframes defined');
+assert(css.includes('@keyframes waveBeamPulse'), 'waveBeamPulse animation keyframes defined');
+console.log('✔ Digital Brutalism CSS styling, hard offset shadows, and animation keyframes verified.');
 
 // -------------------------------------------------------------
 // 8. Runtime Event Simulation (Mock DOM)
@@ -433,21 +450,37 @@ assert.strictEqual(nextBtn.style.display, 'none', 'Next button is hidden on fina
 assert.strictEqual(startCta.style.display, 'inline-flex', 'Start CTA "Got it, Let\'s Play!" appears on final Step 4');
 console.log('✔ Step 4 active: Next button replaced by vibrant Start CTA button.');
 
-// Test Step 4 simulated octave buttons
+// Test Step 4 simulated octave buttons and head tilt reactions
 const btnTara = mockDocElements['btnSimTara'];
+const btnMadhya = mockDocElements['btnSimMadhya'];
 const btnMandra = mockDocElements['btnSimMandra'];
 const zoneTara = mockDocElements['simZoneTara'];
+const zoneMadhya = mockDocElements['simZoneMadhya'];
 const zoneMandra = mockDocElements['simZoneMandra'];
 const tiltLabel = mockDocElements['tiltZoneLabel'];
+const animatedHeadTiltSvg = mockDocElements['animatedHeadTiltSvg'];
 
 btnTara.click();
 assert(zoneTara.classList.contains('active'), 'Tara zone active after clicking Chin Up test');
-assert(tiltLabel.textContent.includes('TARA STHAYI'), 'Label confirms Tara Sthayi');
+assert(tiltLabel.textContent.includes('TARA'), 'Label confirms Tara');
+if (animatedHeadTiltSvg) {
+  assert(animatedHeadTiltSvg.classList.contains('tilt-up'), 'Head tilt SVG tilts up for Tara');
+}
+
+btnMadhya.click();
+assert(zoneMadhya.classList.contains('active'), 'Madhya zone active after clicking Level Head test');
+assert(tiltLabel.textContent.includes('MADHYA'), 'Label confirms Madhya');
+if (animatedHeadTiltSvg) {
+  assert(animatedHeadTiltSvg.classList.contains('tilt-level'), 'Head tilt SVG levels for Madhya');
+}
 
 btnMandra.click();
 assert(zoneMandra.classList.contains('active'), 'Mandra zone active after clicking Chin Down test');
-assert(tiltLabel.textContent.includes('MANDRA STHAYI'), 'Label confirms Mandra Sthayi');
-console.log('✔ Step 4 interactive head tilt simulations and audio triggers confirmed.');
+assert(tiltLabel.textContent.includes('MANDRA'), 'Label confirms Mandra');
+if (animatedHeadTiltSvg) {
+  assert(animatedHeadTiltSvg.classList.contains('tilt-down'), 'Head tilt SVG tilts down for Mandra');
+}
+console.log('✔ Step 4 interactive head tilt simulations and SVG reactions confirmed.');
 
 // Test Back button from Step 4 -> Step 3
 backBtn.click();

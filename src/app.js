@@ -1113,6 +1113,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const simZoneTara = document.getElementById("simZoneTara");
   const simZoneMadhya = document.getElementById("simZoneMadhya");
   const simZoneMandra = document.getElementById("simZoneMandra");
+  const animatedHeadTiltSvg = document.getElementById("animatedHeadTiltSvg");
 
   const scaleSwaraTabsContainer = document.getElementById("scaleSwaraTabs");
   const scaleAnimAutoBtn = document.getElementById("scaleAnimAutoBtn");
@@ -1327,10 +1328,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==============================================================
   let currentLearnStep = 1;
   const STEP_CONFIGS = [
-    { step: 1, subtitle: "Step 1 of 4 • Hand Posture & Finger Placement", nextLabel: "Next: Hold Sa to Start ➔" },
-    { step: 2, subtitle: "Step 2 of 4 • How to Hold Sa (Mandatory to Start)", nextLabel: "Next: 7 Swaras (Ma Closed) ➔" },
-    { step: 3, subtitle: "Step 3 of 4 • Play All 7 Swaras (Ma is All Closed)", nextLabel: "Next: Head Tilt Octaves ➔" },
-    { step: 4, subtitle: "Step 4 of 4 • Spatial Head Tilt (Tara, Madhya, Mandra)", nextLabel: null }
+    { step: 1, subtitle: "Step 1 of 4 • Hand Posture & Finger Placement", nextLabel: "Next: Wake with Sa ➔" },
+    { step: 2, subtitle: "Step 2 of 4 • Wake Up the Flute with Sa", nextLabel: "Next: Play 7 Notes ➔" },
+    { step: 3, subtitle: "Step 3 of 4 • Play All 7 Notes (Sa to Ni)", nextLabel: "Next: Head Tilt Magic ➔" },
+    { step: 4, subtitle: "Step 4 of 4 • Head Tilt Magic (High, Mid, Bass)", nextLabel: null }
   ];
 
   function showLearnStep(step) {
@@ -1464,16 +1465,23 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnSimMadhya) btnSimMadhya.classList.toggle('active', isMadhya);
     if (btnSimMandra) btnSimMandra.classList.toggle('active', isMandra);
 
+    if (animatedHeadTiltSvg) {
+      animatedHeadTiltSvg.classList.remove('auto-demo', 'tilt-up', 'tilt-level', 'tilt-down');
+      if (isTara) animatedHeadTiltSvg.classList.add('tilt-up');
+      else if (isMandra) animatedHeadTiltSvg.classList.add('tilt-down');
+      else animatedHeadTiltSvg.classList.add('tilt-level');
+    }
+
     if (tiltZoneLabel) {
       if (isTara) {
         tiltZoneLabel.className = 'feedback-highlight text-orange';
-        tiltZoneLabel.textContent = 'TARA STHAYI (+1) • High Overblown Register';
+        tiltZoneLabel.textContent = 'TARA (+1) • High Overblown Register';
       } else if (isMandra) {
         tiltZoneLabel.className = 'feedback-highlight text-blue';
-        tiltZoneLabel.textContent = 'MANDRA STHAYI (-1) • Deep Bass Resonant Register';
+        tiltZoneLabel.textContent = 'MANDRA (-1) • Deep Bass Resonant Register';
       } else {
         tiltZoneLabel.className = 'feedback-highlight text-emerald';
-        tiltZoneLabel.textContent = 'MADHYA STHAYI (0) • Balanced Fundamental Pitch';
+        tiltZoneLabel.textContent = 'MADHYA (0) • Balanced Fundamental Pitch';
       }
     }
 
@@ -1499,6 +1507,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const openLearnModal = () => {
     if (learnToPlayModal) {
       learnToPlayModal.classList.remove("hidden");
+      if (animatedHeadTiltSvg) {
+        animatedHeadTiltSvg.classList.remove('tilt-up', 'tilt-level', 'tilt-down');
+        animatedHeadTiltSvg.classList.add('auto-demo');
+      }
       showLearnStep(1); // Always start from Step 1
     }
   };

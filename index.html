@@ -311,11 +311,11 @@
         </button>
 
         <div class="learn-modal-header">
-          <div class="learn-modal-badge">HOW TO PLAY</div>
+          <div class="learn-modal-badge">TUTORIAL • 4 EASY STEPS</div>
           <h2 id="learnModalTitle" class="learn-modal-title">Learn to Play Aer Bender</h2>
           <p class="learn-modal-subtitle" id="learnModalSubtitle">Step 1 of 4 • Hand Posture & Finger Placement</p>
 
-          <!-- Step Progression Indicator Tabs -->
+          <!-- Step Progression Indicator Tabs (Digital Brutalist) -->
           <div class="learn-step-tabs" id="learnStepTabs">
             <button type="button" class="step-tab-btn active" data-step="1" id="stepTab1">
               <span class="step-tab-num">1</span>
@@ -323,316 +323,302 @@
             </button>
             <button type="button" class="step-tab-btn" data-step="2" id="stepTab2">
               <span class="step-tab-num">2</span>
-              <span class="step-tab-label">Hold Sa to Start</span>
+              <span class="step-tab-label">Wake with Sa</span>
             </button>
             <button type="button" class="step-tab-btn" data-step="3" id="stepTab3">
               <span class="step-tab-num">3</span>
-              <span class="step-tab-label">7 Swaras (Ma Closed)</span>
+              <span class="step-tab-label">Play 7 Notes</span>
             </button>
             <button type="button" class="step-tab-btn" data-step="4" id="stepTab4">
               <span class="step-tab-num">4</span>
-              <span class="step-tab-label">Head Tilt Octaves</span>
+              <span class="step-tab-label">Head Tilt Magic</span>
             </button>
           </div>
         </div>
 
         <div class="learn-sections-container">
-          <!-- STEP 1: HOW TO HOLD THE FLUTE (ANIMATED) -->
+          <!-- STEP 1: HOW TO HOLD THE FLUTE (3RD PERSON ANIMATED PERSPECTIVE) -->
           <div class="learn-step-pane active hand-layout-card" id="learnStepPane1">
             <div class="step-pane-header">
               <span class="focus-badge">STEP 1</span>
               <h3 class="focus-title">How to Hold the Flute</h3>
-              <p class="step-intro-text">Hold both hands in front of the camera like an authentic Carnatic venu. Left hand covers the top holes near your mouth, while the right hand covers the lower holes.</p>
+              <p class="step-intro-text">Hold the flute sideways pointing to your right. Notice the hand orientation difference below:</p>
             </div>
 
-            <div class="hand-visual-strip">
-              <div class="hand-side left-side">
-                <span class="hand-tag">✋ LEFT HAND</span>
-                <span class="hand-desc">Holes 1, 2, 3 (Near Mouth)</span>
-                <div class="finger-pills">
-                  <span class="finger-pill">Index (1)</span>
-                  <span class="finger-pill">Middle (2)</span>
-                  <span class="finger-pill">Ring (3)</span>
+            <!-- Hand Orientation Asymmetry Cards -->
+            <div class="hand-orientation-grid">
+              <div class="hand-orient-card left-orient-card">
+                <div class="orient-card-header">
+                  <span class="hand-badge left-badge">✋ LEFT HAND</span>
+                  <span class="orient-key-pill">PALM FACES YOU</span>
                 </div>
-                <span class="pinky-note">Left pinky is relaxed & free (no role)</span>
+                <p class="orient-action-text">Turn your left wrist <strong>inward towards your face</strong> so your index, middle, and ring fingers curve over Holes 1, 2, and 3 near your mouth.</p>
+                <div class="orient-pinky-tag">💤 <strong>Left Pinky:</strong> Free in the air (takes a nap!)</div>
               </div>
-              <div class="hand-divider">➔</div>
-              <div class="hand-side right-side">
-                <span class="hand-tag">🤚 RIGHT HAND</span>
-                <span class="hand-desc">Holes 4, 5, 6, 7 (Tube Body)</span>
-                <div class="finger-pills">
-                  <span class="finger-pill">Index (4)</span>
-                  <span class="finger-pill">Middle (5)</span>
-                  <span class="finger-pill">Ring (6)</span>
-                  <span class="finger-pill">Pinky (7)</span>
+
+              <div class="hand-orient-card right-orient-card">
+                <div class="orient-card-header">
+                  <span class="hand-badge right-badge">🤚 RIGHT HAND</span>
+                  <span class="orient-key-pill">PALM FACES FORWARD</span>
                 </div>
-                <span class="pinky-note">Right hand uses all 4 fingers</span>
+                <p class="orient-action-text">Keep your right hand <strong>facing forward naturally</strong> (away from you). All 4 fingers rest over Holes 4, 5, 6, and 7 on the tube body.</p>
+                <div class="orient-pinky-tag">🎯 <strong>Right Hand:</strong> Uses Index, Middle, Ring & Pinky</div>
               </div>
             </div>
 
-            <!-- Animated Flute Posture Graphic -->
-            <div class="step-illustration-container">
-              <svg viewBox="0 0 760 170" class="step-flute-posture-svg" id="step1PostureSvg">
-                <!-- Flute Body -->
-                <rect x="30" y="68" width="700" height="34" rx="17" fill="rgba(10, 15, 28, 0.92)" stroke="rgba(255, 255, 255, 0.22)" stroke-width="2"/>
-                <!-- Bore cavity line -->
-                <line x1="40" y1="85" x2="720" y2="85" stroke="rgba(56, 189, 248, 0.25)" stroke-width="12" stroke-linecap="round"/>
+            <!-- 3rd-Person Animated Player Perspective SVG Graphic -->
+            <div class="step-illustration-container player-perspective-container">
+              <svg viewBox="0 0 780 230" class="step-flute-posture-svg" id="step1PostureSvg">
+                <!-- Flute Tube Body with Bold Brutalist Border -->
+                <rect x="140" y="132" width="590" height="34" rx="17" fill="#0c1324" stroke="#000000" stroke-width="3"/>
+                <line x1="150" y1="149" x2="720" y2="149" stroke="#00f0ff" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
 
-                <!-- Embouchure Blow Hole (◎) with Animated Breath Stream -->
-                <g class="step-embouchure-marker" transform="translate(85, 85)">
-                  <circle cx="0" cy="0" r="13" fill="#04060c" stroke="#38bdf8" stroke-width="2.5"/>
-                  <circle cx="0" cy="0" r="6" fill="#38bdf8" class="pulse-blow-core"/>
+                <!-- Blow Hole (◎) with Animated Breath Stream -->
+                <g class="step-embouchure-marker" transform="translate(210, 149)">
+                  <circle cx="0" cy="0" r="14" fill="#030712" stroke="#000000" stroke-width="3"/>
+                  <circle cx="0" cy="0" r="7" fill="#00f0ff" class="pulse-blow-core"/>
                   <!-- Lips Breath Waves -->
-                  <path class="breath-wave anim-b1" d="M -16 -40 Q -8 -16 0 -2" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b2" d="M 0 -45 Q 2 -20 0 -2" stroke="#00f0ff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b3" d="M 16 -40 Q 8 -16 0 -2" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                  <text x="0" y="32" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">BLOW (◎)</text>
+                  <path class="breath-wave anim-b1" d="M -14 -24 Q -7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b2" d="M 0 -28 Q 0 -10 0 0" stroke="#ccff00" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b3" d="M 14 -24 Q 7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                  <text x="0" y="32" font-size="10" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">BLOW HERE (◎)</text>
                 </g>
 
-                <!-- Left Hand Group Indicator -->
-                <path d="M 175 48 L 175 40 L 335 40 L 335 48" stroke="#38bdf8" stroke-width="1.6" fill="none"/>
-                <text x="255" y="32" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-display)">✋ LEFT HAND (Holes 1, 2, 3)</text>
+                <!-- LEFT HAND VISUAL: Wrist Turn Arc & Palm Facing You Indicator -->
+                <g transform="translate(290, 75)">
+                  <rect x="-85" y="-20" width="170" height="26" rx="6" fill="#0284c7" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-3" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">⟲ PALM FACES YOU</text>
+                  <path d="M -20 12 Q 0 20 20 12" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </g>
 
-                <!-- Right Hand Group Indicator -->
-                <path d="M 405 48 L 405 40 L 655 40 L 655 48" stroke="#c084fc" stroke-width="1.6" fill="none"/>
-                <text x="530" y="32" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">🤚 RIGHT HAND (Holes 4, 5, 6, 7)</text>
+                <!-- RIGHT HAND VISUAL: Straight Natural Reach Indicator -->
+                <g transform="translate(565, 75)">
+                  <rect x="-85" y="-20" width="170" height="26" rx="6" fill="#7c3aed" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-3" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">➔ PALM FACES FORWARD</text>
+                  <path d="M -18 12 L 18 12" stroke="#c084fc" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </g>
 
-                <!-- Animated Fingers Floating Over Holes -->
+                <!-- Left Hand Holes (1, 2, 3) -->
                 <!-- H1 -->
-                <g class="step-posture-node" transform="translate(195, 85)">
+                <g class="step-posture-node" transform="translate(280, 149)">
                   <g class="anim-floating-finger f-anim-1">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H1</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">L-Idx</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H1</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Idx</text>
                 </g>
                 <!-- H2 -->
-                <g class="step-posture-node" transform="translate(255, 85)">
+                <g class="step-posture-node" transform="translate(330, 149)">
                   <g class="anim-floating-finger f-anim-2">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H2</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">L-Mid</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H2</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Mid</text>
                 </g>
                 <!-- H3 -->
-                <g class="step-posture-node" transform="translate(315, 85)">
+                <g class="step-posture-node" transform="translate(380, 149)">
                   <g class="anim-floating-finger f-anim-3">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H3</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">L-Rng</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H3</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Rng</text>
                 </g>
 
+                <!-- Left Pinky Relaxed in Air -->
+                <g transform="translate(415, 115)" class="anim-floating-finger f-anim-1">
+                  <rect x="-6" y="-32" width="12" height="26" rx="6" fill="#fde68a" stroke="#000000" stroke-width="2"/>
+                  <text x="0" y="-38" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">💤 Pinky Up</text>
+                </g>
+
+                <!-- Right Hand Holes (4, 5, 6, 7) -->
                 <!-- H4 -->
-                <g class="step-posture-node" transform="translate(425, 85)">
+                <g class="step-posture-node" transform="translate(470, 149)">
                   <g class="anim-floating-finger f-anim-4">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H4</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">R-Idx</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Idx</text>
                 </g>
                 <!-- H5 -->
-                <g class="step-posture-node" transform="translate(485, 85)">
+                <g class="step-posture-node" transform="translate(520, 149)">
                   <g class="anim-floating-finger f-anim-5">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H5</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">R-Mid</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Mid</text>
                 </g>
                 <!-- H6 -->
-                <g class="step-posture-node" transform="translate(545, 85)">
+                <g class="step-posture-node" transform="translate(570, 149)">
                   <g class="anim-floating-finger f-anim-6">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H6</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">R-Rng</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Rng</text>
                 </g>
                 <!-- H7 -->
-                <g class="step-posture-node" transform="translate(605, 85)">
+                <g class="step-posture-node" transform="translate(620, 149)">
                   <g class="anim-floating-finger f-anim-7">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.4"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
-                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="rgba(255,255,255,0.3)" stroke-width="1.6"/>
-                  <text x="0" y="28" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H7</text>
-                  <text x="0" y="40" font-size="9" fill="#94a3b8" text-anchor="middle">R-Pnk</text>
+                  <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
+                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Pnk</text>
                 </g>
               </svg>
             </div>
-            <p class="focus-note">Blow air towards the blow hole (◎) and place fingers over the 7 holes.</p>
+            <p class="focus-note">Blow gently across the blow hole (◎) like blowing across the top of a bottle.</p>
           </div>
 
-          <!-- STEP 2: HOW TO HOLD SA & STARTUP GATE (ANIMATED) -->
+          <!-- STEP 2: WAKE UP WITH SA (FRIENDLY MAGIC STARTER KEY) -->
           <div class="learn-step-pane sa-hero-card" id="learnStepPane2" style="display: none;">
             <div class="step-pane-header">
               <span class="focus-badge highlight">STEP 2</span>
-              <h3 class="focus-title">How to Hold Sa — The Startup Gate</h3>
-              <p class="step-intro-text">Important rule: The flute will <strong>NOT start</strong> until you hold Sa! Cover Holes 1 & 2 to power on the instrument.</p>
+              <h3 class="focus-title">Wake Up the Flute with Sa</h3>
+              <p class="step-intro-text">The flute stays quiet and asleep until you play your first note! Think of it like turning on an ignition key:</p>
             </div>
 
-            <!-- Mandatory Activation Rule Box -->
-            <div class="sa-gate-notice-box">
-              <div class="gate-notice-icon">⚠️</div>
-              <div class="gate-notice-text">
-                <strong>FLUTE WON'T START WITHOUT HOLDING SA:</strong>
-                <span>To eliminate background noise, the AI acoustic engine waits in standby until you close <strong>Holes 1 & 2</strong> with your left index & middle finger. Once Sa is locked in, the entire flute activates!</span>
+            <!-- Friendly Magic Starter Key Card (No alarm signs!) -->
+            <div class="magic-starter-box">
+              <div class="starter-icon-badge">⚡</div>
+              <div class="starter-text">
+                <span class="starter-title">THE MAGIC STARTER KEY: 2 FINGERS DOWN</span>
+                <p class="starter-desc">Cover <strong>Holes 1 & 2</strong> with your left index and middle fingers. The moment you cover them, the flute wakes up, lights up in neon green, and starts playing the foundation note <strong>Sa</strong>!</p>
               </div>
             </div>
 
-            <!-- Animated Sa Holding Illustration -->
+            <!-- Animated Sa Awakening Stage -->
             <div class="step-illustration-container sa-stage-anim">
               <svg viewBox="0 0 740 180" class="sa-hero-svg" id="step2SaSvg">
-                <!-- Flute Body -->
-                <rect x="30" y="70" width="680" height="34" rx="17" fill="rgba(10, 15, 28, 0.95)" stroke="rgba(255, 255, 255, 0.2)" stroke-width="2"/>
-                <!-- Resonant Airflow Core (pulsing green on Sa) -->
-                <rect class="sa-glow-bore" x="40" y="78" width="660" height="18" rx="9" fill="#10b981" opacity="0.35"/>
+                <!-- Flute Body with Bold Brutalist Border -->
+                <rect x="30" y="70" width="680" height="34" rx="17" fill="#0c1324" stroke="#000000" stroke-width="3"/>
+                <!-- Resonant Airflow Core (pulsing neon electric lime on Sa) -->
+                <rect class="sa-glow-bore" x="40" y="78" width="660" height="18" rx="9" fill="#ccff00" opacity="0.35"/>
 
                 <!-- Blow Hole (◎) -->
                 <g transform="translate(85, 87)">
-                  <circle cx="0" cy="0" r="13" fill="#04060c" stroke="#38bdf8" stroke-width="2.5"/>
-                  <circle cx="0" cy="0" r="6" fill="#38bdf8" class="pulse-blow-core"/>
-                  <text x="0" y="30" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">LIPS (◎)</text>
+                  <circle cx="0" cy="0" r="14" fill="#04060c" stroke="#000000" stroke-width="3"/>
+                  <circle cx="0" cy="0" r="7" fill="#00f0ff" class="pulse-blow-core"/>
+                  <text x="0" y="32" font-size="10" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">LIPS (◎)</text>
                 </g>
 
                 <!-- 2 FINGERS DOWN (SA) BRACKET -->
-                <path d="M 185 36 L 185 28 L 265 28 L 265 36" stroke="#10b981" stroke-width="2" fill="none"/>
-                <text x="225" y="20" font-size="11" font-weight="800" fill="#10b981" text-anchor="middle">2 FINGERS (LEFT HAND) = SA</text>
+                <path d="M 185 36 L 185 28 L 265 28 L 265 36" stroke="#ccff00" stroke-width="2.5" fill="none"/>
+                <text x="225" y="20" font-size="11.5" font-weight="800" fill="#ccff00" text-anchor="middle" font-family="var(--font-display)">2 FINGERS DOWN = SA (AWAKE!)</text>
 
                 <!-- Hole 1 (Left Index: Animated Press Down) -->
                 <g class="sa-hole-press-group" transform="translate(195, 87)">
                   <g class="anim-sa-pressing-finger f1-press">
-                    <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                    <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    <rect x="-8" y="-48" width="16" height="38" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <!-- Expanding Acoustic Ripple -->
-                  <circle cx="0" cy="0" r="16" class="sa-shockwave" stroke="#10b981" stroke-width="2" fill="none"/>
-                  <circle cx="0" cy="0" r="11" fill="#10b981" stroke="#34d399" stroke-width="2.5"/>
-                  <text x="0" y="4" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">1</text>
-                  <text x="0" y="30" font-size="10" font-weight="bold" fill="#34d399" text-anchor="middle" font-family="var(--font-mono)">CLOSED</text>
+                  <circle cx="0" cy="0" r="16" class="sa-shockwave" stroke="#ccff00" stroke-width="2" fill="none"/>
+                  <circle cx="0" cy="0" r="11" fill="#ccff00" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="4" font-size="11" font-weight="800" fill="#000000" text-anchor="middle">1</text>
+                  <text x="0" y="30" font-size="10" font-weight="800" fill="#ccff00" text-anchor="middle" font-family="var(--font-mono)">CLOSED</text>
                 </g>
 
                 <!-- Hole 2 (Left Middle: Animated Press Down) -->
                 <g class="sa-hole-press-group" transform="translate(255, 87)">
                   <g class="anim-sa-pressing-finger f2-press">
-                    <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                    <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                    <rect x="-8" y="-48" width="16" height="38" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <!-- Expanding Acoustic Ripple -->
-                  <circle cx="0" cy="0" r="16" class="sa-shockwave delay-1" stroke="#10b981" stroke-width="2" fill="none"/>
-                  <circle cx="0" cy="0" r="11" fill="#10b981" stroke="#34d399" stroke-width="2.5"/>
-                  <text x="0" y="4" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">2</text>
-                  <text x="0" y="30" font-size="10" font-weight="bold" fill="#34d399" text-anchor="middle" font-family="var(--font-mono)">CLOSED</text>
+                  <circle cx="0" cy="0" r="16" class="sa-shockwave delay-1" stroke="#ccff00" stroke-width="2" fill="none"/>
+                  <circle cx="0" cy="0" r="11" fill="#ccff00" stroke="#000000" stroke-width="2.5"/>
+                  <text x="0" y="4" font-size="11" font-weight="800" fill="#000000" text-anchor="middle">2</text>
+                  <text x="0" y="30" font-size="10" font-weight="800" fill="#ccff00" text-anchor="middle" font-family="var(--font-mono)">CLOSED</text>
                 </g>
 
                 <!-- Holes 3 to 7: All OPEN -->
-                <g transform="translate(315, 87)">
-                  <circle cx="0" cy="0" r="10" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="9" fill="#94a3b8" text-anchor="middle">3</text>
-                  <text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text>
-                </g>
-                <g transform="translate(425, 87)">
-                  <circle cx="0" cy="0" r="10" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="9" fill="#94a3b8" text-anchor="middle">4</text>
-                  <text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text>
-                </g>
-                <g transform="translate(485, 87)">
-                  <circle cx="0" cy="0" r="10" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="9" fill="#94a3b8" text-anchor="middle">5</text>
-                  <text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text>
-                </g>
-                <g transform="translate(545, 87)">
-                  <circle cx="0" cy="0" r="10" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="9" fill="#94a3b8" text-anchor="middle">6</text>
-                  <text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text>
-                </g>
-                <g transform="translate(605, 87)">
-                  <circle cx="0" cy="0" r="10" fill="rgba(15,23,42,0.6)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="9" fill="#94a3b8" text-anchor="middle">7</text>
-                  <text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text>
-                </g>
+                <g transform="translate(315, 87)"><circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2"/><text x="0" y="4" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">3</text><text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text></g>
+                <g transform="translate(425, 87)"><circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2"/><text x="0" y="4" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">4</text><text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text></g>
+                <g transform="translate(485, 87)"><circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2"/><text x="0" y="4" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">5</text><text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text></g>
+                <g transform="translate(545, 87)"><circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2"/><text x="0" y="4" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">6</text><text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text></g>
+                <g transform="translate(605, 87)"><circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2"/><text x="0" y="4" font-size="9" font-weight="700" fill="#94a3b8" text-anchor="middle">7</text><text x="0" y="28" font-size="9" fill="#64748b" text-anchor="middle">open</text></g>
+
+                <!-- Floating Musical Notes -->
+                <text x="210" y="45" font-size="14" fill="#ccff00" class="anim-float-note n1">♪</text>
+                <text x="270" y="42" font-size="16" fill="#00f0ff" class="anim-float-note n2">♫</text>
 
                 <!-- Unlocked Status Pill -->
-                <g class="sa-unlocked-banner" transform="translate(515, 30)">
-                  <rect x="-85" y="-12" width="170" height="24" rx="12" fill="#10b981" stroke="#34d399" stroke-width="1.5"/>
-                  <text x="0" y="4" font-size="10" font-weight="800" fill="#022c22" text-anchor="middle">🟢 FLUTE UNLOCKED</text>
+                <g class="sa-unlocked-banner" transform="translate(520, 30)">
+                  <rect x="-95" y="-14" width="190" height="28" rx="6" fill="#ccff00" stroke="#000000" stroke-width="2"/>
+                  <text x="0" y="5" font-size="10.5" font-weight="800" fill="#000000" text-anchor="middle" font-family="var(--font-display)">⚡ FLUTE IS AWAKE & READY!</text>
                 </g>
               </svg>
             </div>
-            <p class="focus-note">Cover <strong>Holes 1 & 2</strong> with your left index & middle finger to immediately sound the fundamental note <strong>Sa (C4)</strong> and activate the flute!</p>
+            <p class="focus-note">Cover <strong>Holes 1 & 2</strong> with your left index & middle finger to immediately wake up the instrument!</p>
           </div>
 
-          <!-- STEP 3: HOW TO PLAY SA RI GA MA PA DA NI (ANIMATED - MA ALL CLOSED) -->
+          <!-- STEP 3: HOW TO PLAY ALL 7 NOTES (ANIMATED - MA ALL 7 CLOSED) -->
           <div class="learn-step-pane" id="learnStepPane3" style="display: none;">
-            <div class="learn-animated-scale-section">
+            <div class="learn-animated-scale-section learn-notes-chart-section">
               <div class="anim-scale-header">
                 <div class="anim-header-left">
                   <span class="focus-badge highlight">STEP 3</span>
-                  <h3 class="anim-title">How to Play Sa, Ri, Ga, Ma, Pa, Da, Ni</h3>
+                  <h3 class="anim-title">How to Play All 7 Notes</h3>
                   <p class="step-intro-text">Click any note to see fingering & hear its tone, or let it auto-play.</p>
                 </div>
                 <div class="anim-header-actions">
                   <button type="button" id="scaleAnimAutoBtn" class="btn-anim-toggle active" title="Automatically step through all 7 notes">
-                  <span class="anim-play-icon">⏸</span> <span class="anim-toggle-text">Pause Animation</span>
+                    <span class="anim-play-icon">⏸</span> <span class="anim-toggle-text">Pause Animation</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 7 Swara Selector Tabs (with Ma naturally shown as all 7 closed) -->
+              <div class="scale-swara-tabs" id="scaleSwaraTabs">
+                <button type="button" class="swara-tab active" data-swara="sa" data-note="C4" data-color="#38bdf8">
+                  <span class="tab-swara">Sa</span>
+                  <span class="tab-note">C4</span>
+                  <span class="tab-fingers">2 fingers</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="ri" data-note="D4" data-color="#2dd4bf">
+                  <span class="tab-swara">Ri</span>
+                  <span class="tab-note">D4</span>
+                  <span class="tab-fingers">1 finger</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="ga" data-note="E4" data-color="#4ade80">
+                  <span class="tab-swara">Ga</span>
+                  <span class="tab-note">E4</span>
+                  <span class="tab-fingers">All open</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="ma" data-note="F4" data-color="#facc15">
+                  <span class="tab-swara">Ma</span>
+                  <span class="tab-note">F4</span>
+                  <span class="tab-fingers">All 7 closed</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="pa" data-note="G4" data-color="#fb923c">
+                  <span class="tab-swara">Pa</span>
+                  <span class="tab-note">G4</span>
+                  <span class="tab-fingers">5 fingers</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="dha" data-note="A4" data-color="#f43f5e">
+                  <span class="tab-swara">Da</span>
+                  <span class="tab-note">A4</span>
+                  <span class="tab-fingers">4 fingers</span>
+                </button>
+                <button type="button" class="swara-tab" data-swara="ni" data-note="B4" data-color="#c084fc">
+                  <span class="tab-swara">Ni</span>
+                  <span class="tab-note">B4</span>
+                  <span class="tab-fingers">3 fingers</span>
                 </button>
               </div>
-            </div>
-
-            <!-- Crucial User Design Callout for Ma -->
-            <div class="ma-closed-callout-pill">
-              <span class="ma-pill-icon">✨</span>
-              <span class="ma-pill-text"><strong>Carnatic Venu Design Note:</strong> In this flute, <strong>MA (F4) is played with ALL 7 FINGERS CLOSED</strong> (Holes 1 to 7 all covered).</span>
-            </div>
-
-            <!-- 7 Swara Selector Tabs (with updated fingers badge for Ma) -->
-            <div class="scale-swara-tabs" id="scaleSwaraTabs">
-              <button type="button" class="swara-tab active" data-swara="sa" data-note="C4" data-color="#38bdf8">
-                <span class="tab-swara">Sa</span>
-                <span class="tab-note">C4</span>
-                <span class="tab-fingers">2 fingers</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="ri" data-note="D4" data-color="#2dd4bf">
-                <span class="tab-swara">Ri</span>
-                <span class="tab-note">D4</span>
-                <span class="tab-fingers">1 finger</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="ga" data-note="E4" data-color="#4ade80">
-                <span class="tab-swara">Ga</span>
-                <span class="tab-note">E4</span>
-                <span class="tab-fingers">All open</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="ma" data-note="F4" data-color="#facc15">
-                <span class="tab-swara">Ma</span>
-                <span class="tab-note">F4</span>
-                <span class="tab-fingers">All 7 closed</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="pa" data-note="G4" data-color="#fb923c">
-                <span class="tab-swara">Pa</span>
-                <span class="tab-note">G4</span>
-                <span class="tab-fingers">5 fingers</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="dha" data-note="A4" data-color="#f43f5e">
-                <span class="tab-swara">Da</span>
-                <span class="tab-note">A4</span>
-                <span class="tab-fingers">4 fingers</span>
-              </button>
-              <button type="button" class="swara-tab" data-swara="ni" data-note="B4" data-color="#c084fc">
-                <span class="tab-swara">Ni</span>
-                <span class="tab-note">B4</span>
-                <span class="tab-fingers">3 fingers</span>
-              </button>
-            </div>
 
             <!-- Animated Flute Stage with Finger Press Action -->
             <div class="scale-flute-stage" id="scaleFluteStage">
@@ -842,7 +828,7 @@
                     <td class="note-instruction">Left hand all 3 + Right index & middle (5 closed)</td>
                   </tr>
                   <tr>
-                    <td class="swara-name"><span class="swara-badge dha-badge">Da</span></td>
+                    <td class="swara-name"><span class="swara-badge dha-badge">Dha</span></td>
                     <td class="note-key">A4</td>
                     <td><span class="hole-dot closed">●</span></td>
                     <td><span class="hole-dot closed">●</span></td>
@@ -872,99 +858,167 @@
         </div>
 
         <!-- STEP 4: HEAD TILT CONCEPT ANIMATED -->
-          <div class="learn-step-pane head-tilt-card" id="learnStepPane4" style="display: none;">
-            <div class="step-pane-header">
-              <span class="focus-badge highlight">STEP 4</span>
-              <h3 class="focus-title">Head Tilt Concept — Spatial Octaves</h3>
-              <p class="step-intro-text">Seamlessly shift octaves in real time just by tilting your chin up or down in the camera sightline—no buttons or finger changes needed!</p>
+        <div class="learn-step-pane head-tilt-card" id="learnStepPane4" style="display: none;">
+          <div class="step-pane-header">
+            <span class="focus-badge highlight">STEP 4</span>
+            <h3 class="focus-title">Head Tilt Magic — Change Octaves</h3>
+            <p class="step-intro-text">Change registers in real time just by tilting your chin up or down in front of the camera—no buttons or finger changes needed!</p>
+          </div>
+
+          <!-- Animated Head Tilt Character Profile Stage -->
+          <div class="step-illustration-container head-tilt-anim-container">
+            <svg viewBox="0 0 760 210" class="head-tilt-profile-svg auto-demo" id="animatedHeadTiltSvg">
+              <defs>
+                <linearGradient id="beamTaraGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#ff5500" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="beamMadhyaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00ff88" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="beamMandraGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Floor Reference Line -->
+              <line x1="40" y1="195" x2="720" y2="195" stroke="#1e293b" stroke-width="2" stroke-dasharray="6,6"/>
+
+              <!-- Tilting Head & Flute Group (Pivots at neck 160, 140) -->
+              <g id="avatarHeadProfile" class="avatar-tilt-head" transform="translate(0, 0)">
+                <!-- Torso Base -->
+                <path d="M 90 210 C 90 170 120 150 160 145 C 200 150 230 170 230 210 Z" fill="#0b1329" stroke="#000000" stroke-width="3"/>
+                
+                <!-- Neck & Tilting Head Profile -->
+                <g class="head-rotator" id="headRotatorNode">
+                  <!-- Head Contour (Profile looking right) -->
+                  <path d="M 135 140 C 120 120 125 75 160 65 C 195 55 215 80 215 105 L 210 118 L 220 122 L 205 132 L 212 142 C 190 155 160 155 135 140 Z" fill="#1e293b" stroke="#000000" stroke-width="3"/>
+                  <!-- Eye -->
+                  <circle cx="190" cy="98" r="4" fill="#00f0ff"/>
+                  <circle cx="191" cy="97" r="1.5" fill="#ffffff"/>
+                  <!-- Ear / Headphones -->
+                  <rect x="145" y="95" width="16" height="30" rx="8" fill="#38bdf8" stroke="#000000" stroke-width="2"/>
+
+                  <!-- Flute Held at Lips Extending Right -->
+                  <rect x="195" y="120" width="220" height="18" rx="9" fill="#0b1120" stroke="#000000" stroke-width="2.5"/>
+                  <line x1="205" y1="129" x2="405" y2="129" stroke="#00f0ff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+                  <!-- Mouth Blow Hole -->
+                  <circle cx="210" cy="129" r="6" fill="#38bdf8" stroke="#000000" stroke-width="2"/>
+
+                  <!-- Sound Wave Beam Radiating from Flute Exit (x=415, y=129) -->
+                  <g class="sound-beam-emitter" id="soundBeamEmitter">
+                    <!-- Tara High Beam (+15° Up) -->
+                    <g class="beam-group beam-tara-group" id="beamTaraG">
+                      <polygon points="415,129 680,60 680,110" fill="url(#beamTaraGrad)" opacity="0.6"/>
+                      <path d="M 425 125 Q 445 105 465 120 T 505 110 T 545 100 T 585 90 T 625 80 T 665 70" fill="none" stroke="#ff5500" stroke-width="3" stroke-linecap="round" class="anim-wave-beam"/>
+                      <text x="690" y="85" font-size="11" font-weight="800" fill="#ff5500" font-family="var(--font-display)">▲ HIGH (TARA)</text>
+                    </g>
+                    <!-- Madhya Mid Beam (0° Level) -->
+                    <g class="beam-group beam-madhya-group" id="beamMadhyaG">
+                      <polygon points="415,129 680,105 680,155" fill="url(#beamMadhyaGrad)" opacity="0.5"/>
+                      <path d="M 425 129 Q 450 115 475 129 T 525 129 T 575 129 T 625 129 T 675 129" fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round" class="anim-wave-beam"/>
+                      <text x="690" y="133" font-size="11" font-weight="800" fill="#00ff88" font-family="var(--font-display)">◆ MID (MADHYA)</text>
+                    </g>
+                    <!-- Mandra Bass Beam (-15° Down) -->
+                    <g class="beam-group beam-mandra-group" id="beamMandraG">
+                      <polygon points="415,129 680,150 680,200" fill="url(#beamMandraGrad)" opacity="0.5"/>
+                      <path d="M 425 133 Q 460 160 495 133 T 565 133 T 635 133 T 705 133" fill="none" stroke="#00f0ff" stroke-width="3.5" stroke-linecap="round" class="anim-wave-beam"/>
+                      <text x="690" y="175" font-size="11" font-weight="800" fill="#00f0ff" font-family="var(--font-display)">▼ BASS (MANDRA)</text>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+
+          <!-- 3 Octave Zones Digital Brutalist Grid -->
+          <div class="octave-zones-grid">
+            <!-- Tara (High) -->
+            <div class="octave-zone-card zone-tara" id="simZoneTara">
+              <div class="zone-badge">▲ HIGH REGISTER</div>
+              <div class="zone-angle-tag">+15° Chin Up</div>
+              <h4 class="zone-name">Tara (High)</h4>
+              <div class="zone-anim-circle">
+                <div class="head-icon chin-up">▲</div>
+                <div class="acoustic-beam beam-tara"></div>
+              </div>
+              <p class="zone-desc">Tilt chin up to overblow into the high octave. Bright, piercing melodies!</p>
+              <span class="zone-color-pill pill-tara">Sunset Orange (#ff5500)</span>
             </div>
 
-            <!-- 3 Octave Zones Interactive Strip -->
-            <div class="octave-zones-grid">
-              <!-- Tara (High) -->
-              <div class="octave-zone-card zone-tara" id="simZoneTara">
-                <div class="zone-badge">▲ HIGH REGISTER</div>
-                <div class="zone-angle-tag">+15° Chin Up</div>
-                <h4 class="zone-name">Tara Sthayi</h4>
-                <div class="zone-anim-circle">
-                  <div class="head-icon chin-up">▲</div>
-                  <div class="acoustic-beam beam-tara"></div>
-                </div>
-                <p class="zone-desc">Tilt chin up to overblow into the high octave. Produces tight, bright, piercing sound waves.</p>
-                <span class="zone-color-pill pill-tara">Coral Orange (#f97316)</span>
+            <!-- Madhya (Mid) -->
+            <div class="octave-zone-card zone-madhya active" id="simZoneMadhya">
+              <div class="zone-badge">◆ DEFAULT REGISTER</div>
+              <div class="zone-angle-tag">0° Level Head</div>
+              <h4 class="zone-name">Madhya (Normal)</h4>
+              <div class="zone-anim-circle">
+                <div class="head-icon chin-level">◆</div>
+                <div class="acoustic-beam beam-madhya"></div>
               </div>
-
-              <!-- Madhya (Mid) -->
-              <div class="octave-zone-card zone-madhya active" id="simZoneMadhya">
-                <div class="zone-badge">◆ DEFAULT REGISTER</div>
-                <div class="zone-angle-tag">0° Level Head</div>
-                <h4 class="zone-name">Madhya Sthayi</h4>
-                <div class="zone-anim-circle">
-                  <div class="head-icon chin-level">◆</div>
-                  <div class="acoustic-beam beam-madhya"></div>
-                </div>
-                <p class="zone-desc">Keep chin level looking forward. Produces rich, balanced fundamental woodwind melodies.</p>
-                <span class="zone-color-pill pill-madhya">Emerald Teal (#10b981)</span>
-              </div>
-
-              <!-- Mandra (Bass) -->
-              <div class="octave-zone-card zone-mandra" id="simZoneMandra">
-                <div class="zone-badge">▼ BASS REGISTER</div>
-                <div class="zone-angle-tag">-15° Chin Down</div>
-                <h4 class="zone-name">Mandra Sthayi</h4>
-                <div class="zone-anim-circle">
-                  <div class="head-icon chin-down">▼</div>
-                  <div class="acoustic-beam beam-mandra"></div>
-                </div>
-                <p class="zone-desc">Tilt chin downward towards chest. Produces deep resonant bass vibrations with long wavelengths.</p>
-                <span class="zone-color-pill pill-mandra">Royal Blue (#3b82f6)</span>
-              </div>
+              <p class="zone-desc">Look straight forward. Balanced, sweet natural flute tones.</p>
+              <span class="zone-color-pill pill-madhya">Mint Green (#00ff88)</span>
             </div>
 
-            <!-- Interactive Head Tilt Demonstration Stage -->
-            <div class="tilt-interactive-stage">
-              <div class="tilt-stage-header">
-                <span class="tilt-stage-title">Interactive Octave Simulation</span>
-                <span class="tilt-stage-hint">Click below to test each head posture:</span>
+            <!-- Mandra (Bass) -->
+            <div class="octave-zone-card zone-mandra" id="simZoneMandra">
+              <div class="zone-badge">▼ BASS REGISTER</div>
+              <div class="zone-angle-tag">-15° Chin Down</div>
+              <h4 class="zone-name">Mandra (Bass)</h4>
+              <div class="zone-anim-circle">
+                <div class="head-icon chin-down">▼</div>
+                <div class="acoustic-beam beam-mandra"></div>
               </div>
-              <div class="tilt-controls-row">
-                <button type="button" class="btn-tilt-sim" id="btnSimTara" data-octave="1">
-                  ▲ Test Chin Up (High Tara)
-                </button>
-                <button type="button" class="btn-tilt-sim active" id="btnSimMadhya" data-octave="0">
-                  ◆ Test Level Head (Mid Madhya)
-                </button>
-                <button type="button" class="btn-tilt-sim" id="btnSimMandra" data-octave="-1">
-                  ▼ Test Chin Down (Bass Mandra)
-                </button>
-              </div>
-              <div class="tilt-live-feedback" id="tiltLiveFeedback">
-                Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA STHAYI (0) • Balanced Fundamental Pitch</span>
-              </div>
+              <p class="zone-desc">Tilt chin slightly down towards your chest. Deep, warm resonant bass!</p>
+              <span class="zone-color-pill pill-mandra">Electric Blue (#00f0ff)</span>
             </div>
           </div>
-        </div>
 
-        <!-- Wizard Navigation Actions -->
-        <div class="learn-modal-actions learn-wizard-nav">
-          <button id="learnStepBackBtn" class="btn btn-step-back" type="button" style="display: none;">
-            ← Back
-          </button>
-          <div class="step-dots-indicator" id="stepDotsIndicator">
-            <span class="step-dot active" data-step="1" title="Step 1: Hold Flute"></span>
-            <span class="step-dot" data-step="2" title="Step 2: Unlock with Sa"></span>
-            <span class="step-dot" data-step="3" title="Step 3: 7 Swaras (Ma Closed)"></span>
-            <span class="step-dot" data-step="4" title="Step 4: Head Tilt Octaves"></span>
+          <!-- Interactive Head Tilt Demonstration Stage -->
+          <div class="tilt-interactive-stage">
+            <div class="tilt-stage-header">
+              <span class="tilt-stage-title">Test Head Tilt Postures:</span>
+              <span class="tilt-stage-hint">Click a button to tilt the character and hear the tone:</span>
+            </div>
+            <div class="tilt-controls-row">
+              <button type="button" class="btn-tilt-sim" id="btnSimTara" data-octave="1">
+                ▲ Test Chin Up (High)
+              </button>
+              <button type="button" class="btn-tilt-sim active" id="btnSimMadhya" data-octave="0">
+                ◆ Test Level Head (Mid)
+              </button>
+              <button type="button" class="btn-tilt-sim" id="btnSimMandra" data-octave="-1">
+                ▼ Test Chin Down (Bass)
+              </button>
+            </div>
+            <div class="tilt-live-feedback" id="tiltLiveFeedback">
+              Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA (0) • Normal Balanced Register</span>
+            </div>
           </div>
-          <button id="learnStepNextBtn" class="btn btn-step-next" type="button">
-            Next: Hold Sa to Start ➔
-          </button>
-          <button id="learnModalStartBtn" class="btn btn-primary btn-learn-cta" type="button" style="display: none;">
-            Got it, Let's Play! 🪈
-          </button>
         </div>
       </div>
+
+      <!-- Wizard Navigation Actions (Digital Brutalist) -->
+      <div class="learn-modal-actions learn-wizard-nav">
+        <button id="learnStepBackBtn" class="btn btn-step-back" type="button" style="display: none;">
+          ← Back
+        </button>
+        <div class="step-dots-indicator" id="stepDotsIndicator">
+          <span class="step-dot active" data-step="1" title="Step 1: Hold Flute"></span>
+          <span class="step-dot" data-step="2" title="Step 2: Wake with Sa"></span>
+          <span class="step-dot" data-step="3" title="Step 3: Play 7 Notes"></span>
+          <span class="step-dot" data-step="4" title="Step 4: Head Tilt Magic"></span>
+        </div>
+        <button id="learnStepNextBtn" class="btn btn-step-next" type="button">
+          Next: Wake with Sa ➔
+        </button>
+        <button id="learnModalStartBtn" class="btn btn-primary btn-learn-cta" type="button" style="display: none;">
+          Got it, Let's Play! 🪈
+        </button>
+      </div>
     </div>
+  </div>
 
   <!-- Isolated FaceMesh Worker Iframe (prevents Emscripten WASM allocator collision) -->
   <iframe id="facemeshWorker" src="facemesh-worker.html" style="display:none;width:0;height:0;border:none;" aria-hidden="true"></iframe>

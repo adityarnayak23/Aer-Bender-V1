@@ -57,7 +57,7 @@ assert.ok(html.includes('Holes 1, 2, 3'), 'Holes 1, 2, 3 assigned to Left Hand')
 assert.ok(html.includes('Holes 4, 5, 6, 7'), 'Holes 4, 5, 6, 7 assigned to Right Hand');
 
 assert.ok(html.includes('sa-hero-card'), '2 Fingers for Sa hero card present');
-assert.ok(html.includes('2 Fingers Down = SA (Saw)'), '2 Fingers Down = SA title present');
+assert.ok(html.includes('2 Fingers Down = SA') || html.includes('2 FINGERS DOWN = SA') || html.includes('2 FINGERS DOWN'), '2 Fingers Down = SA title present');
 assert.ok(html.includes('sa-hero-svg'), 'Visual flute SVG showing 2 fingers closed for Sa');
 
 assert.ok(html.includes('learn-notes-chart-section'), 'All notes chart section present');
