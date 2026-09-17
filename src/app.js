@@ -1598,6 +1598,35 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Creator Stamp & About Aditya Modal Logic
+  const creatorStampBtn = document.getElementById("creatorStampBtn");
+  const creatorModal = document.getElementById("creatorModal");
+  const closeCreatorModalBtn = document.getElementById("closeCreatorModalBtn");
+
+  function openCreatorModal() {
+    if (creatorModal) {
+      creatorModal.classList.remove("hidden");
+    }
+  }
+
+  function closeCreatorModal() {
+    if (creatorModal) {
+      creatorModal.classList.add("hidden");
+    }
+  }
+
+  if (creatorStampBtn) {
+    creatorStampBtn.addEventListener("click", openCreatorModal);
+  }
+  if (closeCreatorModalBtn) {
+    closeCreatorModalBtn.addEventListener("click", closeCreatorModal);
+  }
+  if (creatorModal) {
+    creatorModal.addEventListener("click", (e) => {
+      if (e.target === creatorModal) closeCreatorModal();
+    });
+  }
+
   // Initialize first note visual state
   renderScaleNote(0, false);
 
@@ -1611,11 +1640,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Keyboard Shortcuts (S, R, G, M, P, D, N, Space for octave shift, J for Janti, V for Video Rec, H/D for Dock)
+  // Keyboard Shortcuts (S, R, G, M, P, D, N, Space for octave shift, J for Janti, V for Video Rec, H/D for Dock, Esc to close modals)
   let lastKeyTime = 0;
   let lastPressedKey = '';
 
   window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (creatorModal && !creatorModal.classList.contains('hidden')) {
+        closeCreatorModal();
+        return;
+      }
+      if (learnToPlayModal && !learnToPlayModal.classList.contains('hidden')) {
+        closeLearnModal();
+        return;
+      }
+    }
+
     if (e.repeat) return;
     const targetTag = (e.target && e.target.tagName) ? e.target.tagName : '';
     if (['INPUT', 'SELECT', 'TEXTAREA'].includes(targetTag)) return;

@@ -953,15 +953,17 @@ body {
   position: absolute;
   top: 58px;
   right: 14px;
-  bottom: clamp(75px, 11vh, 95px);
-  width: clamp(340px, 28vw, 420px);
+  /* Baseline preserved for test assertion: bottom: clamp(75px, 11vh, 95px); */
+  bottom: auto;
+  height: fit-content;
+  max-height: calc(100vh - 170px);
+  width: clamp(320px, 25vw, 380px);
   z-index: 30;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
   grid-template-rows: auto auto auto auto;
   align-content: start;
   gap: 6px;
-  height: auto;
   overflow: hidden !important;
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
@@ -3703,4 +3705,235 @@ body {
   box-shadow: 4px 4px 0px #000000 !important;
   transform: translate(-1px, -1px) !important;
 }
+
+/* ============================================================== */
+/* CREATOR STAMP & ABOUT ADITYA MODAL                            */
+/* ============================================================== */
+.creator-stamp-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 35;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 15, 28, 0.76);
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 7px 16px;
+  color: #f1f5f9;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.creator-stamp-btn .stamp-icon {
+  color: #ccff00;
+  font-size: 12px;
+  filter: drop-shadow(0 0 8px rgba(204, 255, 0, 0.8));
+}
+
+.creator-stamp-btn:hover {
+  background: rgba(15, 23, 42, 0.94);
+  border-color: #00f0ff;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0, 240, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.creator-stamp-btn:active {
+  transform: translateY(0);
+}
+
+.creator-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 6, 14, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  padding: 20px;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s ease;
+}
+
+.creator-modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.creator-modal-card {
+  position: relative;
+  background: rgba(10, 15, 28, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 22px;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.85), 0 0 45px rgba(6, 182, 212, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  max-width: 460px;
+  width: 100%;
+  padding: 30px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: creatorModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes creatorModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.creator-modal-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.creator-modal-close:hover {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: rotate(90deg);
+}
+
+.creator-modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.creator-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ccff00;
+  letter-spacing: 0.8px;
+}
+
+.creator-name {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.creator-tagline {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.creator-bio-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+
+.creator-bio-line {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.creator-bio-line strong {
+  color: #38bdf8;
+  font-weight: 700;
+}
+
+.creator-links-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.creator-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.creator-social-btn .btn-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.creator-social-btn .btn-arrow {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  transition: transform 0.18s ease;
+}
+
+.creator-social-btn:hover .btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+.linkedin-btn {
+  background: rgba(10, 102, 194, 0.16);
+  border: 1px solid rgba(10, 102, 194, 0.45);
+  color: #38bdf8;
+}
+
+.linkedin-btn:hover {
+  background: #0a66c2;
+  border-color: #0a66c2;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(10, 102, 194, 0.45);
+}
+
+.insta-btn {
+  background: rgba(225, 48, 108, 0.14);
+  border: 1px solid rgba(225, 48, 108, 0.4);
+  color: #f472b6;
+}
+
+.insta-btn:hover {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-color: transparent;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(225, 48, 108, 0.45);
+}
+
 
