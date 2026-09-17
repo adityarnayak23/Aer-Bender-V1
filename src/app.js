@@ -1099,6 +1099,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const headerLearnBtn = document.getElementById("headerLearnBtn");
   const closeLearnModalBtn = document.getElementById("closeLearnModalBtn");
   const learnModalStartBtn = document.getElementById("learnModalStartBtn");
+  const learnStepNextBtn = document.getElementById("learnStepNextBtn");
+  const learnStepBackBtn = document.getElementById("learnStepBackBtn");
+  const learnModalSubtitle = document.getElementById("learnModalSubtitle");
+  const stepDotsIndicator = document.getElementById("stepDotsIndicator");
+  const learnStepTabs = document.getElementById("learnStepTabs");
+
+  // Step 4 Simulation Elements
+  const btnSimTara = document.getElementById("btnSimTara");
+  const btnSimMadhya = document.getElementById("btnSimMadhya");
+  const btnSimMandra = document.getElementById("btnSimMandra");
+  const tiltZoneLabel = document.getElementById("tiltZoneLabel");
+  const simZoneTara = document.getElementById("simZoneTara");
+  const simZoneMadhya = document.getElementById("simZoneMadhya");
+  const simZoneMandra = document.getElementById("simZoneMandra");
 
   const scaleSwaraTabsContainer = document.getElementById("scaleSwaraTabs");
   const scaleAnimAutoBtn = document.getElementById("scaleAnimAutoBtn");
@@ -1138,9 +1152,9 @@ document.addEventListener('DOMContentLoaded', () => {
       swaraId: "ma1",
       title: "MA (F4)",
       note: "F4",
-      holes: [false, true, true, true, true, true, true],
+      holes: [true, true, true, true, true, true, true],
       color: "#facc15",
-      desc: "Close Holes 2 to 7 (Left Hand Middle & Ring + Right Hand all 4 fingers closed)."
+      desc: "All 7 fingers closed! Cover all holes with Left Hand (1-3) & Right Hand (4-7) for Ma."
     },
     {
       swaraKey: "pa",
@@ -1154,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       swaraKey: "dha",
       swaraId: "dha2",
-      title: "DHA (A4)",
+      title: "DA / DHA (A4)",
       note: "A4",
       holes: [true, true, true, true, false, false, false],
       color: "#f43f5e",
@@ -1308,11 +1322,184 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ==============================================================
+  // 4-STEP WIZARD CONTROLLER FOR LEARN TO PLAY MODAL
+  // ==============================================================
+  let currentLearnStep = 1;
+  const STEP_CONFIGS = [
+    { step: 1, subtitle: "Step 1 of 4 • Hand Posture & Finger Placement", nextLabel: "Next: Hold Sa to Start ➔" },
+    { step: 2, subtitle: "Step 2 of 4 • How to Hold Sa (Mandatory to Start)", nextLabel: "Next: 7 Swaras (Ma Closed) ➔" },
+    { step: 3, subtitle: "Step 3 of 4 • Play All 7 Swaras (Ma is All Closed)", nextLabel: "Next: Head Tilt Octaves ➔" },
+    { step: 4, subtitle: "Step 4 of 4 • Spatial Head Tilt (Tara, Madhya, Mandra)", nextLabel: null }
+  ];
+
+  function showLearnStep(step) {
+    const targetStep = Math.max(1, Math.min(4, step));
+    currentLearnStep = targetStep;
+
+    // 1. Toggle Step Panes
+    for (let s = 1; s <= 4; s++) {
+      const pane = document.getElementById(`learnStepPane${s}`);
+      if (pane) {
+        if (s === targetStep) {
+          pane.style.display = 'block';
+          pane.classList.add('active');
+        } else {
+          pane.style.display = 'none';
+          pane.classList.remove('active');
+        }
+      }
+    }
+
+    // 2. Update Header Subtitle
+    if (learnModalSubtitle && STEP_CONFIGS[targetStep - 1]) {
+      learnModalSubtitle.textContent = STEP_CONFIGS[targetStep - 1].subtitle;
+    }
+
+    // 3. Update Progress Tabs
+    if (learnStepTabs) {
+      const tabBtns = learnStepTabs.querySelectorAll('.step-tab-btn');
+      tabBtns.forEach(btn => {
+        const bStep = parseInt(btn.dataset.step, 10);
+        btn.classList.toggle('active', bStep === targetStep);
+      });
+    }
+
+    // 4. Update Progress Dots
+    if (stepDotsIndicator) {
+      const dots = stepDotsIndicator.querySelectorAll('.step-dot');
+      dots.forEach(dot => {
+        const dStep = parseInt(dot.dataset.step, 10);
+        dot.classList.toggle('active', dStep === targetStep);
+      });
+    }
+
+    // 5. Update Navigation Buttons
+    if (learnStepBackBtn) {
+      learnStepBackBtn.style.display = (targetStep === 1) ? 'none' : 'inline-flex';
+    }
+
+    if (targetStep < 4) {
+      if (learnStepNextBtn) {
+        learnStepNextBtn.style.display = 'inline-flex';
+        learnStepNextBtn.textContent = STEP_CONFIGS[targetStep - 1].nextLabel;
+      }
+      if (learnModalStartBtn) {
+        learnModalStartBtn.style.display = 'none';
+      }
+    } else {
+      if (learnStepNextBtn) {
+        learnStepNextBtn.style.display = 'none';
+      }
+      if (learnModalStartBtn) {
+        learnModalStartBtn.style.display = 'inline-flex';
+        learnModalStartBtn.textContent = "Got it, Let's Play! 🪈";
+      }
+    }
+
+    // 6. Handle Animations / Audio state per step
+    if (targetStep === 3) {
+      renderScaleNote(currentScaleIndex, false);
+      startScaleAnimation();
+    } else {
+      stopScaleAnimation();
+    }
+  }
+
+  // Navigation Button Listeners
+  if (learnStepNextBtn) {
+    learnStepNextBtn.addEventListener("click", () => {
+      audio.resume();
+      showLearnStep(currentLearnStep + 1);
+    });
+  }
+
+  if (learnStepBackBtn) {
+    learnStepBackBtn.addEventListener("click", () => {
+      audio.resume();
+      showLearnStep(currentLearnStep - 1);
+    });
+  }
+
+  // Tab & Dot Clicks - user can review previous steps, but forward progression requires clicking 'Next'
+  if (learnStepTabs) {
+    const tabBtns = learnStepTabs.querySelectorAll('.step-tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        audio.resume();
+        const step = parseInt(btn.dataset.step, 10);
+        // Only allow clicking to current or previous steps (cannot skip forward without pressing Next)
+        if (step && step <= currentLearnStep) {
+          showLearnStep(step);
+        }
+      });
+    });
+  }
+
+  if (stepDotsIndicator) {
+    const dots = stepDotsIndicator.querySelectorAll('.step-dot');
+    dots.forEach(dot => {
+      dot.addEventListener("click", () => {
+        audio.resume();
+        const step = parseInt(dot.dataset.step, 10);
+        if (step && step <= currentLearnStep) {
+          showLearnStep(step);
+        }
+      });
+    });
+  }
+
+  // Step 4 Head Tilt Octave Simulator Controls
+  function setSimulatedOctave(octave) {
+    audio.resume();
+    const isTara = (octave === 1);
+    const isMadhya = (octave === 0);
+    const isMandra = (octave === -1);
+
+    if (simZoneTara) simZoneTara.classList.toggle('active', isTara);
+    if (simZoneMadhya) simZoneMadhya.classList.toggle('active', isMadhya);
+    if (simZoneMandra) simZoneMandra.classList.toggle('active', isMandra);
+
+    if (btnSimTara) btnSimTara.classList.toggle('active', isTara);
+    if (btnSimMadhya) btnSimMadhya.classList.toggle('active', isMadhya);
+    if (btnSimMandra) btnSimMandra.classList.toggle('active', isMandra);
+
+    if (tiltZoneLabel) {
+      if (isTara) {
+        tiltZoneLabel.className = 'feedback-highlight text-orange';
+        tiltZoneLabel.textContent = 'TARA STHAYI (+1) • High Overblown Register';
+      } else if (isMandra) {
+        tiltZoneLabel.className = 'feedback-highlight text-blue';
+        tiltZoneLabel.textContent = 'MANDRA STHAYI (-1) • Deep Bass Resonant Register';
+      } else {
+        tiltZoneLabel.className = 'feedback-highlight text-emerald';
+        tiltZoneLabel.textContent = 'MADHYA STHAYI (0) • Balanced Fundamental Pitch';
+      }
+    }
+
+    // Play preview tone at that octave
+    try {
+      const rootF = 277.18;
+      const f = rootF * Math.pow(2, octave);
+      if (audio && typeof audio.playDirectNote === 'function') {
+        audio.playDirectNote(f, 0.7);
+      } else if (audio && typeof audio.playSwara === 'function') {
+        const saObj = window.SwarasData ? window.SwarasData.SWARA_BY_ID['sa'] : null;
+        if (saObj) audio.playSwara(saObj);
+      }
+    } catch (e) {
+      // safe catch
+    }
+  }
+
+  if (btnSimTara) btnSimTara.addEventListener('click', () => setSimulatedOctave(1));
+  if (btnSimMadhya) btnSimMadhya.addEventListener('click', () => setSimulatedOctave(0));
+  if (btnSimMandra) btnSimMandra.addEventListener('click', () => setSimulatedOctave(-1));
+
   const openLearnModal = () => {
     if (learnToPlayModal) {
       learnToPlayModal.classList.remove("hidden");
-      renderScaleNote(currentScaleIndex, false);
-      startScaleAnimation();
+      showLearnStep(1); // Always start from Step 1
     }
   };
 

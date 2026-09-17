@@ -2569,3 +2569,569 @@ body {
 .anim-hole-node .hole-disc-fill {
   transition: opacity 0.2s ease;
 }
+
+/* ============================================================== */
+/* 4-STEP WIZARD: HOW TO LEARN AER BENDER                         */
+/* ============================================================== */
+.learn-step-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.step-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px 14px;
+  color: #94a3b8;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.step-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.step-tab-btn.active {
+  background: rgba(56, 189, 248, 0.16);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
+.step-tab-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.step-tab-btn.active .step-tab-num {
+  background: #38bdf8;
+  color: #021226;
+}
+
+.learn-step-pane {
+  animation: fadeInStep 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInStep {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step-pane-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.step-intro-text {
+  font-size: 13.5px;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.pinky-note {
+  font-size: 11px;
+  color: #38bdf8;
+  font-style: italic;
+}
+
+.right-side .pinky-note {
+  color: #c084fc;
+}
+
+.step-illustration-container {
+  background: rgba(2, 6, 17, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-flute-posture-svg {
+  width: 100%;
+  max-width: 760px;
+  height: auto;
+}
+
+/* Embouchure breath wave animations */
+.pulse-blow-core {
+  animation: blowPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes blowPulse {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.breath-wave {
+  animation: breathStream 1.5s ease-in-out infinite;
+}
+.anim-b1 { animation-delay: 0s; }
+.anim-b2 { animation-delay: 0.25s; }
+.anim-b3 { animation-delay: 0.5s; }
+
+@keyframes breathStream {
+  0% { stroke-dashoffset: 20; opacity: 0.2; }
+  50% { opacity: 0.9; }
+  100% { stroke-dashoffset: -20; opacity: 0.2; }
+}
+
+/* Floating finger gentle hover */
+.anim-floating-finger {
+  animation: fingerHover 2.4s ease-in-out infinite alternate;
+}
+.f-anim-1 { animation-delay: 0s; }
+.f-anim-2 { animation-delay: 0.2s; }
+.f-anim-3 { animation-delay: 0.4s; }
+.f-anim-4 { animation-delay: 0.6s; }
+.f-anim-5 { animation-delay: 0.8s; }
+.f-anim-6 { animation-delay: 1.0s; }
+.f-anim-7 { animation-delay: 1.2s; }
+
+@keyframes fingerHover {
+  0% { transform: translateY(-2px); }
+  100% { transform: translateY(4px); }
+}
+
+/* STEP 2: SA STARTUP GATE STYLES */
+.sa-gate-notice-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.1);
+}
+
+.gate-notice-icon {
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.gate-notice-text {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #e2e8f0;
+}
+
+.gate-notice-text strong {
+  display: block;
+  color: #fbbf24;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.sa-stage-anim .sa-hero-svg {
+  max-width: 740px;
+  height: auto;
+}
+
+.anim-sa-pressing-finger {
+  animation: saFingerPress 1.6s cubic-bezier(0.16, 1, 0.3, 1) infinite alternate;
+}
+.f2-press {
+  animation-delay: 0.15s;
+}
+
+@keyframes saFingerPress {
+  0% { transform: translateY(-8px); opacity: 0.8; }
+  100% { transform: translateY(0px); opacity: 1; }
+}
+
+.sa-shockwave {
+  animation: saShockwaveExpand 1.6s ease-out infinite;
+  transform-origin: center;
+}
+.sa-shockwave.delay-1 {
+  animation-delay: 0.4s;
+}
+
+@keyframes saShockwaveExpand {
+  0% { r: 10; opacity: 0.8; stroke-width: 2.5px; }
+  100% { r: 24; opacity: 0; stroke-width: 0.5px; }
+}
+
+.sa-glow-bore {
+  animation: boreGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes boreGlow {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.45; }
+}
+
+/* STEP 3: MA CLOSED CALLOUT PILL */
+.ma-closed-callout-pill {
+  background: rgba(250, 204, 21, 0.12);
+  border: 1px solid rgba(250, 204, 21, 0.4);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #fef08a;
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.15);
+}
+
+.ma-pill-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ma-pill-text strong {
+  color: #facc15;
+}
+
+.row-highlight-ma {
+  background: rgba(250, 204, 21, 0.09);
+  border-left: 2px solid #facc15;
+}
+
+/* STEP 4: HEAD TILT CARDS & SIMULATION STAGE */
+.octave-zones-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .octave-zones-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.octave-zone-card {
+  background: rgba(15, 22, 38, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.zone-tara.active {
+  border-color: #f97316;
+  background: rgba(249, 115, 22, 0.08);
+  box-shadow: 0 0 24px rgba(249, 115, 22, 0.35), inset 0 1px 0 rgba(249, 115, 22, 0.2);
+  transform: translateY(-2px);
+}
+
+.zone-madhya.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 0 24px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(16, 185, 129, 0.2);
+  transform: translateY(-2px);
+}
+
+.zone-mandra.active {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.08);
+  box-shadow: 0 0 24px rgba(59, 130, 246, 0.35), inset 0 1px 0 rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
+}
+
+.zone-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #94a3b8;
+}
+
+.zone-tara .zone-badge { color: #f97316; }
+.zone-madhya .zone-badge { color: #10b981; }
+.zone-mandra .zone-badge { color: #3b82f6; }
+
+.zone-angle-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.zone-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.zone-anim-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin: 4px auto;
+  background: rgba(2, 6, 17, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.head-icon {
+  font-size: 20px;
+  transition: transform 0.25s ease;
+}
+
+.head-icon.chin-up {
+  color: #f97316;
+  transform: translateY(-4px) rotate(-15deg);
+}
+
+.head-icon.chin-level {
+  color: #10b981;
+  transform: translateY(0);
+}
+
+.head-icon.chin-down {
+  color: #3b82f6;
+  transform: translateY(4px) rotate(15deg);
+}
+
+.zone-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+}
+
+.zone-color-pill {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.pill-tara {
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  color: #f97316;
+}
+
+.pill-madhya {
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10b981;
+}
+
+.pill-mandra {
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+  color: #3b82f6;
+}
+
+/* Tilt Simulation Stage */
+.tilt-interactive-stage {
+  background: rgba(2, 6, 17, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tilt-stage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tilt-stage-title {
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.tilt-stage-hint {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.tilt-controls-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-tilt-sim {
+  flex: 1;
+  min-width: 170px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+  padding: 8px 12px;
+  color: #cbd5e1;
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-tilt-sim:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.btn-tilt-sim#btnSimTara.active {
+  background: rgba(249, 115, 22, 0.2);
+  border-color: #f97316;
+  color: #f97316;
+  box-shadow: 0 0 14px rgba(249, 115, 22, 0.35);
+}
+
+.btn-tilt-sim#btnSimMadhya.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.35);
+}
+
+.btn-tilt-sim#btnSimMandra.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: #3b82f6;
+  color: #3b82f6;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+}
+
+.tilt-live-feedback {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.feedback-highlight {
+  font-weight: 800;
+}
+
+.text-orange { color: #f97316; }
+.text-emerald { color: #10b981; }
+.text-blue { color: #3b82f6; }
+
+/* WIZARD NAVIGATION FOOTER */
+.learn-wizard-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 16px;
+}
+
+.btn-step-back {
+  font-family: var(--font-display) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 10px 20px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #cbd5e1 !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-step-back:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  transform: translateX(-2px);
+}
+
+.step-dots-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.step-dot.active {
+  width: 26px;
+  border-radius: 6px;
+  background: #38bdf8;
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.btn-step-next {
+  font-family: var(--font-display) !important;
+  font-size: 14.5px !important;
+  font-weight: 800 !important;
+  padding: 11px 24px !important;
+  background: linear-gradient(135deg, #0ea5e9, #0284c7) !important;
+  border: 1px solid #38bdf8 !important;
+  color: #ffffff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 0 20px rgba(14, 165, 233, 0.4) !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-step-next:hover {
+  background: linear-gradient(135deg, #38bdf8, #0ea5e9) !important;
+  box-shadow: 0 0 26px rgba(56, 189, 248, 0.6) !important;
+  transform: translateX(2px);
+}
