@@ -2712,9 +2712,9 @@ body {
 
 /* Animated Pressing Finger Transition */
 .anim-pressing-finger {
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-  transform: translateY(-16px);
-  opacity: 0.3;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  transform: translateY(-24px);
+  opacity: 0.35;
 }
 
 .anim-pressing-finger.finger-down {
@@ -3201,21 +3201,20 @@ body {
 }
 
 .scale-flute-stage {
-  padding: 6px 10px !important;
-  max-height: 110px;
+  padding: 8px 12px !important;
+  min-height: 120px;
 }
 
 .scale-action-banner {
-  margin-bottom: 2px !important;
+  margin-bottom: 4px !important;
 }
 
 .scale-interactive-flute-svg {
-  max-height: 80px;
+  max-height: 125px;
 }
 
 .swaras-table-wrapper {
-  overflow: hidden !important;
-  max-height: 165px;
+  overflow: visible !important;
   border: 1.5px solid #000000;
   box-shadow: 3px 3px 0px #000000;
   border-radius: 6px;
@@ -3225,14 +3224,14 @@ body {
 .swaras-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 10px;
+  font-size: 9.5px;
   margin: 0 !important;
 }
 
 .swaras-table th, 
 .swaras-table td {
-  padding: 2px 4px !important;
-  line-height: 1.15;
+  padding: 1.5px 3.5px !important;
+  line-height: 1.12;
 }
 
 .row-highlight-ma {

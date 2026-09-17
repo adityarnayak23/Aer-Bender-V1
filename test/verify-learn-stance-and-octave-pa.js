@@ -76,23 +76,36 @@ assert(!trackerJs.includes('strikes bottom bore wall & REBOUNDS'), 'No air strik
 assert(trackerJs.includes('Dynamic Acoustic Vortex & Concentric Breath Waves'), 'Subtle concentric aperture breath waves present');
 console.log('✔ Canvas tracker clean embouchure (zero air coming out of blow hole) verified.');
 
-// 6. Step 3: Zero Scroll
-console.log('\n6. Checking Step 3 Zero Scroll...');
+// 6. Zero Emojis in Learn Modal & Step 3 Hero Animation
+console.log('\n6. Checking Zero Emojis in Learn Modal & Step 3 Hero Animation...');
+const modalStartIdx = html.indexOf('id="learnToPlayModal"');
+const modalEndIdx = html.indexOf('<!-- Isolated FaceMesh Worker Iframe');
+const modalHtml = html.slice(modalStartIdx, modalEndIdx);
+assert(!modalHtml.match(/[\u{1F300}-\u{1FAFF}]/u), 'Learn modal must have ZERO emojis');
+assert(!modalHtml.includes('✋') && !modalHtml.includes('🤚') && !modalHtml.includes('🪈'), 'Hand and flute emojis removed from modal');
+
+// Step 3: All 7 notes present and visible, big animation
+assert(html.includes('sa-badge') && html.includes('ri-badge') && html.includes('ga-badge') && 
+       html.includes('ma-badge') && html.includes('pa-badge') && html.includes('dha-badge') && 
+       html.includes('ni-badge'), 'All 7 swaras present in Step 3 table');
+assert(html.includes('id="scaleFluteSvg"') && html.includes('anim-pressing-finger'), 'Scale flute SVG has animated pressing fingers');
 assert(css.includes('#learnStepPane3') && css.includes('overflow: hidden !important;'), '#learnStepPane3 has overflow: hidden !important');
-assert(css.includes('.swaras-table-wrapper') && css.includes('max-height: 165px;'), 'swaras-table-wrapper is compactly bounded');
-console.log('✔ Step 3 zero-scroll layout verified.');
+assert(css.includes('.swaras-table-wrapper') && css.includes('overflow: visible !important;'), 'swaras-table-wrapper overflow visible so no notes clipped');
+console.log('✔ Zero emojis & Step 3 all 7 notes and hero animation verified.');
 
-// 7. Step 4: Note Pa Example, 3s Duration, and Authentic Colors
-console.log('\n7. Checking Step 4 (Note Pa, 3s Playback, Authentic Sthayi Colors)...');
-assert(html.includes('head-tilt-pa-fingers') || html.includes('PA (5 CLOSED ●)'), 'Flute in Step 4 shows Note Pa with 5 closed holes');
-assert(html.includes('▲ Test Chin Up (High · 3s)') || html.includes('Test Tara Pa (+1 High · 3s)'), 'Button for high octave indicates 3s duration');
-assert(html.includes('◆ Test Level Head (Mid · 3s)') || html.includes('Test Madhya Pa (0 Mid · 3s)'), 'Button for mid octave indicates 3s duration');
-assert(html.includes('▼ Test Chin Down (Bass · 3s)') || html.includes('Test Mandra Pa (-1 Bass · 3s)'), 'Button for bass octave indicates 3s duration');
+// 7. Step 4: Note Pa Example, Dynamic Octave Colors, Tone Descriptors, and No 3s in Reader Text
+console.log('\n7. Checking Step 4 (Note Pa, Dynamic Octave Colors, Tone Descriptors, No 3s in Reader Text)...');
+assert(html.includes('head-tilt-pa-fingers') && html.includes('pa-closed-hole'), 'Step 4 shows Note Pa with dynamic pa-closed-hole classes');
+assert(!html.includes('playing for 3s each!'), 'No 3s mention in Step 4 intro');
+assert(!html.includes('Plays for 3s'), 'No 3s mention in Step 4 header');
+assert(html.includes('▲ Test Chin Up (High Octave)'), 'Button for high octave without 3s text');
+assert(html.includes('◆ Test Level Head (Mid Octave)'), 'Button for mid octave without 3s text');
+assert(html.includes('▼ Test Chin Down (Bass Octave)'), 'Button for bass octave without 3s text');
 
-// Verify authentic colors in HTML cards
-assert(html.includes('Coral Orange (#ff5500)'), 'Tara card has Coral Orange #ff5500');
-assert(html.includes('Emerald Green (#10b981)'), 'Madhya card has Emerald Green #10b981');
-assert(html.includes('Royal Blue (#3b82f6)'), 'Mandra card has Royal Blue #3b82f6');
+// Verify tone descriptors in HTML cards
+assert(html.includes('High Pitch · Piercing'), 'Tara card has High Pitch · Piercing descriptor');
+assert(html.includes('Natural Pitch · Warm'), 'Madhya card has Natural Pitch · Warm descriptor');
+assert(html.includes('Deep Bass · Resonant'), 'Mandra card has Deep Bass · Resonant descriptor');
 
 // Verify CSS colors
 assert(css.includes('box-shadow: 4px 4px 0px #ff5500 !important;'), 'Tara active card has #ff5500 glow');
@@ -100,11 +113,11 @@ assert(css.includes('box-shadow: 4px 4px 0px #10b981 !important;'), 'Madhya acti
 assert(css.includes('box-shadow: 4px 4px 0px #3b82f6 !important;'), 'Mandra active card has #3b82f6 glow');
 assert(css.includes('#learnStepPane4') && css.includes('overflow: hidden !important;'), '#learnStepPane4 has overflow: hidden !important');
 
-// Verify 3s playback logic in app.js
+// Verify 3s playback logic in app.js under the hood
 assert(appJs.includes('setTimeout(() => {') && appJs.includes('audio.stopVoice();') && appJs.includes('3000);'), 'app.js stops octave preview tone after exactly 3000ms');
 assert(appJs.includes('const paRatio = 1.5;'), 'app.js uses Pa ratio 1.5 for octave demo');
 
-console.log('✔ Step 4 Note Pa, 3s playback, and authentic octave colors verified.');
+console.log('✔ Step 4 Note Pa, dynamic colors, tone descriptors, and 3000ms engine verified.');
 
 console.log('\n================================================================');
 console.log('🎉 ALL USER REQUIREMENTS VERIFIED AND PASSED 100%!');

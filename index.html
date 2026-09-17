@@ -328,24 +328,24 @@
               <p class="step-intro-text">Hold flute sideways to your right. Left wrist turns inward; Right hand reaches forward.</p>
             </div>
 
-            <!-- Hand Orientation Asymmetry Cards (Punchy & Less Wordy) -->
+            <!-- Hand Orientation Asymmetry Cards (Zero Emojis, High Contrast) -->
             <div class="hand-orientation-grid">
               <div class="hand-orient-card left-orient-card">
                 <div class="orient-card-header">
-                  <span class="hand-badge left-badge">✋ LEFT HAND</span>
+                  <span class="hand-badge left-badge">LEFT HAND</span>
                   <span class="orient-key-pill">PALM FACES YOU</span>
                 </div>
                 <p class="orient-action-text">Turn left wrist <strong>inward towards your face</strong> so index, middle, and ring curve over Holes 1, 2, and 3.</p>
-                <div class="orient-pinky-tag">💤 <strong>Left Pinky:</strong> Free in the air (takes a nap!)</div>
+                <div class="orient-pinky-tag"><strong>Left Pinky:</strong> Free in the air (relaxed, not on flute)</div>
               </div>
 
               <div class="hand-orient-card right-orient-card">
                 <div class="orient-card-header">
-                  <span class="hand-badge right-badge">🤚 RIGHT HAND</span>
+                  <span class="hand-badge right-badge">RIGHT HAND</span>
                   <span class="orient-key-pill">PALM FACES FORWARD</span>
                 </div>
                 <p class="orient-action-text">Keep right hand <strong>facing forward naturally</strong> (away from you). 4 fingers rest over Holes 4, 5, 6, and 7.</p>
-                <div class="orient-pinky-tag">🎯 <strong>Right Hand:</strong> Uses Index, Middle, Ring & Pinky</div>
+                <div class="orient-pinky-tag"><strong>Right Hand:</strong> Uses Index, Middle, Ring &amp; Pinky</div>
               </div>
             </div>
 
@@ -355,39 +355,47 @@
                 <!-- Upper-Half Body Silhouette (Head, Neck, Torso, Both Arms in Flute Stance) -->
                 <g class="player-upper-body" id="playerUpperBodyStance">
                   <!-- Torso / Chest Silhouette -->
-                  <path d="M 60 245 C 60 190 95 165 145 160 L 215 160 C 265 165 295 190 295 245 Z" fill="#080f20" stroke="#000000" stroke-width="2.5"/>
+                  <path d="M 50 245 C 50 185 90 160 145 156 L 225 156 C 275 160 310 185 310 245 Z" fill="#080f20" stroke="#000000" stroke-width="2.5"/>
                   <!-- Collar / Stance accent -->
-                  <path d="M 145 160 Q 180 185 215 160" stroke="#1e293b" stroke-width="2" fill="none"/>
+                  <path d="M 145 156 Q 185 180 225 156" stroke="#1e293b" stroke-width="2" fill="none"/>
 
-                  <!-- Head in Side Profile Facing Flute Head (Mouth near x=205, y=148) -->
+                  <!-- Head in Side Profile Facing Flute Head (Mouth near x=210, y=149) -->
                   <g transform="translate(0, 0)">
                     <!-- Neck -->
-                    <path d="M 160 162 L 160 145 L 195 145 L 195 162 Z" fill="#141d33" stroke="#000000" stroke-width="2"/>
-                    <!-- Head Contour -->
-                    <path d="M 140 142 C 130 115 145 80 178 72 C 210 65 228 85 228 112 L 222 124 L 232 130 L 216 138 L 220 148 C 200 158 170 158 140 142 Z" fill="#141d33" stroke="#000000" stroke-width="2.5"/>
+                    <path d="M 160 160 L 160 144 L 198 144 L 198 160 Z" fill="#141d33" stroke="#000000" stroke-width="2"/>
+                    <!-- Head Contour with clear jaw, nose, and lips -->
+                    <path d="M 138 142 C 128 114 142 78 178 70 C 212 62 232 82 232 110 L 226 122 L 236 128 L 220 136 L 224 148 C 202 158 170 158 138 142 Z" fill="#141d33" stroke="#000000" stroke-width="2.5"/>
                     <!-- Focused Eye looking along flute -->
-                    <circle cx="204" cy="106" r="3.5" fill="#00f0ff"/>
-                    <circle cx="205" cy="105" r="1.2" fill="#ffffff"/>
-                    <!-- Ear / Audio Headphone -->
-                    <rect x="156" cy="102" y="102" width="14" height="26" rx="7" fill="#0284c7" stroke="#000000" stroke-width="1.8"/>
-                    <!-- Lips / Embouchure Aperture -->
-                    <ellipse cx="218" cy="138" rx="4" ry="2.5" fill="#f43f5e" opacity="0.85"/>
+                    <circle cx="206" cy="104" r="3.5" fill="#00f0ff"/>
+                    <circle cx="207" cy="103" r="1.2" fill="#ffffff"/>
+                    <!-- Ear / Monitor Headphone -->
+                    <rect x="154" cy="100" y="100" width="16" height="28" rx="8" fill="#0284c7" stroke="#000000" stroke-width="2"/>
+                    <!-- Lips / Embouchure Resting against Flute Blow Hole -->
+                    <ellipse cx="218" cy="138" rx="4.5" ry="3" fill="#f43f5e" opacity="0.9"/>
+                    <!-- Chin under flute shelf -->
+                    <path d="M 205 146 Q 212 156 220 156" stroke="#000000" stroke-width="2" fill="none"/>
                   </g>
 
                   <!-- Left Arm & Hand Raised (Wrist Turned Inward towards Face ⟲) -->
                   <g class="left-arm-group">
-                    <!-- Left Bicep / Forearm curving in -->
-                    <path d="M 115 178 Q 160 215 260 165" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
-                    <path d="M 115 178 Q 160 215 260 165" stroke="#000000" stroke-width="2" fill="none"/>
-                    <!-- Left Wrist Turn Arc Indicator -->
-                    <path d="M 248 185 A 14 14 0 0 1 270 160" stroke="#38bdf8" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+                    <!-- Left Shoulder to Elbow -->
+                    <path d="M 125 178 Q 105 210 130 226" stroke="#0b1730" stroke-width="20" stroke-linecap="round" fill="none"/>
+                    <path d="M 125 178 Q 105 210 130 226" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Left Forearm curving upward & inward to flute -->
+                    <path d="M 130 226 Q 170 236 270 168" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
+                    <path d="M 130 226 Q 170 236 270 168" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Left Wrist Turn Indicator Arc -->
+                    <path d="M 252 188 A 16 16 0 0 1 278 160" stroke="#38bdf8" stroke-width="2.2" fill="none" stroke-dasharray="3,2"/>
                   </g>
 
-                  <!-- Right Arm Extended Forward along Flute ➔ -->
+                  <!-- Right Arm Extended Forward along Flute -->
                   <g class="right-arm-group">
-                    <!-- Right Bicep / Forearm reaching forward -->
-                    <path d="M 230 180 Q 360 210 520 170" stroke="#0b1730" stroke-width="16" stroke-linecap="round" fill="none"/>
-                    <path d="M 230 180 Q 360 210 520 170" stroke="#000000" stroke-width="2" fill="none"/>
+                    <!-- Right Shoulder to Elbow extending forward -->
+                    <path d="M 225 178 Q 280 216 350 212" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
+                    <path d="M 225 178 Q 280 216 350 212" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Right Forearm extending forward along flute body -->
+                    <path d="M 350 212 Q 430 206 530 172" stroke="#0b1730" stroke-width="16" stroke-linecap="round" fill="none"/>
+                    <path d="M 350 212 Q 430 206 530 172" stroke="#000000" stroke-width="2.5" fill="none"/>
                   </g>
                 </g>
 
@@ -412,15 +420,15 @@
 
                 <!-- LEFT HAND VISUAL: Wrist Turn Arc & Palm Facing You Indicator -->
                 <g transform="translate(320, 68)">
-                  <rect x="-85" y="-18" width="170" height="24" rx="5" fill="#0284c7" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">⟲ PALM FACES YOU</text>
+                  <rect x="-95" y="-18" width="190" height="24" rx="5" fill="#0284c7" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES YOU (INWARD)</text>
                   <path d="M -18 10 Q 0 18 18 10" stroke="#38bdf8" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
                 <!-- RIGHT HAND VISUAL: Straight Natural Reach Indicator -->
                 <g transform="translate(565, 68)">
-                  <rect x="-85" y="-18" width="170" height="24" rx="5" fill="#7c3aed" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">➔ PALM FACES FORWARD</text>
+                  <rect x="-105" y="-18" width="210" height="24" rx="5" fill="#7c3aed" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES FORWARD (OUTWARD)</text>
                   <path d="M -16 10 L 16 10" stroke="#c084fc" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
@@ -428,8 +436,8 @@
                 <!-- H1 -->
                 <g class="step-posture-node" transform="translate(285, 149)">
                   <g class="anim-floating-finger f-anim-1">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H1</text>
@@ -438,8 +446,8 @@
                 <!-- H2 -->
                 <g class="step-posture-node" transform="translate(335, 149)">
                   <g class="anim-floating-finger f-anim-2">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H2</text>
@@ -448,8 +456,8 @@
                 <!-- H3 -->
                 <g class="step-posture-node" transform="translate(385, 149)">
                   <g class="anim-floating-finger f-anim-3">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H3</text>
@@ -459,15 +467,15 @@
                 <!-- Left Pinky Relaxed in Air -->
                 <g transform="translate(420, 115)" class="anim-floating-finger f-anim-1">
                   <rect x="-6" y="-30" width="12" height="24" rx="6" fill="#fde68a" stroke="#000000" stroke-width="2"/>
-                  <text x="0" y="-36" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">💤 Pinky Up</text>
+                  <text x="0" y="-36" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">Pinky Up</text>
                 </g>
 
                 <!-- Right Hand Holes (4, 5, 6, 7) -->
                 <!-- H4 -->
                 <g class="step-posture-node" transform="translate(470, 149)">
                   <g class="anim-floating-finger f-anim-4">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
@@ -476,8 +484,8 @@
                 <!-- H5 -->
                 <g class="step-posture-node" transform="translate(520, 149)">
                   <g class="anim-floating-finger f-anim-5">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
@@ -486,8 +494,8 @@
                 <!-- H6 -->
                 <g class="step-posture-node" transform="translate(570, 149)">
                   <g class="anim-floating-finger f-anim-6">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
@@ -496,8 +504,8 @@
                 <!-- H7 -->
                 <g class="step-posture-node" transform="translate(620, 149)">
                   <g class="anim-floating-finger f-anim-7">
-                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
@@ -513,15 +521,15 @@
             <div class="step-pane-header">
               <span class="focus-badge highlight">STEP 2</span>
               <h3 class="focus-title">Wake Up the Flute with Sa</h3>
-              <p class="step-intro-text">⚡ MAGIC KEY: Cover Holes 1 &amp; 2 to awaken the flute!</p>
+              <p class="step-intro-text">STARTER KEY: Cover Holes 1 &amp; 2 to awaken the flute!</p>
             </div>
 
             <!-- Friendly Magic Starter Key Card (No alarm signs!) -->
             <div class="magic-starter-box">
-              <div class="starter-icon-badge">⚡</div>
+              <div class="starter-icon-badge">KEY</div>
               <div class="starter-text">
                 <span class="starter-title">THE MAGIC STARTER KEY: 2 FINGERS DOWN</span>
-                <p class="starter-desc">Cover <strong>Holes 1 & 2</strong> with your left index and middle fingers. The moment you cover them, the flute wakes up, lights up in neon green, and starts playing the foundation note <strong>Sa</strong>!</p>
+                <p class="starter-desc">Cover <strong>Holes 1 &amp; 2</strong> with your left index and middle fingers. The moment you cover them, the flute wakes up, lights up in neon green, and starts playing the foundation note <strong>Sa</strong>!</p>
               </div>
             </div>
 
@@ -584,7 +592,7 @@
                 <!-- Unlocked Status Pill -->
                 <g class="sa-unlocked-banner" transform="translate(520, 30)">
                   <rect x="-95" y="-14" width="190" height="28" rx="6" fill="#ccff00" stroke="#000000" stroke-width="2"/>
-                  <text x="0" y="5" font-size="10.5" font-weight="800" fill="#000000" text-anchor="middle" font-family="var(--font-display)">⚡ FLUTE IS AWAKE & READY!</text>
+                  <text x="0" y="5" font-size="10.5" font-weight="800" fill="#000000" text-anchor="middle" font-family="var(--font-display)">FLUTE IS AWAKE & READY!</text>
                 </g>
               </svg>
             </div>
@@ -656,113 +664,120 @@
 
               <!-- Animated Visual Flute Graphic with Interactive Holes & Fingers -->
               <div class="flute-diagram-container">
-                <svg viewBox="0 0 740 140" class="scale-interactive-flute-svg" id="scaleFluteSvg">
+                <svg viewBox="0 0 740 160" class="scale-interactive-flute-svg" id="scaleFluteSvg">
                   <!-- Flute Tube Body -->
-                  <rect x="20" y="55" width="700" height="32" rx="16" fill="rgba(10, 15, 28, 0.85)" stroke="rgba(255, 255, 255, 0.22)" stroke-width="2"/>
+                  <rect x="20" y="68" width="700" height="38" rx="19" fill="#090f1d" stroke="#38bdf8" stroke-width="2.5"/>
                   <!-- Flute Inner Glow Stream -->
-                  <line x1="30" y1="71" x2="710" y2="71" stroke="rgba(56, 189, 248, 0.25)" stroke-width="14" stroke-linecap="round"/>
+                  <line x1="30" y1="87" x2="710" y2="87" stroke="rgba(56, 189, 248, 0.28)" stroke-width="16" stroke-linecap="round"/>
 
                   <!-- Mouth Blow Hole (◎) -->
-                  <g class="anim-blow-hole-group" transform="translate(65, 71)">
-                    <circle cx="0" cy="0" r="13" fill="rgba(6, 9, 16, 0.95)" stroke="#38bdf8" stroke-width="2.5"/>
-                    <circle cx="0" cy="0" r="6" fill="#38bdf8" class="pulse-blow-core"/>
+                  <g class="anim-blow-hole-group" transform="translate(65, 87)">
+                    <circle cx="0" cy="0" r="14" fill="rgba(6, 9, 16, 0.95)" stroke="#38bdf8" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="7" fill="#38bdf8" class="pulse-blow-core"/>
                     <!-- Lips Airflow Waves -->
                     <path d="M -18 -26 Q -10 -8 0 0" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.8"/>
                     <path d="M 0 -30 Q 0 -12 0 0" stroke="#00f0ff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.9"/>
-                    <text x="0" y="32" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">BLOW (◎)</text>
+                    <text x="0" y="34" font-size="10" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">BLOW (◎)</text>
                   </g>
 
                   <!-- Left Hand Group Bracket -->
-                  <path d="M 175 42 L 175 36 L 335 36 L 335 42" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.6"/>
-                  <text x="255" y="30" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle" font-family="var(--font-display)">✋ LEFT HAND (Holes 1, 2, 3)</text>
+                  <path d="M 175 48 L 175 40 L 335 40 L 335 48" stroke="#38bdf8" stroke-width="1.8" fill="none" opacity="0.75"/>
+                  <text x="255" y="32" font-size="11.5" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-display)">LEFT HAND (Holes 1, 2, 3)</text>
 
                   <!-- Right Hand Group Bracket -->
-                  <path d="M 405 42 L 405 36 L 655 36 L 655 42" stroke="#c084fc" stroke-width="1.5" fill="none" opacity="0.6"/>
-                  <text x="530" y="30" font-size="11" font-weight="700" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">🤚 RIGHT HAND (Holes 4, 5, 6, 7)</text>
+                  <path d="M 405 48 L 405 40 L 625 40 L 625 48" stroke="#c084fc" stroke-width="1.8" fill="none" opacity="0.75"/>
+                  <text x="515" y="32" font-size="11.5" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">RIGHT HAND (Holes 4, 5, 6, 7)</text>
 
-                  <!-- 7 Animated Holes with Physical Finger Down/Up Animation -->
+                  <!-- 7 Animated Holes with Hero Finger Down/Up Animation -->
                   <!-- Hole 1 (Left Index) -->
-                  <g class="anim-hole-node active-closed" id="holeNode1" transform="translate(195, 71)">
+                  <g class="anim-hole-node active-closed" id="holeNode1" transform="translate(195, 87)">
                     <g class="anim-pressing-finger finger-down" id="finger1">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="1"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H1</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Idx</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="1"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H1</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#38bdf8" text-anchor="middle">L-Idx</text>
                   </g>
 
                   <!-- Hole 2 (Left Middle) -->
-                  <g class="anim-hole-node active-closed" id="holeNode2" transform="translate(255, 71)">
+                  <g class="anim-hole-node active-closed" id="holeNode2" transform="translate(255, 87)">
                     <g class="anim-pressing-finger finger-down" id="finger2">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="1"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H2</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Mid</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="1"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H2</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#38bdf8" text-anchor="middle">L-Mid</text>
                   </g>
 
                   <!-- Hole 3 (Left Ring) -->
-                  <g class="anim-hole-node" id="holeNode3" transform="translate(315, 71)">
+                  <g class="anim-hole-node" id="holeNode3" transform="translate(315, 87)">
                     <g class="anim-pressing-finger" id="finger3">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H3</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">L-Rng</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H3</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#38bdf8" text-anchor="middle">L-Rng</text>
                   </g>
 
                   <!-- Hole 4 (Right Index) -->
-                  <g class="anim-hole-node" id="holeNode4" transform="translate(425, 71)">
+                  <g class="anim-hole-node" id="holeNode4" transform="translate(425, 87)">
                     <g class="anim-pressing-finger" id="finger4">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H4</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Idx</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Idx</text>
                   </g>
 
                   <!-- Hole 5 (Right Middle) -->
-                  <g class="anim-hole-node" id="holeNode5" transform="translate(485, 71)">
+                  <g class="anim-hole-node" id="holeNode5" transform="translate(485, 87)">
                     <g class="anim-pressing-finger" id="finger5">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H5</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Mid</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Mid</text>
                   </g>
 
                   <!-- Hole 6 (Right Ring) -->
-                  <g class="anim-hole-node" id="holeNode6" transform="translate(545, 71)">
+                  <g class="anim-hole-node" id="holeNode6" transform="translate(545, 87)">
                     <g class="anim-pressing-finger" id="finger6">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H6</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Rng</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Rng</text>
                   </g>
 
                   <!-- Hole 7 (Right Pinky) -->
-                  <g class="anim-hole-node" id="holeNode7" transform="translate(605, 71)">
+                  <g class="anim-hole-node" id="holeNode7" transform="translate(605, 87)">
                     <g class="anim-pressing-finger" id="finger7">
-                      <rect x="-8" y="-48" width="16" height="38" rx="8" fill="rgba(254, 215, 170, 0.95)" stroke="#fb923c" stroke-width="1.5"/>
-                      <ellipse cx="0" cy="-14" rx="5" ry="3.5" fill="#f43f5e" opacity="0.5"/>
+                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-bg" fill="rgba(15, 23, 42, 0.7)" stroke="rgba(255, 255, 255, 0.35)" stroke-width="2"/>
-                    <circle cx="0" cy="0" r="11" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="30" font-size="10" font-weight="700" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">H7</text>
-                    <text x="0" y="42" font-size="9" fill="#94a3b8" text-anchor="middle">R-Pnk</text>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
+                    <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
+                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
+                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Pnk</text>
                   </g>
                 </svg>
               </div>
@@ -888,7 +903,7 @@
           <div class="step-pane-header">
             <span class="focus-badge highlight">STEP 4</span>
             <h3 class="focus-title">Head Tilt Magic — Change Octaves</h3>
-            <p class="step-intro-text">Tilt chin up, level, or down to change octaves. Example: note <strong>Pa</strong> (5 fingers closed) playing for 3s each!</p>
+            <p class="step-intro-text">Tilt chin up, level, or down to smoothly shift octaves. Example: note <strong>Pa</strong> (5 fingers closed).</p>
           </div>
 
           <!-- Animated Head Tilt Character Profile Stage -->
@@ -935,13 +950,13 @@
 
                   <!-- Example Note Pa: 5 fingers closed (H1-H5 ●), 2 open (H6-H7 ○) -->
                   <g transform="translate(230, 129)" class="head-tilt-pa-fingers">
-                    <circle cx="0" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
-                    <circle cx="14" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
-                    <circle cx="28" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
-                    <circle cx="48" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
-                    <circle cx="62" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
-                    <circle cx="76" cy="0" r="3" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
-                    <circle cx="90" cy="0" r="3" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
+                    <circle cx="0" cy="0" r="3.5" class="pa-closed-hole" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="14" cy="0" r="3.5" class="pa-closed-hole" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="28" cy="0" r="3.5" class="pa-closed-hole" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="48" cy="0" r="3.5" class="pa-closed-hole" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="62" cy="0" r="3.5" class="pa-closed-hole" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="76" cy="0" r="3.2" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
+                    <circle cx="90" cy="0" r="3.2" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
                     <text x="45" y="16" font-size="7.5" font-weight="800" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">PA (5 CLOSED ●)</text>
                   </g>
 
@@ -983,7 +998,7 @@
                 <div class="acoustic-beam beam-tara"></div>
               </div>
               <p class="zone-desc">Tilt chin up to overblow into high octave. Bright, piercing melodies!</p>
-              <span class="zone-color-pill pill-tara">Coral Orange (#ff5500)</span>
+              <span class="zone-color-pill pill-tara">High Pitch · Piercing</span>
             </div>
 
             <!-- Madhya (Mid) -->
@@ -996,7 +1011,7 @@
                 <div class="acoustic-beam beam-madhya"></div>
               </div>
               <p class="zone-desc">Look straight forward. Balanced natural tones.</p>
-              <span class="zone-color-pill pill-madhya">Emerald Green (#10b981)</span>
+              <span class="zone-color-pill pill-madhya">Natural Pitch · Warm</span>
             </div>
 
             <!-- Mandra (Bass) -->
@@ -1009,29 +1024,29 @@
                 <div class="acoustic-beam beam-mandra"></div>
               </div>
               <p class="zone-desc">Tilt chin slightly down towards chest. Deep resonant bass!</p>
-              <span class="zone-color-pill pill-mandra">Royal Blue (#3b82f6)</span>
+              <span class="zone-color-pill pill-mandra">Deep Bass · Resonant</span>
             </div>
           </div>
 
           <!-- Interactive Head Tilt Demonstration Stage -->
           <div class="tilt-interactive-stage">
             <div class="tilt-stage-header">
-              <span class="tilt-stage-title">Test Head Tilt Postures (Plays for 3s):</span>
+              <span class="tilt-stage-title">Test Head Tilt Postures:</span>
               <span class="tilt-stage-hint">Click a button to tilt character and hear note Pa:</span>
             </div>
             <div class="tilt-controls-row">
               <button type="button" class="btn-tilt-sim" id="btnSimTara" data-octave="1">
-                ▲ Test Chin Up (High · 3s)
+                ▲ Test Chin Up (High Octave)
               </button>
               <button type="button" class="btn-tilt-sim active" id="btnSimMadhya" data-octave="0">
-                ◆ Test Level Head (Mid · 3s)
+                ◆ Test Level Head (Mid Octave)
               </button>
               <button type="button" class="btn-tilt-sim" id="btnSimMandra" data-octave="-1">
-                ▼ Test Chin Down (Bass · 3s)
+                ▼ Test Chin Down (Bass Octave)
               </button>
             </div>
             <div class="tilt-live-feedback" id="tiltLiveFeedback">
-              Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA (0) • Mid Pa (392 Hz) · Playing for 3s</span>
+              Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA (0) • Mid Pa (392 Hz)</span>
             </div>
           </div>
         </div>
@@ -1052,7 +1067,7 @@
           Next: Wake with Sa ➔
         </button>
         <button id="learnModalStartBtn" class="btn btn-primary btn-learn-cta" type="button" style="display: none;">
-          Got it, Let's Play! 🪈
+          Got it, Let's Play!
         </button>
       </div>
     </div>

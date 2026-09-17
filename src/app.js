@@ -1494,15 +1494,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tiltZoneLabel) {
       if (isTara) {
         tiltZoneLabel.className = 'feedback-highlight text-orange';
-        tiltZoneLabel.textContent = 'TARA (+1) • High Pa (784 Hz) · Playing for 3s';
+        tiltZoneLabel.textContent = 'TARA (+1) • High Pa (784 Hz)';
       } else if (isMandra) {
         tiltZoneLabel.className = 'feedback-highlight text-blue';
-        tiltZoneLabel.textContent = 'MANDRA (-1) • Deep Bass Pa (196 Hz) · Playing for 3s';
+        tiltZoneLabel.textContent = 'MANDRA (-1) • Deep Bass Pa (196 Hz)';
       } else {
         tiltZoneLabel.className = 'feedback-highlight text-emerald';
-        tiltZoneLabel.textContent = 'MADHYA (0) • Mid Pa (392 Hz) · Playing for 3s';
+        tiltZoneLabel.textContent = 'MADHYA (0) • Mid Pa (392 Hz)';
       }
     }
+
+    // Update SVG Pa finger nodes to match active octave color
+    const activeColor = isTara ? '#ff5500' : (isMandra ? '#3b82f6' : '#10b981');
+    const paFingerCircles = document.querySelectorAll('.head-tilt-pa-fingers circle.pa-closed-hole');
+    paFingerCircles.forEach(c => c.setAttribute('fill', activeColor));
 
     // Clear previous octave tone timer
     if (simOctaveTimer) {
@@ -1510,21 +1515,26 @@ document.addEventListener('DOMContentLoaded', () => {
       simOctaveTimer = null;
     }
 
-    // Play note Pa for exactly 3 seconds (not more)
+    // Play note Pa across octaves
     try {
       const rootF = 277.18; // Base C#4
       const paRatio = 1.5;  // Panchamam (Pa) = 3/2
       const f = rootF * paRatio * Math.pow(2, octave);
 
-      if (audio && typeof audio.playDirectNote === 'function') {
+      audio.setOctaveShift(octave);
+      const paObj = (window.SwarasData && window.SwarasData.SWARA_BY_ID)
+        ? (window.SwarasData.SWARA_BY_ID['pa'] || { id: 'pa', family: 'pa', freqRatio: 1.5 })
+        : { id: 'pa', family: 'pa', freqRatio: 1.5 };
+
+      if (audio.samplesLoaded && audio.sampleBuffers && audio.sampleBuffers['pa']) {
+        audio.playSwara(paObj);
+      } else if (typeof audio.playDirectNote === 'function') {
         audio.playDirectNote(f, 0.75);
-      } else if (audio && typeof audio.playSwara === 'function') {
-        audio.setOctaveShift(octave);
-        const paObj = window.SwarasData ? window.SwarasData.SWARA_BY_ID['pa'] : null;
-        if (paObj) audio.playSwara(paObj);
+      } else if (typeof audio.playSwara === 'function') {
+        audio.playSwara(paObj);
       }
 
-      // Automatically stop after exactly 3 seconds
+      // Automatically stop tone after note preview
       simOctaveTimer = setTimeout(() => {
         if (audio && typeof audio.stopVoice === 'function') {
           audio.stopVoice();
@@ -1539,6 +1549,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnSimTara) btnSimTara.addEventListener('click', () => setSimulatedOctave(1));
   if (btnSimMadhya) btnSimMadhya.addEventListener('click', () => setSimulatedOctave(0));
   if (btnSimMandra) btnSimMandra.addEventListener('click', () => setSimulatedOctave(-1));
+
+  if (simZoneTara) simZoneTara.addEventListener('click', () => setSimulatedOctave(1));
+  if (simZoneMadhya) simZoneMadhya.addEventListener('click', () => setSimulatedOctave(0));
+  if (simZoneMandra) simZoneMandra.addEventListener('click', () => setSimulatedOctave(-1));
 
   const openLearnModal = () => {
     if (learnToPlayModal) {
