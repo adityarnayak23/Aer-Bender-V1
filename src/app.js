@@ -897,45 +897,39 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ⚡ Electric vs. 🪈 Carnatic 2-Button Switch (Electric default)
+  // ⚡ Electric Flute Engine (Permanent Default, Carnatic Mode Removed)
   const modeElectricBtn = document.getElementById('modeElectricBtn');
   const modeCarnaticBtn = document.getElementById('modeCarnaticBtn');
 
-  function setTimbreMode(isElectric, shouldResumeAudio = true) {
+  function setTimbreMode(isElectric = true, shouldResumeAudio = true) {
     if (shouldResumeAudio) {
       audio.resume();
     }
-    state.isElectricMode = isElectric;
-    audio.setElectricMode(isElectric);
+    // Carnatic mode removed: permanently lock to Electric mode
+    state.isElectricMode = true;
+    audio.setElectricMode(true);
 
     if (modeElectricBtn && modeCarnaticBtn) {
-      if (isElectric) {
-        modeElectricBtn.classList.add('active');
-        modeElectricBtn.setAttribute('aria-pressed', 'true');
-        modeCarnaticBtn.classList.remove('active');
-        modeCarnaticBtn.setAttribute('aria-pressed', 'false');
-      } else {
-        modeCarnaticBtn.classList.add('active');
-        modeCarnaticBtn.setAttribute('aria-pressed', 'true');
-        modeElectricBtn.classList.remove('active');
-        modeElectricBtn.setAttribute('aria-pressed', 'false');
-      }
+      modeElectricBtn.classList.add('active');
+      modeElectricBtn.setAttribute('aria-pressed', 'true');
+      modeCarnaticBtn.classList.remove('active');
+      modeCarnaticBtn.setAttribute('aria-pressed', 'false');
     }
     if (timbreModeBadge) {
-      timbreModeBadge.classList.toggle('electric-active', isElectric);
-      timbreModeBadge.textContent = isElectric ? '⚡ Electric Flute' : 'Acoustic Engine';
+      timbreModeBadge.classList.add('electric-active');
+      timbreModeBadge.textContent = '⚡ Electric Flute';
     }
   }
 
   function toggleElectricMode() {
-    setTimbreMode(!state.isElectricMode);
+    setTimbreMode(true);
   }
 
   if (modeElectricBtn) {
     modeElectricBtn.addEventListener('click', () => setTimbreMode(true));
   }
   if (modeCarnaticBtn) {
-    modeCarnaticBtn.addEventListener('click', () => setTimbreMode(false));
+    modeCarnaticBtn.addEventListener('click', () => setTimbreMode(true));
   }
   if (timbreModeBadge) {
     timbreModeBadge.addEventListener('click', () => toggleElectricMode());
