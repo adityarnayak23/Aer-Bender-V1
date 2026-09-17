@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!isSameSwara || !audio.isPlaying) {
       state.currentSwara = sw;
       audio.setBreathPressure(0.85);
-      audio.playSwara(sw);
+      audio.playSwara(sw, res.transitionMeta);
       highlightActiveCard(sw.id);
     }
     renderHolesDiagram(res.holes);
@@ -383,25 +383,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Render 7 Tone Hole Circles in HUD
+  // Render 7 Tone Hole Circles in HUD with zero-allocation DOM reuse & change-skipping
+  let lastRenderedHolesKey = '';
   function renderHolesDiagram(holesArray) {
-    if (!holesDiagramEl) return;
-    holesDiagramEl.innerHTML = '';
+    if (!holesDiagramEl || !holesArray) return;
+    const key = holesArray.map(h => (h === true ? 'T' : (h === 'half' ? 'H' : 'F'))).join('');
+    if (key === lastRenderedHolesKey) return;
+    lastRenderedHolesKey = key;
 
     const labels = ['L1', 'L2', 'L3', 'R1', 'R2', 'R3', 'R4'];
+    let children = holesDiagramEl.children;
+    if (children.length !== 7) {
+      holesDiagramEl.innerHTML = '';
+      labels.forEach((lbl) => {
+        const circle = document.createElement('div');
+        const text = document.createElement('span');
+        text.textContent = lbl;
+        circle.appendChild(text);
+        holesDiagramEl.appendChild(circle);
+      });
+      children = holesDiagramEl.children;
+    }
 
     holesArray.forEach((stateVal, idx) => {
-      const circle = document.createElement('div');
+      const circle = children[idx];
+      if (!circle) return;
       const isHalf = stateVal === 'half';
       const isClosed = stateVal === true;
       circle.className = `hole-pip ${isClosed ? 'closed' : (isHalf ? 'half' : 'open')}`;
       circle.title = `${labels[idx]}: ${isHalf ? 'Half-curled' : (isClosed ? 'Closed' : 'Open')}`;
-
-      const text = document.createElement('span');
-      text.textContent = labels[idx];
-      circle.appendChild(text);
-
-      holesDiagramEl.appendChild(circle);
     });
   }
 

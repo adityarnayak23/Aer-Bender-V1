@@ -228,7 +228,7 @@ class FluteAudioEngine {
     }
 
     if (this.isElectricMode) {
-      this.playElectricFlute(sampleId, freq, swaraDetuneCents);
+      this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, prevSwaraObj || this.currentSwaraObj, swaraObj);
     } else if (this.samplesLoaded && this.sampleBuffers[sampleId]) {
       this.playAcousticSample(sampleId, freq, swaraDetuneCents);
     } else {
@@ -366,7 +366,7 @@ class FluteAudioEngine {
     // If currently playing and legato glide, glide the existing electric voice
     if (this.isPlaying && this.activeElectricVoice && isLegato) {
       const isLowerOctave = (this.octaveShift === -1 || targetFreq < 240);
-      const glideTime = 0.048;
+      const glideTime = 0.015; // Crisp 15ms classical Indian woodwind pitch transition
       this.activeElectricVoice.oscillators.forEach(osc => {
         const mult = osc._freqMultiplier || 1.0;
         osc.frequency.cancelScheduledValues(now);
@@ -374,15 +374,15 @@ class FluteAudioEngine {
         osc.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq * mult), now + glideTime);
       });
       const baseCutoff = Math.min(8800, Math.max(1600, targetFreq * 4.2));
-      this.activeElectricVoice.filter.frequency.setTargetAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now, 0.04);
+      this.activeElectricVoice.filter.frequency.setTargetAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now, 0.015);
       if (this.activeElectricVoice.bassEQ) {
-        this.activeElectricVoice.bassEQ.gain.setTargetAtTime(isLowerOctave ? 9.0 : 1.5, now, 0.04);
+        this.activeElectricVoice.bassEQ.gain.setTargetAtTime(isLowerOctave ? 9.0 : 1.5, now, 0.015);
       }
       if (this.activeElectricVoice.oscMixGainSub) {
-        this.activeElectricVoice.oscMixGainSub.gain.setTargetAtTime(isLowerOctave ? 0.72 : 0.22, now, 0.04);
+        this.activeElectricVoice.oscMixGainSub.gain.setTargetAtTime(isLowerOctave ? 0.72 : 0.22, now, 0.015);
       }
       if (this.activeElectricVoice.boreBreathFilter) {
-        this.activeElectricVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, 0.04);
+        this.activeElectricVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, 0.015);
       }
       this.activeElectricVoice.targetFreq = targetFreq;
       this.currentFreq = targetFreq;
@@ -582,7 +582,7 @@ class FluteAudioEngine {
 
     // 7. Volume Attack Envelope (Equal-loudness compensated: +35% energy in lower octave for thick chest weight)
     const targetGain = (isLowerOctave ? 0.70 : 0.52) * this.breathPressure;
-    const attackTime = isLegato ? 0.015 : 0.008;
+    const attackTime = isLegato ? 0.012 : 0.005;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
     oscSaw.start(now);

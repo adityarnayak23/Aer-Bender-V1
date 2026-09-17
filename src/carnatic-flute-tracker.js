@@ -850,15 +850,18 @@ class CarnaticFluteTracker {
     if (!this.canvasCtx) return;
 
     if (this.canvasElement && typeof window !== 'undefined') {
-      const rect = this.canvasElement.getBoundingClientRect ? this.canvasElement.getBoundingClientRect() : null;
-      const dpr = window.devicePixelRatio ? Math.max(2, window.devicePixelRatio) : 2;
-      const baseW = (rect && rect.width > 0) ? rect.width : (this.videoElement && this.videoElement.videoWidth > 0 ? this.videoElement.videoWidth : 1280);
-      const baseH = (rect && rect.height > 0) ? rect.height : (this.videoElement && this.videoElement.videoHeight > 0 ? this.videoElement.videoHeight : 720);
-      const targetW = Math.round(baseW * dpr);
-      const targetH = Math.round(baseH * dpr);
-      if (this.canvasElement.width !== targetW || this.canvasElement.height !== targetH) {
-        this.canvasElement.width = targetW;
-        this.canvasElement.height = targetH;
+      if (!this._lastCanvasCheck || (this.frameCount - this._lastCanvasCheck >= 60)) {
+        this._lastCanvasCheck = this.frameCount;
+        const rect = this.canvasElement.getBoundingClientRect ? this.canvasElement.getBoundingClientRect() : null;
+        const dpr = window.devicePixelRatio ? Math.max(2, window.devicePixelRatio) : 2;
+        const baseW = (rect && rect.width > 0) ? rect.width : (this.videoElement && this.videoElement.videoWidth > 0 ? this.videoElement.videoWidth : 1280);
+        const baseH = (rect && rect.height > 0) ? rect.height : (this.videoElement && this.videoElement.videoHeight > 0 ? this.videoElement.videoHeight : 720);
+        const targetW = Math.round(baseW * dpr);
+        const targetH = Math.round(baseH * dpr);
+        if (this.canvasElement.width !== targetW || this.canvasElement.height !== targetH) {
+          this.canvasElement.width = targetW;
+          this.canvasElement.height = targetH;
+        }
       }
     }
 
@@ -1572,10 +1575,23 @@ class CarnaticFluteTracker {
       openThreshold = 0.28;
     }
 
+    // Instantaneous Threshold Bypass:
+    // When a player performs a clear finger down (rawScore >= closeThreshold) or release (rawScore < openThreshold),
+    // immediately adopt rawScore to bypass all filter delay.
+    // When within the hysteresis deadband or stationary, smoothScore eliminates all camera noise.
+    let finalScore = smoothScore;
+    if (!currentlyClosed && rawScore >= closeThreshold) {
+      finalScore = rawScore;
+      this.fingerCurlScores[holeIdx] = rawScore;
+    } else if (currentlyClosed && rawScore < openThreshold) {
+      finalScore = rawScore;
+      this.fingerCurlScores[holeIdx] = rawScore;
+    }
+
     if (currentlyClosed) {
-      return smoothScore >= openThreshold;
+      return finalScore >= openThreshold;
     } else {
-      return smoothScore >= closeThreshold;
+      return finalScore >= closeThreshold;
     }
   }
 
