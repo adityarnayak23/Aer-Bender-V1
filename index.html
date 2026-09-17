@@ -293,6 +293,7 @@
               <!-- Populated dynamically by JS -->
             </div>
           </div>
+          <div class="phrases-chips tala-phrases-chips" id="talaPhrasesChips"></div>
         </div>
       </section>
 
@@ -337,22 +338,22 @@
         </div>
 
         <div class="learn-sections-container">
-          <!-- STEP 1: HOW TO HOLD THE FLUTE (3RD PERSON ANIMATED PERSPECTIVE) -->
+          <!-- STEP 1: HOW TO HOLD THE FLUTE (UPPER-HALF BODY STANCE ANIMATION) -->
           <div class="learn-step-pane active hand-layout-card" id="learnStepPane1">
             <div class="step-pane-header">
               <span class="focus-badge">STEP 1</span>
               <h3 class="focus-title">How to Hold the Flute</h3>
-              <p class="step-intro-text">Hold the flute sideways pointing to your right. Notice the hand orientation difference below:</p>
+              <p class="step-intro-text">Hold flute sideways to your right. Left wrist turns inward; Right hand reaches forward.</p>
             </div>
 
-            <!-- Hand Orientation Asymmetry Cards -->
+            <!-- Hand Orientation Asymmetry Cards (Punchy & Less Wordy) -->
             <div class="hand-orientation-grid">
               <div class="hand-orient-card left-orient-card">
                 <div class="orient-card-header">
                   <span class="hand-badge left-badge">✋ LEFT HAND</span>
                   <span class="orient-key-pill">PALM FACES YOU</span>
                 </div>
-                <p class="orient-action-text">Turn your left wrist <strong>inward towards your face</strong> so your index, middle, and ring fingers curve over Holes 1, 2, and 3 near your mouth.</p>
+                <p class="orient-action-text">Turn left wrist <strong>inward towards your face</strong> so index, middle, and ring curve over Holes 1, 2, and 3.</p>
                 <div class="orient-pinky-tag">💤 <strong>Left Pinky:</strong> Free in the air (takes a nap!)</div>
               </div>
 
@@ -361,48 +362,124 @@
                   <span class="hand-badge right-badge">🤚 RIGHT HAND</span>
                   <span class="orient-key-pill">PALM FACES FORWARD</span>
                 </div>
-                <p class="orient-action-text">Keep your right hand <strong>facing forward naturally</strong> (away from you). All 4 fingers rest over Holes 4, 5, 6, and 7 on the tube body.</p>
+                <p class="orient-action-text">Keep right hand <strong>facing forward naturally</strong> (away from you). 4 fingers rest over Holes 4, 5, 6, and 7.</p>
                 <div class="orient-pinky-tag">🎯 <strong>Right Hand:</strong> Uses Index, Middle, Ring & Pinky</div>
               </div>
             </div>
 
-            <!-- 3rd-Person Animated Player Perspective SVG Graphic -->
+            <!-- Upper-Half Body Animated Player Stance SVG Graphic -->
             <div class="step-illustration-container player-perspective-container">
-              <svg viewBox="0 0 780 230" class="step-flute-posture-svg" id="step1PostureSvg">
+              <svg viewBox="0 0 800 245" class="step-flute-posture-svg" id="step1PostureSvg">
+                <defs>
+                  <!-- Air stream gradients -->
+                  <linearGradient id="airJetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                    <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.75"/>
+                  </linearGradient>
+                  <linearGradient id="airReboundGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
+                    <stop offset="40%" stop-color="#ccff00" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.15"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Upper-Half Body Silhouette (Head, Neck, Torso, Both Arms in Flute Stance) -->
+                <g class="player-upper-body" id="playerUpperBodyStance">
+                  <!-- Torso / Chest Silhouette -->
+                  <path d="M 60 245 C 60 190 95 165 145 160 L 215 160 C 265 165 295 190 295 245 Z" fill="#080f20" stroke="#000000" stroke-width="2.5"/>
+                  <!-- Collar / Stance accent -->
+                  <path d="M 145 160 Q 180 185 215 160" stroke="#1e293b" stroke-width="2" fill="none"/>
+
+                  <!-- Head in Side Profile Facing Flute Head (Mouth near x=205, y=148) -->
+                  <g transform="translate(0, 0)">
+                    <!-- Neck -->
+                    <path d="M 160 162 L 160 145 L 195 145 L 195 162 Z" fill="#141d33" stroke="#000000" stroke-width="2"/>
+                    <!-- Head Contour -->
+                    <path d="M 140 142 C 130 115 145 80 178 72 C 210 65 228 85 228 112 L 222 124 L 232 130 L 216 138 L 220 148 C 200 158 170 158 140 142 Z" fill="#141d33" stroke="#000000" stroke-width="2.5"/>
+                    <!-- Focused Eye looking along flute -->
+                    <circle cx="204" cy="106" r="3.5" fill="#00f0ff"/>
+                    <circle cx="205" cy="105" r="1.2" fill="#ffffff"/>
+                    <!-- Ear / Audio Headphone -->
+                    <rect x="156" cy="102" y="102" width="14" height="26" rx="7" fill="#0284c7" stroke="#000000" stroke-width="1.8"/>
+                    <!-- Lips / Embouchure Aperture -->
+                    <ellipse cx="218" cy="138" rx="4" ry="2.5" fill="#f43f5e" opacity="0.85"/>
+                  </g>
+
+                  <!-- Left Arm & Hand Raised (Wrist Turned Inward towards Face ⟲) -->
+                  <g class="left-arm-group">
+                    <!-- Left Bicep / Forearm curving in -->
+                    <path d="M 115 178 Q 160 215 260 165" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
+                    <path d="M 115 178 Q 160 215 260 165" stroke="#000000" stroke-width="2" fill="none"/>
+                    <!-- Left Wrist Turn Arc Indicator -->
+                    <path d="M 248 185 A 14 14 0 0 1 270 160" stroke="#38bdf8" stroke-width="2" fill="none" stroke-dasharray="3,2"/>
+                  </g>
+
+                  <!-- Right Arm Extended Forward along Flute ➔ -->
+                  <g class="right-arm-group">
+                    <!-- Right Bicep / Forearm reaching forward -->
+                    <path d="M 230 180 Q 360 210 520 170" stroke="#0b1730" stroke-width="16" stroke-linecap="round" fill="none"/>
+                    <path d="M 230 180 Q 360 210 520 170" stroke="#000000" stroke-width="2" fill="none"/>
+                  </g>
+                </g>
+
                 <!-- Flute Tube Body with Bold Brutalist Border -->
                 <rect x="140" y="132" width="590" height="34" rx="17" fill="#0c1324" stroke="#000000" stroke-width="3"/>
-                <line x1="150" y1="149" x2="720" y2="149" stroke="#00f0ff" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+                <line x1="150" y1="149" x2="720" y2="149" stroke="#00f0ff" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
 
-                <!-- Blow Hole (◎) with Animated Breath Stream -->
+                <!-- REAL ACOUSTICS: Embouchure Air Jet Strike, Top Split & Inner Rebound -->
+                <!-- Mouth Blow Hole (◎) -->
                 <g class="step-embouchure-marker" transform="translate(210, 149)">
+                  <!-- Chimney Hole Outer Bevel -->
                   <circle cx="0" cy="0" r="14" fill="#030712" stroke="#000000" stroke-width="3"/>
+                  <!-- Deep Acoustic Bore Aperture -->
                   <circle cx="0" cy="0" r="7" fill="#00f0ff" class="pulse-blow-core"/>
-                  <!-- Lips Breath Waves -->
-                  <path class="breath-wave anim-b1" d="M -14 -24 Q -7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b2" d="M 0 -28 Q 0 -10 0 0" stroke="#ccff00" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b3" d="M 14 -24 Q 7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-                  <text x="0" y="32" font-size="10" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">BLOW HERE (◎)</text>
+
+                  <!-- Razor-Sharp Strike Edge / Labium blade (Opposite rim) -->
+                  <line x1="5" y1="-12" x2="5" y2="12" stroke="#ffffff" stroke-width="2.5"/>
+
+                  <!-- Lips Air Jet hitting Strike Edge -->
+                  <line x1="-16" y1="-12" x2="5" y2="0" stroke="url(#airJetGrad)" stroke-width="3" stroke-linecap="round" class="anim-air-jet"/>
+
+                  <!-- Backward-compatible breath waves -->
+                  <path class="breath-wave anim-b1" d="M -14 -24 Q -7 -8 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b2" d="M 0 -28 Q 0 -10 0 0" stroke="#ccff00" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b3" d="M 14 -24 Q 7 -8 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+                  <!-- A. TOP SPLIT STREAM (Curling into the atmosphere above flute) -->
+                  <path d="M 5 0 Q 18 -18 35 -24" stroke="#38bdf8" stroke-width="2.4" fill="none" stroke-linecap="round" class="anim-air-split-top"/>
+                  <text x="38" y="-28" font-size="8.5" font-weight="800" fill="#38bdf8" font-family="var(--font-mono)">SPLITS OVER TOP ↗</text>
+
+                  <!-- B. BOTTOM SPLIT STREAM & REBOUND (Plunges down, hits bottom bore, rebounds forward) -->
+                  <!-- Down plunge -->
+                  <path d="M 5 0 L 7 11" stroke="#00f0ff" stroke-width="2.2" fill="none"/>
+                  <!-- Bore floor strike bounce flash -->
+                  <ellipse cx="7" cy="11" rx="4" ry="2" fill="#ffffff" opacity="0.8"/>
+                  <!-- Rebound wave surge into bore tube -->
+                  <path d="M 7 11 Q 20 2 40 5 T 75 4" stroke="url(#airReboundGrad)" stroke-width="2.8" fill="none" stroke-linecap="round" class="anim-air-rebound"/>
+                  <text x="15" y="30" font-size="8.5" font-weight="800" fill="#ccff00" font-family="var(--font-mono)">↘ REBOUNDS OFF INNER WALL</text>
+
+                  <text x="0" y="44" font-size="9" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">BLOW HERE (◎)</text>
                 </g>
 
                 <!-- LEFT HAND VISUAL: Wrist Turn Arc & Palm Facing You Indicator -->
-                <g transform="translate(290, 75)">
-                  <rect x="-85" y="-20" width="170" height="26" rx="6" fill="#0284c7" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-3" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">⟲ PALM FACES YOU</text>
-                  <path d="M -20 12 Q 0 20 20 12" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <g transform="translate(320, 68)">
+                  <rect x="-85" y="-18" width="170" height="24" rx="5" fill="#0284c7" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">⟲ PALM FACES YOU</text>
+                  <path d="M -18 10 Q 0 18 18 10" stroke="#38bdf8" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
                 <!-- RIGHT HAND VISUAL: Straight Natural Reach Indicator -->
-                <g transform="translate(565, 75)">
-                  <rect x="-85" y="-20" width="170" height="26" rx="6" fill="#7c3aed" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-3" font-size="10" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">➔ PALM FACES FORWARD</text>
-                  <path d="M -18 12 L 18 12" stroke="#c084fc" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                <g transform="translate(565, 68)">
+                  <rect x="-85" y="-18" width="170" height="24" rx="5" fill="#7c3aed" stroke="#000000" stroke-width="2" />
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">➔ PALM FACES FORWARD</text>
+                  <path d="M -16 10 L 16 10" stroke="#c084fc" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
                 <!-- Left Hand Holes (1, 2, 3) -->
                 <!-- H1 -->
-                <g class="step-posture-node" transform="translate(280, 149)">
+                <g class="step-posture-node" transform="translate(285, 149)">
                   <g class="anim-floating-finger f-anim-1">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -410,9 +487,9 @@
                   <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Idx</text>
                 </g>
                 <!-- H2 -->
-                <g class="step-posture-node" transform="translate(330, 149)">
+                <g class="step-posture-node" transform="translate(335, 149)">
                   <g class="anim-floating-finger f-anim-2">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -420,9 +497,9 @@
                   <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Mid</text>
                 </g>
                 <!-- H3 -->
-                <g class="step-posture-node" transform="translate(380, 149)">
+                <g class="step-posture-node" transform="translate(385, 149)">
                   <g class="anim-floating-finger f-anim-3">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -431,16 +508,16 @@
                 </g>
 
                 <!-- Left Pinky Relaxed in Air -->
-                <g transform="translate(415, 115)" class="anim-floating-finger f-anim-1">
-                  <rect x="-6" y="-32" width="12" height="26" rx="6" fill="#fde68a" stroke="#000000" stroke-width="2"/>
-                  <text x="0" y="-38" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">💤 Pinky Up</text>
+                <g transform="translate(420, 115)" class="anim-floating-finger f-anim-1">
+                  <rect x="-6" y="-30" width="12" height="24" rx="6" fill="#fde68a" stroke="#000000" stroke-width="2"/>
+                  <text x="0" y="-36" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">💤 Pinky Up</text>
                 </g>
 
                 <!-- Right Hand Holes (4, 5, 6, 7) -->
                 <!-- H4 -->
                 <g class="step-posture-node" transform="translate(470, 149)">
                   <g class="anim-floating-finger f-anim-4">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -450,7 +527,7 @@
                 <!-- H5 -->
                 <g class="step-posture-node" transform="translate(520, 149)">
                   <g class="anim-floating-finger f-anim-5">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -460,7 +537,7 @@
                 <!-- H6 -->
                 <g class="step-posture-node" transform="translate(570, 149)">
                   <g class="anim-floating-finger f-anim-6">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -470,7 +547,7 @@
                 <!-- H7 -->
                 <g class="step-posture-node" transform="translate(620, 149)">
                   <g class="anim-floating-finger f-anim-7">
-                    <rect x="-8" y="-46" width="16" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <rect x="-8" y="-44" width="16" height="32" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
                     <ellipse cx="0" cy="-14" rx="4" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
@@ -487,7 +564,7 @@
             <div class="step-pane-header">
               <span class="focus-badge highlight">STEP 2</span>
               <h3 class="focus-title">Wake Up the Flute with Sa</h3>
-              <p class="step-intro-text">The flute stays quiet and asleep until you play your first note! Think of it like turning on an ignition key:</p>
+              <p class="step-intro-text">⚡ MAGIC KEY: Cover Holes 1 &amp; 2 to awaken the flute!</p>
             </div>
 
             <!-- Friendly Magic Starter Key Card (No alarm signs!) -->
@@ -567,7 +644,7 @@
 
           <!-- STEP 3: HOW TO PLAY ALL 7 NOTES (ANIMATED - MA ALL 7 CLOSED) -->
           <div class="learn-step-pane" id="learnStepPane3" style="display: none;">
-            <div class="learn-animated-scale-section learn-notes-chart-section">
+            <div class="learn-animated-scale-section" data-section="learn-notes-chart-section">
               <div class="anim-scale-header">
                 <div class="anim-header-left">
                   <span class="focus-badge highlight">STEP 3</span>
@@ -862,7 +939,7 @@
           <div class="step-pane-header">
             <span class="focus-badge highlight">STEP 4</span>
             <h3 class="focus-title">Head Tilt Magic — Change Octaves</h3>
-            <p class="step-intro-text">Change registers in real time just by tilting your chin up or down in front of the camera—no buttons or finger changes needed!</p>
+            <p class="step-intro-text">Tilt chin up, level, or down to change octaves. Example: note <strong>Pa</strong> (5 fingers closed) playing for 3s each!</p>
           </div>
 
           <!-- Animated Head Tilt Character Profile Stage -->
@@ -874,12 +951,12 @@
                   <stop offset="100%" stop-color="#f97316" stop-opacity="0"/>
                 </linearGradient>
                 <linearGradient id="beamMadhyaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#00ff88" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#059669" stop-opacity="0"/>
                 </linearGradient>
                 <linearGradient id="beamMandraGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.9"/>
+                  <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
                 </linearGradient>
               </defs>
 
@@ -907,25 +984,37 @@
                   <!-- Mouth Blow Hole -->
                   <circle cx="210" cy="129" r="6" fill="#38bdf8" stroke="#000000" stroke-width="2"/>
 
+                  <!-- Example Note Pa: 5 fingers closed (H1-H5 ●), 2 open (H6-H7 ○) -->
+                  <g transform="translate(230, 129)" class="head-tilt-pa-fingers">
+                    <circle cx="0" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="14" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="28" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="48" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="62" cy="0" r="3.2" fill="#10b981" stroke="#000000" stroke-width="1"/>
+                    <circle cx="76" cy="0" r="3" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
+                    <circle cx="90" cy="0" r="3" fill="#0b1120" stroke="#94a3b8" stroke-width="1.2"/>
+                    <text x="45" y="16" font-size="7.5" font-weight="800" fill="#cbd5e1" text-anchor="middle" font-family="var(--font-mono)">PA (5 CLOSED ●)</text>
+                  </g>
+
                   <!-- Sound Wave Beam Radiating from Flute Exit (x=415, y=129) -->
                   <g class="sound-beam-emitter" id="soundBeamEmitter">
-                    <!-- Tara High Beam (+15° Up) -->
+                    <!-- Tara High Beam (+15° Up) - Coral Orange -->
                     <g class="beam-group beam-tara-group" id="beamTaraG">
                       <polygon points="415,129 680,60 680,110" fill="url(#beamTaraGrad)" opacity="0.6"/>
                       <path d="M 425 125 Q 445 105 465 120 T 505 110 T 545 100 T 585 90 T 625 80 T 665 70" fill="none" stroke="#ff5500" stroke-width="3" stroke-linecap="round" class="anim-wave-beam"/>
                       <text x="690" y="85" font-size="11" font-weight="800" fill="#ff5500" font-family="var(--font-display)">▲ HIGH (TARA)</text>
                     </g>
-                    <!-- Madhya Mid Beam (0° Level) -->
+                    <!-- Madhya Mid Beam (0° Level) - Emerald Green -->
                     <g class="beam-group beam-madhya-group" id="beamMadhyaG">
                       <polygon points="415,129 680,105 680,155" fill="url(#beamMadhyaGrad)" opacity="0.5"/>
-                      <path d="M 425 129 Q 450 115 475 129 T 525 129 T 575 129 T 625 129 T 675 129" fill="none" stroke="#00ff88" stroke-width="3" stroke-linecap="round" class="anim-wave-beam"/>
-                      <text x="690" y="133" font-size="11" font-weight="800" fill="#00ff88" font-family="var(--font-display)">◆ MID (MADHYA)</text>
+                      <path d="M 425 129 Q 450 115 475 129 T 525 129 T 575 129 T 625 129 T 675 129" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" class="anim-wave-beam"/>
+                      <text x="690" y="133" font-size="11" font-weight="800" fill="#10b981" font-family="var(--font-display)">◆ MID (MADHYA)</text>
                     </g>
-                    <!-- Mandra Bass Beam (-15° Down) -->
+                    <!-- Mandra Bass Beam (-15° Down) - Royal Blue -->
                     <g class="beam-group beam-mandra-group" id="beamMandraG">
                       <polygon points="415,129 680,150 680,200" fill="url(#beamMandraGrad)" opacity="0.5"/>
-                      <path d="M 425 133 Q 460 160 495 133 T 565 133 T 635 133 T 705 133" fill="none" stroke="#00f0ff" stroke-width="3.5" stroke-linecap="round" class="anim-wave-beam"/>
-                      <text x="690" y="175" font-size="11" font-weight="800" fill="#00f0ff" font-family="var(--font-display)">▼ BASS (MANDRA)</text>
+                      <path d="M 425 133 Q 460 160 495 133 T 565 133 T 635 133 T 705 133" fill="none" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round" class="anim-wave-beam"/>
+                      <text x="690" y="175" font-size="11" font-weight="800" fill="#3b82f6" font-family="var(--font-display)">▼ BASS (MANDRA)</text>
                     </g>
                   </g>
                 </g>
@@ -939,61 +1028,61 @@
             <div class="octave-zone-card zone-tara" id="simZoneTara">
               <div class="zone-badge">▲ HIGH REGISTER</div>
               <div class="zone-angle-tag">+15° Chin Up</div>
-              <h4 class="zone-name">Tara (High)</h4>
+              <h4 class="zone-name">Tara (High Pa)</h4>
               <div class="zone-anim-circle">
                 <div class="head-icon chin-up">▲</div>
                 <div class="acoustic-beam beam-tara"></div>
               </div>
-              <p class="zone-desc">Tilt chin up to overblow into the high octave. Bright, piercing melodies!</p>
-              <span class="zone-color-pill pill-tara">Sunset Orange (#ff5500)</span>
+              <p class="zone-desc">Tilt chin up to overblow into high octave. Bright, piercing melodies!</p>
+              <span class="zone-color-pill pill-tara">Coral Orange (#ff5500)</span>
             </div>
 
             <!-- Madhya (Mid) -->
             <div class="octave-zone-card zone-madhya active" id="simZoneMadhya">
               <div class="zone-badge">◆ DEFAULT REGISTER</div>
               <div class="zone-angle-tag">0° Level Head</div>
-              <h4 class="zone-name">Madhya (Normal)</h4>
+              <h4 class="zone-name">Madhya (Mid Pa)</h4>
               <div class="zone-anim-circle">
                 <div class="head-icon chin-level">◆</div>
                 <div class="acoustic-beam beam-madhya"></div>
               </div>
-              <p class="zone-desc">Look straight forward. Balanced, sweet natural flute tones.</p>
-              <span class="zone-color-pill pill-madhya">Mint Green (#00ff88)</span>
+              <p class="zone-desc">Look straight forward. Balanced natural tones.</p>
+              <span class="zone-color-pill pill-madhya">Emerald Green (#10b981)</span>
             </div>
 
             <!-- Mandra (Bass) -->
             <div class="octave-zone-card zone-mandra" id="simZoneMandra">
               <div class="zone-badge">▼ BASS REGISTER</div>
               <div class="zone-angle-tag">-15° Chin Down</div>
-              <h4 class="zone-name">Mandra (Bass)</h4>
+              <h4 class="zone-name">Mandra (Bass Pa)</h4>
               <div class="zone-anim-circle">
                 <div class="head-icon chin-down">▼</div>
                 <div class="acoustic-beam beam-mandra"></div>
               </div>
-              <p class="zone-desc">Tilt chin slightly down towards your chest. Deep, warm resonant bass!</p>
-              <span class="zone-color-pill pill-mandra">Electric Blue (#00f0ff)</span>
+              <p class="zone-desc">Tilt chin slightly down towards chest. Deep resonant bass!</p>
+              <span class="zone-color-pill pill-mandra">Royal Blue (#3b82f6)</span>
             </div>
           </div>
 
           <!-- Interactive Head Tilt Demonstration Stage -->
           <div class="tilt-interactive-stage">
             <div class="tilt-stage-header">
-              <span class="tilt-stage-title">Test Head Tilt Postures:</span>
-              <span class="tilt-stage-hint">Click a button to tilt the character and hear the tone:</span>
+              <span class="tilt-stage-title">Test Head Tilt Postures (Plays for 3s):</span>
+              <span class="tilt-stage-hint">Click a button to tilt character and hear note Pa:</span>
             </div>
             <div class="tilt-controls-row">
               <button type="button" class="btn-tilt-sim" id="btnSimTara" data-octave="1">
-                ▲ Test Chin Up (High)
+                ▲ Test Chin Up (High · 3s)
               </button>
               <button type="button" class="btn-tilt-sim active" id="btnSimMadhya" data-octave="0">
-                ◆ Test Level Head (Mid)
+                ◆ Test Level Head (Mid · 3s)
               </button>
               <button type="button" class="btn-tilt-sim" id="btnSimMandra" data-octave="-1">
-                ▼ Test Chin Down (Bass)
+                ▼ Test Chin Down (Bass · 3s)
               </button>
             </div>
             <div class="tilt-live-feedback" id="tiltLiveFeedback">
-              Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA (0) • Normal Balanced Register</span>
+              Active: <span id="tiltZoneLabel" class="feedback-highlight text-emerald">MADHYA (0) • Mid Pa (392 Hz) · Playing for 3s</span>
             </div>
           </div>
         </div>

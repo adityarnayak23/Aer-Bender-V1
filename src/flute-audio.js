@@ -1004,6 +1004,14 @@ class FluteAudioEngine {
     return this.isJazzMode;
   }
 
+  // Direct note playback for simulations and tutorials (e.g. 3-second Step 4 octave tests)
+  playDirectNote(freq, breathPressure = 0.75) {
+    this.resume();
+    this.setBreathPressure(breathPressure);
+    this.playSyntheticFlute(freq, 0);
+    this.isPlaying = true;
+  }
+
   setTimbre() {}
 
   // -------------------------------------------------------------------------

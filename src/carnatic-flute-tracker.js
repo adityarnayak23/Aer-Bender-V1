@@ -2476,8 +2476,83 @@ class CarnaticFluteTracker {
 
     // 5. Active state vs Inactive state
     if (isEmbouchureActive) {
-      // Dynamic Acoustic Vortex & Concentric Breath Waves (semi-oval waves radiating softly into bore)
+      // Dynamic Acoustic Air Jet Strike, Split & Rebound Dynamics
+      const jetPhase = (now * 0.008) % (2 * Math.PI);
       const vortexPulse = (Math.sin(now * 0.006) + 1.0) * 0.5;
+
+      // A. Laminar Air Jet from Lips striking the Labium edge
+      ctx.save();
+      const lipsX = surfBlowPos.x - ux * (9 * scale) - nx * (12 * scale);
+      const lipsY = surfBlowPos.y - uy * (9 * scale) - ny * (12 * scale);
+      
+      ctx.beginPath();
+      ctx.moveTo(lipsX, lipsY);
+      ctx.lineTo(surfBlowPos.x, surfBlowPos.y);
+      ctx.strokeStyle = 'rgba(255, 255, 255, ' + (0.75 + 0.2 * Math.sin(jetPhase)) + ')';
+      ctx.lineWidth = 2.0 * scale;
+      ctx.shadowColor = octaveAura;
+      ctx.shadowBlur = 6 * scale;
+      ctx.stroke();
+
+      // B. Top Split Stream: Aerodynamic wake curling over the top into the room
+      ctx.beginPath();
+      ctx.moveTo(surfBlowPos.x, surfBlowPos.y);
+      ctx.bezierCurveTo(
+        surfBlowPos.x + ux * (4 * scale) - nx * (8 * scale),
+        surfBlowPos.y + uy * (4 * scale) - ny * (8 * scale),
+        surfBlowPos.x + ux * (14 * scale) - nx * (16 * scale),
+        surfBlowPos.y + uy * (14 * scale) - ny * (16 * scale),
+        surfBlowPos.x + ux * (24 * scale) - nx * (18 * scale),
+        surfBlowPos.y + uy * (24 * scale) - ny * (18 * scale)
+      );
+      ctx.strokeStyle = 'rgba(186, 230, 253, ' + (0.65 + 0.25 * Math.cos(jetPhase)) + ')';
+      ctx.lineWidth = 1.4 * scale;
+      ctx.setLineDash([4 * scale, 3 * scale]);
+      ctx.lineDashOffset = -(now * 0.03) % (7 * scale);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // C. Bottom Split Stream: Dives into chimney, strikes bottom bore wall & REBOUNDS
+      const boreFloorDist = tubeRadius * 1.6;
+      const strikeX = surfBlowPos.x + nx * boreFloorDist;
+      const strikeY = surfBlowPos.y + ny * boreFloorDist;
+
+      // Downward plunge into chimney
+      ctx.beginPath();
+      ctx.moveTo(surfBlowPos.x, surfBlowPos.y);
+      ctx.lineTo(strikeX, strikeY);
+      ctx.strokeStyle = octaveAura;
+      ctx.lineWidth = 1.8 * scale;
+      ctx.stroke();
+
+      // Bore floor impact bounce flash
+      ctx.beginPath();
+      if (typeof ctx.ellipse === 'function') {
+        ctx.ellipse(strikeX, strikeY, 3.5 * scale, 1.8 * scale, angleRad, 0, 2 * Math.PI, false);
+      }
+      ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + 0.3 * vortexPulse) + ')';
+      ctx.fill();
+
+      // Upward & forward REBOUND off bore floor sending acoustic vortex down the tube
+      ctx.beginPath();
+      ctx.moveTo(strikeX, strikeY);
+      ctx.bezierCurveTo(
+        strikeX + ux * (8 * scale) - nx * (boreFloorDist * 0.6),
+        strikeY + uy * (8 * scale) - ny * (boreFloorDist * 0.6),
+        strikeX + ux * (18 * scale) - nx * (boreFloorDist * 0.3),
+        strikeY + uy * (18 * scale) - ny * (boreFloorDist * 0.3),
+        strikeX + ux * (32 * scale),
+        strikeY + uy * (32 * scale)
+      );
+      ctx.strokeStyle = 'rgba(204, 255, 0, ' + (0.7 + 0.25 * Math.sin(jetPhase)) + ')';
+      ctx.lineWidth = 1.6 * scale;
+      ctx.setLineDash([5 * scale, 3 * scale]);
+      ctx.lineDashOffset = -(now * 0.04) % (8 * scale);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Dynamic Acoustic Vortex & Concentric Breath Waves (semi-oval waves radiating softly into bore)
       for (let r = 1; r <= 2; r++) {
         const rippleRx = blowRx + (r * 3.5 + vortexPulse * 2.8) * scale;
         const rippleRy = blowRy + (r * 2.0 + vortexPulse * 1.6) * scale;

@@ -583,6 +583,18 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(Boolean)
       .sort((a, b) => a.freqRatio - b.freqRatio);
 
+    // Auto-fit swara cards: apply dynamic count & density classes so up to 16 notes fit on a single line
+    swarasCardsContainer.dataset.count = String(list.length);
+    if (list.length >= 11) {
+      swarasCardsContainer.classList.add('dense-16');
+      swarasCardsContainer.classList.remove('dense-8');
+    } else if (list.length >= 8) {
+      swarasCardsContainer.classList.add('dense-8');
+      swarasCardsContainer.classList.remove('dense-16');
+    } else {
+      swarasCardsContainer.classList.remove('dense-8', 'dense-16');
+    }
+
     list.forEach(sw => {
       const card = document.createElement('div');
       card.className = 'swara-card';
@@ -1450,7 +1462,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Step 4 Head Tilt Octave Simulator Controls
+  let simOctaveTimer = null;
+
+  // Step 4 Head Tilt Octave Simulator Controls (Demonstrating Note Pa for exactly 3 seconds)
   function setSimulatedOctave(octave) {
     audio.resume();
     const isTara = (octave === 1);
@@ -1475,26 +1489,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (tiltZoneLabel) {
       if (isTara) {
         tiltZoneLabel.className = 'feedback-highlight text-orange';
-        tiltZoneLabel.textContent = 'TARA (+1) • High Overblown Register';
+        tiltZoneLabel.textContent = 'TARA (+1) • High Pa (784 Hz) · Playing for 3s';
       } else if (isMandra) {
         tiltZoneLabel.className = 'feedback-highlight text-blue';
-        tiltZoneLabel.textContent = 'MANDRA (-1) • Deep Bass Resonant Register';
+        tiltZoneLabel.textContent = 'MANDRA (-1) • Deep Bass Pa (196 Hz) · Playing for 3s';
       } else {
         tiltZoneLabel.className = 'feedback-highlight text-emerald';
-        tiltZoneLabel.textContent = 'MADHYA (0) • Balanced Fundamental Pitch';
+        tiltZoneLabel.textContent = 'MADHYA (0) • Mid Pa (392 Hz) · Playing for 3s';
       }
     }
 
-    // Play preview tone at that octave
+    // Clear previous octave tone timer
+    if (simOctaveTimer) {
+      clearTimeout(simOctaveTimer);
+      simOctaveTimer = null;
+    }
+
+    // Play note Pa for exactly 3 seconds (not more)
     try {
-      const rootF = 277.18;
-      const f = rootF * Math.pow(2, octave);
+      const rootF = 277.18; // Base C#4
+      const paRatio = 1.5;  // Panchamam (Pa) = 3/2
+      const f = rootF * paRatio * Math.pow(2, octave);
+
       if (audio && typeof audio.playDirectNote === 'function') {
-        audio.playDirectNote(f, 0.7);
+        audio.playDirectNote(f, 0.75);
       } else if (audio && typeof audio.playSwara === 'function') {
-        const saObj = window.SwarasData ? window.SwarasData.SWARA_BY_ID['sa'] : null;
-        if (saObj) audio.playSwara(saObj);
+        audio.setOctaveShift(octave);
+        const paObj = window.SwarasData ? window.SwarasData.SWARA_BY_ID['pa'] : null;
+        if (paObj) audio.playSwara(paObj);
       }
+
+      // Automatically stop after exactly 3 seconds
+      simOctaveTimer = setTimeout(() => {
+        if (audio && typeof audio.stopVoice === 'function') {
+          audio.stopVoice();
+        }
+        simOctaveTimer = null;
+      }, 3000);
     } catch (e) {
       // safe catch
     }
