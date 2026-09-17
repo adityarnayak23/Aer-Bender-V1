@@ -164,16 +164,16 @@
             <div class="calib-item">
               <div class="calib-label-row">
                 <label for="fluteHeightSlider">Flute Level</label>
-                <span id="fluteHeightVal" class="calib-val">54%</span>
+                <span id="fluteHeightVal" class="calib-val">47%</span>
               </div>
-              <input type="range" id="fluteHeightSlider" min="35" max="75" step="1" value="54" class="form-range">
+              <input type="range" id="fluteHeightSlider" min="35" max="75" step="1" value="47" class="form-range">
             </div>
             <div class="calib-item">
               <div class="calib-label-row">
                 <label for="sensitivitySlider">Finger Curl</label>
-                <span id="sensitivityVal" class="calib-val">1.30</span>
+                <span id="sensitivityVal" class="calib-val">1.45</span>
               </div>
-              <input type="range" id="sensitivitySlider" min="1.15" max="1.55" step="0.02" value="1.30" class="form-range">
+              <input type="range" id="sensitivitySlider" min="1.15" max="1.55" step="0.01" value="1.45" class="form-range">
             </div>
           </div>
         </div>
@@ -245,7 +245,7 @@
         <div class="card tala-card">
           <div class="card-header tala-card-header">
             <div class="title-with-tag">
-              <h3>Carnatic Tala</h3>
+              <h3>Carnatic Tala & Metronome</h3>
             </div>
             <div class="tala-header-actions">
               <button id="talaPlayBtn" class="btn btn-tala-play" title="Start / Stop Tala">
@@ -254,7 +254,7 @@
             </div>
           </div>
 
-          <!-- Tala Selector & Speed Controls -->
+          <!-- Tala Selector & Speed & Metronome BPM Controls in Same Box -->
           <div class="tala-controls-row">
             <div class="tala-select-wrap">
               <select id="talaSelect" class="form-select tala-select" title="Select Carnatic Tala">
@@ -270,6 +270,13 @@
             <div class="tala-speed-group">
               <button type="button" class="tala-speed-btn active" data-speed="2" title="1st Speed">1x</button>
               <button type="button" class="tala-speed-btn" data-speed="1" title="2nd Speed">2x</button>
+            </div>
+
+            <!-- Metronome BPM Controls in Same Box -->
+            <div class="tala-bpm-group" id="talaBpmGroup" title="Metronome Tempo (BPM)">
+              <button type="button" id="talaBpmDown" class="btn-tiny" title="Decrease BPM">−</button>
+              <span id="talaBpmDisplay" class="tala-bpm-num">75 BPM</span>
+              <button type="button" id="talaBpmUp" class="btn-tiny" title="Increase BPM">+</button>
             </div>
           </div>
 

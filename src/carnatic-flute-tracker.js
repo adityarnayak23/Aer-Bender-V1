@@ -59,8 +59,8 @@ class CarnaticFluteTracker {
     this.hasLearnedPitchBaseline = false;
     this.pitchSamplesCount = 0;
 
-    // Finger curl sensitivity threshold
-    this.curlThreshold = 1.35;
+    // Finger curl sensitivity threshold (default 1.45)
+    this.curlThreshold = 1.45;
     this.swapHands = false;
     this.isPanelCollapsed = true; // Studio controls collapsed by default
 
@@ -69,10 +69,10 @@ class CarnaticFluteTracker {
     this.lineAngleDeg = 12;
     this.OCTAVE_LINES = {
       HIGH: 0.44,  // Tara (+1)
-      MID:  0.55,  // Madhya (0)
+      MID:  0.47,  // Madhya (0) - calibrated to 47% default
       BASS: 0.67   // Mandra (-1)
     };
-    this.fixedFluteY = this.OCTAVE_LINES.MID; // Single flute line vertical center (fixed, stationary)
+    this.fixedFluteY = 0.47; // Default flute level at 47%
     this.fluteY = this.fixedFluteY;
     this.fluteAngleDeg = this.lineAngleDeg; // Tilted line
     this.fixedFluteCenterX = 0.52;

@@ -47,14 +47,24 @@ assert(css.includes('.swaras-grid.wrap-2-lines') || css.includes('.swaras-grid[d
 assert(css.includes('.swaras-section {') && css.includes('justify-content: flex-start !important;'), 'swaras-section aligns swarams to top');
 console.log('✔ Square swara cards, top alignment, and 2nd line wrapping verified.');
 
-// 3. Carnatic Tala Card (Compact Box with 1x & 2x Controls)
-console.log('\n3. Checking Carnatic Tala Card (Compact with 1x, 2x)...');
+// 3. Carnatic Tala & Metronome Card (Compact Box with 1x & 2x Controls & Metronome BPM)
+console.log('\n3. Checking Carnatic Tala & Metronome Card (Compact with 1x, 2x, and BPM)...');
 assert(css.includes('--accent-acid: #ccff00;'), '--accent-acid declared in root as #ccff00');
 assert(css.includes('.btn-tala-play {') && css.includes('background: #ccff00 !important;'), 'Start Tala button is neon #ccff00');
-assert(html.includes('<h3>Carnatic Tala</h3>'), 'Carnatic Tala header');
-assert(html.includes('tala-speed-group'), 'Tala speed controls (1x, 2x) restored in HTML');
-assert(!html.includes('tala-bpm-group'), 'Non-tala BPM controls removed from HTML');
-console.log('✔ Carnatic Tala (compact with 1x, 2x restored) verified.');
+assert(html.includes('<h3>Carnatic Tala & Metronome</h3>') || html.includes('<h3>Carnatic Tala and Metronome</h3>'), 'Carnatic Tala & Metronome header in Title Case');
+assert(html.includes('tala-speed-group'), 'Tala speed controls (1x, 2x) in HTML');
+assert(html.includes('tala-bpm-group') && html.includes('talaBpmDisplay'), 'Metronome with BPM in the same box');
+console.log('✔ Carnatic Tala & Metronome (compact with 1x, 2x, and BPM in same box) verified.');
+
+// 3b. Calibration Defaults: Flute Level 47% & Finger Curl 1.45
+console.log('\n3b. Checking Calibration Defaults (Flute Level 47% & Finger Curl 1.45)...');
+assert(html.includes('id="fluteHeightSlider" min="35" max="75" step="1" value="47"'), 'Default flute level slider value is 47%');
+assert(html.includes('id="fluteHeightVal" class="calib-val">47%</span>'), 'Default flute level text is 47%');
+assert(html.includes('id="sensitivitySlider"') && html.includes('value="1.45"'), 'Default finger curl sensitivity slider is 1.45');
+assert(html.includes('id="sensitivityVal" class="calib-val">1.45</span>'), 'Default finger curl text is 1.45');
+assert(trackerJs.includes('this.curlThreshold = 1.45;'), 'Tracker default curlThreshold is 1.45');
+assert(trackerJs.includes('this.fixedFluteY = 0.47;'), 'Tracker default fixedFluteY is 0.47 (47%)');
+console.log('✔ Default Flute Level 47% and Finger Curl 1.45 verified.');
 
 // 4. Step 1: Upper-Half Body Stance & Clean Embouchure (No air coming out of blow hole)
 console.log('\n4. Checking Step 1 Upper-Half Body Stance & Clean Embouchure...');

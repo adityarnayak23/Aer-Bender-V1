@@ -619,7 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="swara-symbol">${sw.short}</span>
           <div class="swara-titles">
             <h4>${sw.swara || sw.name}</h4>
-            <span class="western-sub">${sw.western}4 (${sw.cents > 0 ? '+' + sw.cents : sw.cents}¢)</span>
+            <span class="western-sub">${sw.western}4</span>
           </div>
         </div>
         <div class="card-pips-row">${pipsHtml}</div>
