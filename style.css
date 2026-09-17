@@ -1134,34 +1134,48 @@ body {
 }
 
 .swaras-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 3px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
   width: 100%;
   min-width: 0;
-  overflow: hidden;
-  flex: 1;
-  min-height: 0;
-  align-items: stretch;
+  align-content: flex-start;
+}
+
+/* When 8 or more notes are active, arrange into 8 columns wrapping to a 2nd line */
+.swaras-grid.wrap-2-lines,
+.swaras-grid[data-count="8"],
+.swaras-grid[data-count="9"],
+.swaras-grid[data-count="10"],
+.swaras-grid[data-count="11"],
+.swaras-grid[data-count="12"],
+.swaras-grid[data-count="13"],
+.swaras-grid[data-count="14"],
+.swaras-grid[data-count="15"],
+.swaras-grid[data-count="16"] {
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3.5px;
 }
 
 .swara-card {
-  flex: 1 1 0;
+  aspect-ratio: 1 / 1;
+  width: 100%;
   min-width: 0;
-  overflow: hidden;
+  box-sizing: border-box;
   background: #141722;
   border: 1.5px solid #262c3d;
   border-radius: 0px;
-  padding: 3px 2px;
+  padding: 2px 1px;
   cursor: pointer;
   transition: all 0.1s ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 1px;
   text-align: center;
   box-shadow: 2px 2px 0px #000000;
+  overflow: hidden;
 }
 
 /* Dynamic auto-shrink when 8 to 10 notes are active */
@@ -1700,20 +1714,29 @@ body {
 /* Card 5: Carnatic Tala & Metronome (Crucial: retains flex: 1 for test) */
 .tala-card {
   flex: 1;
-  padding: 3px 6px;
+  padding: 6px 8px;
   height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 1.5px;
+  justify-content: center;
+  gap: 6px;
 }
 
 .tala-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1px;
+  margin-bottom: 0px;
+}
+
+.tala-card-header h3 {
+  font-family: var(--font-display) !important;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  text-transform: none !important;
 }
 
 .btn-tala-play {
@@ -1754,16 +1777,22 @@ body {
 .tala-controls-row {
   display: flex;
   align-items: center;
-  gap: 4px;
+  width: 100%;
 }
 
 .tala-select-wrap {
+  width: 100%;
   flex: 1;
 }
 
 .tala-select {
-  padding: 2px 4px;
-  font-size: 9.5px;
+  width: 100%;
+  padding: 5px 8px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: #10141f;
+  border: 1.5px solid #2a334a;
+  color: #f1f5f9;
 }
 
 .tala-speed-group {

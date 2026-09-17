@@ -28,29 +28,27 @@ console.log('================================================================\n'
 // 1. Typography & Main UI Headers
 console.log('1. Checking Typography & Main UI Headers...');
 assert(html.includes('<h3>Harmonic Spectrum</h3>'), 'Harmonic Spectrum header must exist in Title Case');
-assert(html.includes('<h3>Recognized Swaras & Fingering</h3>'), 'Recognized Swaras & Fingering header must exist in Camel/Title Case');
+assert(html.includes('<h3>Recognised Swaram</h3>'), 'Recognised Swaram header must exist in Title Case');
 assert(css.includes('.card-header h3') && css.includes('var(--font-display)'), 'Card header h3 must use var(--font-display)');
 assert(css.includes('.section-subhead h3') && css.includes('text-transform: none'), 'Recognized swaras subhead must be text-transform: none !important');
 console.log('✔ Typography & Title Case verified.');
 
-// 2. Auto-Shrink Swara Cards (7 to 16 notes)
-console.log('\n2. Checking Auto-Fit Swara Cards...');
+// 2. Square Swara Boxes & 2nd Line Wrapping
+console.log('\n2. Checking Square Swara Boxes & 2nd Line Wrapping...');
 assert(appJs.includes('swarasCardsContainer.dataset.count = String(list.length);'), 'app.js sets dataset.count on container');
-assert(appJs.includes("swarasCardsContainer.classList.add('dense-16');"), 'app.js toggles dense-16 class');
-assert(appJs.includes("swarasCardsContainer.classList.add('dense-8');"), 'app.js toggles dense-8 class');
-assert(css.includes('.swaras-grid {') && css.includes('flex-wrap: nowrap;'), 'swaras-grid must be a single nowrap flex line');
-assert(css.includes('.swaras-grid.dense-8') || css.includes('.swaras-grid[data-count="8"]'), 'CSS defines dense-8 auto-shrink rules');
-assert(css.includes('.swaras-grid.dense-16') || css.includes('.swaras-grid[data-count="16"]'), 'CSS defines dense-16 auto-shrink rules');
-console.log('✔ Auto-fit swara cards verified.');
+assert(appJs.includes("swarasCardsContainer.classList.add('wrap-2-lines');"), 'app.js toggles wrap-2-lines class for 8+ notes');
+assert(css.includes('.swara-card {') && css.includes('aspect-ratio: 1 / 1;'), 'swara-card must be a square with aspect-ratio: 1 / 1');
+assert(css.includes('.swaras-grid.wrap-2-lines') || css.includes('.swaras-grid[data-count="8"]'), 'CSS defines 2nd line wrapping for 8+ swaras');
+console.log('✔ Square swara cards and 2nd line wrapping verified.');
 
-// 3. Carnatic Tala Card Neon & Controls Visibility
-console.log('\n3. Checking Carnatic Tala Sizing & Neon Visibility...');
+// 3. Carnatic Tala Card (Only Talas, Metronome Clutter Removed)
+console.log('\n3. Checking Carnatic Tala Card (Only Talas)...');
 assert(css.includes('--accent-acid: #ccff00;'), '--accent-acid declared in root as #ccff00');
-assert(css.includes('--accent-orange: #ff5500;'), '--accent-orange declared in root as #ff5500');
 assert(css.includes('.btn-tala-play {') && css.includes('background: #ccff00 !important;'), 'Start Tala button is neon #ccff00');
-assert(css.includes('.tala-speed-btn') && css.includes('color: #e2e8f0 !important;'), '1x/2x speed buttons have high contrast text');
-assert(css.includes('.tala-speed-btn.active {') && css.includes('background: #ccff00 !important;'), 'Active 1x/2x button highlights in bright neon lime');
-console.log('✔ Carnatic Tala neon styling and controls verified.');
+assert(html.includes('<h3>Carnatic Tala</h3>'), 'Carnatic Tala header without metronome clutter');
+assert(!html.includes('tala-speed-group'), 'Non-tala speed controls removed from HTML');
+assert(!html.includes('tala-bpm-group'), 'Non-tala BPM controls removed from HTML');
+console.log('✔ Carnatic Tala (only talas, metronome removed) verified.');
 
 // 4. Step 1: Upper-Half Body Stance & Clean Embouchure (No air coming out of blow hole)
 console.log('\n4. Checking Step 1 Upper-Half Body Stance & Clean Embouchure...');

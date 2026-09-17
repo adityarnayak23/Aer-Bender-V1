@@ -583,8 +583,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(Boolean)
       .sort((a, b) => a.freqRatio - b.freqRatio);
 
-    // Auto-fit swara cards: apply dynamic count & density classes so up to 16 notes fit on a single line
+    // Auto-fit swara cards as squares; wrap into 2nd line when needed
     swarasCardsContainer.dataset.count = String(list.length);
+    if (list.length >= 8) {
+      swarasCardsContainer.classList.add('wrap-2-lines');
+    } else {
+      swarasCardsContainer.classList.remove('wrap-2-lines');
+    }
     if (list.length >= 11) {
       swarasCardsContainer.classList.add('dense-16');
       swarasCardsContainer.classList.remove('dense-8');
