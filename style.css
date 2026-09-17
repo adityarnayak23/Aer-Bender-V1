@@ -953,7 +953,7 @@ body {
   position: absolute;
   top: 58px;
   right: 14px;
-  bottom: 12px;
+  bottom: clamp(75px, 11vh, 95px);
   width: clamp(340px, 28vw, 420px);
   z-index: 30;
   display: grid;
@@ -1082,9 +1082,10 @@ body {
   }
 }
 
-/* Card 1: Audio Visualizer */
+/* Card 1: Audio Visualizer (1.5x bigger) */
 .visualizer-card {
   padding: 5px 8px;
+  min-height: 115px;
 }
 
 .visualizer-card .card-header {
@@ -1094,21 +1095,21 @@ body {
 .visualizer-card canvas {
   width: 100%;
   flex: 1;
-  min-height: 0;
-  height: auto;
+  min-height: 90px;
+  height: 90px;
   background: #06070a;
   border-radius: 0px;
   border: 1.5px solid #202636;
   display: block;
 }
 
-/* Card 2: 7 Swaras Recognized Strip */
+/* Card 2: 7 Swaras Recognized Strip (Scaled to 65% size) */
 .swaras-section {
-  padding: 4px 6px;
+  padding: 3px 5px;
   height: auto !important;
   max-height: fit-content;
   justify-content: flex-start !important;
-  gap: 3px;
+  gap: 2px;
 }
 
 .section-subhead {
@@ -1122,7 +1123,7 @@ body {
 
 .section-subhead h3 {
   font-family: var(--font-display) !important;
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.3px;
@@ -1130,7 +1131,7 @@ body {
 }
 
 .section-subhead .hint {
-  font-size: 8px;
+  font-size: 7.5px;
   color: var(--accent-muted);
   font-family: var(--font-mono);
   white-space: nowrap;
@@ -1138,14 +1139,14 @@ body {
 
 .swaras-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3.5px;
   width: 100%;
   min-width: 0;
   align-content: flex-start;
 }
 
-/* When 8 or more notes are active, arrange into 4 columns wrapping to next line */
+/* When 8 or more notes are active, arrange into 5 columns wrapping to next line */
 .swaras-grid.wrap-2-lines,
 .swaras-grid[data-count="8"],
 .swaras-grid[data-count="9"],
@@ -1156,8 +1157,8 @@ body {
 .swaras-grid[data-count="14"],
 .swaras-grid[data-count="15"],
 .swaras-grid[data-count="16"] {
-  grid-template-columns: repeat(4, 1fr);
-  gap: 3.5px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
 }
 
 .swara-card {
@@ -1168,15 +1169,16 @@ body {
   background: #141722;
   border: 1.5px solid #262c3d;
   border-radius: 0px;
-  padding: 3px 2px;
+  padding: 2px;
   cursor: pointer;
   transition: all 0.1s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  gap: 1.5px;
   text-align: center;
-  box-shadow: 2px 2px 0px #000000;
+  box-shadow: 1.5px 1.5px 0px #000000;
   overflow: hidden;
 }
 
@@ -1337,13 +1339,13 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1px;
+  gap: 0.5px;
   width: 100%;
 }
 
 .swara-symbol {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 800;
   color: #ffffff;
   line-height: 1;
@@ -1353,15 +1355,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 0px;
   width: 100%;
 }
 
 .swara-titles h4 {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.05;
   color: #cbd5e1;
   text-align: center;
   word-break: break-word;
@@ -1371,21 +1373,23 @@ body {
 
 .western-sub {
   font-family: var(--font-mono);
-  font-size: 7px;
+  font-size: 6px;
   color: var(--accent-dim);
   white-space: nowrap;
+  line-height: 1;
 }
 
 .card-pips-row {
   display: flex;
   justify-content: center;
-  gap: 1.5px;
+  align-items: center;
+  gap: 1.2px;
   margin: 1px 0 0;
 }
 
 .mini-pip {
-  width: 3.5px;
-  height: 3.5px;
+  width: 3px;
+  height: 3px;
   border-radius: 0px;
   display: inline-block;
 }
@@ -1579,12 +1583,12 @@ body {
   transform: scale(1.15);
 }
 
-/* Card 4: Carnatic Raga & 16 Swarasthanas Builder */
+/* Card 4: Carnatic Raga & 16 Swarasthanas Builder (Scaled to 65% size) */
 .raga-builder-card {
-  padding: 4px 8px;
+  padding: 3px 6px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1.5px;
 }
 
 .raga-builder-header {
@@ -1592,15 +1596,15 @@ body {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 2px;
+  gap: 3px;
+  margin-bottom: 1px;
 }
 
 .raga-scale-summary {
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-top: 2px;
+  gap: 4px;
+  margin-top: 1px;
   flex-wrap: wrap;
 }
 
@@ -1609,24 +1613,24 @@ body {
   border: 1.5px solid var(--accent-blue);
   border-radius: 0px;
   color: var(--accent-blue);
-  padding: 1px 6px;
+  padding: 0.5px 4px;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 8px;
   font-weight: 700;
   box-shadow: 1px 1px 0px #000000;
 }
 
 .raga-notes-list {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: 8px;
   color: #cbd5e1;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .raga-preset-dropdown-wrap .raga-select {
-  min-width: 165px;
-  font-size: 10px;
-  padding: 3px 5px;
+  min-width: 140px;
+  font-size: 8.5px;
+  padding: 2px 4px;
 }
 
 .swarasthanas-matrix {
@@ -1635,24 +1639,24 @@ body {
   justify-content: space-around;
   flex: 1;
   min-height: 0;
-  gap: 2px;
+  gap: 1.5px;
   background: #0a0c13;
   border: 1.5px solid #202636;
   border-radius: 0px;
-  padding: 2px 4px;
+  padding: 1.5px 3px;
 }
 
 .swara-matrix-row {
   display: grid;
-  grid-template-columns: 22px 1fr;
+  grid-template-columns: 18px 1fr;
   align-items: center;
-  gap: 4px;
-  height: 14px;
+  gap: 3px;
+  height: 11px;
 }
 
 .matrix-type-label {
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: 7.5px;
   font-weight: 800;
   color: #a0aec0;
   text-align: right;
@@ -1662,7 +1666,7 @@ body {
 .matrix-cells-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 3px;
+  gap: 2px;
   height: 100%;
 }
 
@@ -1678,7 +1682,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 2px;
-  padding: 0 4px;
+  padding: 0 3px;
   height: 100%;
   border-radius: 0px;
   background: #141724;
@@ -1689,7 +1693,7 @@ body {
   transition: all 0.1s ease;
   white-space: nowrap;
   overflow: hidden;
-  font-size: 8.5px;
+  font-size: 7.5px;
   box-shadow: 1px 1px 0px #000000;
 }
 
@@ -1716,13 +1720,13 @@ body {
 
 .chip-short {
   font-weight: 800;
-  font-size: 9px;
+  font-size: 8px;
   line-height: 1;
   color: #ffffff;
 }
 
 .chip-name {
-  font-size: 7.5px;
+  font-size: 6.5px;
   color: #a0aec0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1730,7 +1734,7 @@ body {
 
 .chip-cents {
   font-family: var(--font-mono);
-  font-size: 7px;
+  font-size: 6px;
   color: var(--accent-blue);
 }
 

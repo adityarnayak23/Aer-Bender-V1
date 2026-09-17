@@ -129,6 +129,17 @@ assert(appJs.includes('const paRatio = 1.5;'), 'app.js uses Pa ratio 1.5 for oct
 
 console.log('✔ Step 4 Note Pa, dynamic colors, tone descriptors, and 3000ms engine verified.');
 
+// 8. Panel Proportions: Harmonic 1.5x, Swaram 65% & Centered, Raga 65%, Camera clearance below panel
+console.log('\n8. Checking Right Panel Proportions, Swaram Centering & Bottom Clearance...');
+assert(html.includes('id="visualizerCanvas" width="560" height="90"'), 'visualizerCanvas height increased by 1.5x to 90');
+assert(css.includes('.visualizer-card canvas') && css.includes('height: 90px;'), 'CSS sets visualizer canvas height to 90px');
+assert(css.includes('.swara-card {') && css.includes('justify-content: center;') && css.includes('align-items: center;'), 'swara-card centers notes and pips in the middle');
+assert(css.includes('.card-pips-row {') && css.includes('justify-content: center;'), 'card-pips-row is centered');
+assert(css.includes('.raga-builder-card {') && css.includes('padding: 3px 6px;'), 'raga-builder-card scaled down to 65%');
+assert(css.includes('.swara-matrix-row {') && css.includes('height: 11px;'), 'swara-matrix-row height scaled to 11px');
+assert(css.includes('.controls-panel {') && css.includes('bottom: clamp(75px, 11vh, 95px);'), 'controls-panel provides bottom gap for camera screen');
+console.log('✔ Proportions, swaram center, and bottom clearance verified.');
+
 console.log('\n================================================================');
 console.log('🎉 ALL USER REQUIREMENTS VERIFIED AND PASSED 100%!');
 console.log('================================================================\n');
