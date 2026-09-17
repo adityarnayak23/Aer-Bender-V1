@@ -68,7 +68,11 @@ class FluteAudioEngine {
     if (this.isInitialized) return;
 
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-    this.ctx = new AudioContextClass();
+    try {
+      this.ctx = new AudioContextClass({ latencyHint: 'interactive' });
+    } catch (e) {
+      this.ctx = new AudioContextClass();
+    }
 
     // 1. Dynamics Compressor (Transparent limiter to prevent digital clipping)
     const compressor = this.ctx.createDynamicsCompressor();
@@ -299,8 +303,8 @@ class FluteAudioEngine {
     voiceGain.gain.setValueAtTime(0.0001, now);
     // Smooth acoustic balance: Scale Tara higher octave (0.54), Madhya (0.65), Mandra lower octave (0.85) for good physical weight
     const targetGain = (isTaraOctave ? 0.54 : (isMandraOctave ? 0.85 : 0.65)) * this.breathPressure;
-    // Crisp 14ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
-    const attackTime = this.isJazzMode ? 0.055 : 0.014;
+    // Crisp 8ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
+    const attackTime = this.isJazzMode ? 0.055 : 0.008;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
     // Warm body shaping & Mandra Bass Weight (+8.5dB low shelf in lower octave)
@@ -578,7 +582,7 @@ class FluteAudioEngine {
 
     // 7. Volume Attack Envelope (Equal-loudness compensated: +35% energy in lower octave for thick chest weight)
     const targetGain = (isLowerOctave ? 0.70 : 0.52) * this.breathPressure;
-    const attackTime = isLegato ? 0.020 : 0.012;
+    const attackTime = isLegato ? 0.015 : 0.008;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
     oscSaw.start(now);
@@ -878,26 +882,27 @@ class FluteAudioEngine {
   // Smooth release when stopping
   stopVoice() {
     const now = this.ctx.currentTime;
+    const rel = this.isJazzMode ? 0.060 : 0.010;
 
     if (this.activeSampleVoice) {
       const oldSample = this.activeSampleVoice;
       this.activeSampleVoice = null;
       oldSample.gain.gain.cancelScheduledValues(now);
-      oldSample.gain.gain.setTargetAtTime(0.0001, now, 0.065);
+      oldSample.gain.gain.linearRampToValueAtTime(0.0001, now + rel);
       setTimeout(() => {
         try {
           oldSample.source.stop();
           oldSample.source.disconnect();
           oldSample.gain.disconnect();
         } catch (e) {}
-      }, 100);
+      }, Math.round((rel + 0.02) * 1000));
     }
 
     if (this.activeElectricVoice) {
       const oldElectric = this.activeElectricVoice;
       this.activeElectricVoice = null;
       oldElectric.gain.gain.cancelScheduledValues(now);
-      oldElectric.gain.gain.setTargetAtTime(0.0001, now, 0.065);
+      oldElectric.gain.gain.linearRampToValueAtTime(0.0001, now + rel);
       setTimeout(() => {
         try {
           if (oldElectric.oscillators) {
@@ -913,14 +918,14 @@ class FluteAudioEngine {
           }
           oldElectric.gain.disconnect();
         } catch (e) {}
-      }, 100);
+      }, Math.round((rel + 0.02) * 1000));
     }
 
     if (this.activeVoice) {
       const oldVoice = this.activeVoice;
       this.activeVoice = null;
       oldVoice.gain.gain.cancelScheduledValues(now);
-      oldVoice.gain.gain.setTargetAtTime(0.0001, now, 0.075);
+      oldVoice.gain.gain.linearRampToValueAtTime(0.0001, now + rel);
       setTimeout(() => {
         try {
           oldVoice.primaryOsc.stop();
@@ -930,7 +935,7 @@ class FluteAudioEngine {
           if (oldVoice.flutter2) oldVoice.flutter2.stop();
           oldVoice.gain.disconnect();
         } catch (e) {}
-      }, 120);
+      }, Math.round((rel + 0.02) * 1000));
     }
 
     this.isPlaying = false;

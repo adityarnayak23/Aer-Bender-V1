@@ -307,8 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function handleSwaraDetected(res) {
     if (!res || !res.swara) {
       silentFramesCount++;
-      // Require 6 consecutive silent frames (~100ms) before muting to absorb momentary camera tracking blips
-      if (silentFramesCount >= 6) {
+      // Require 3 consecutive silent frames (~50ms at 60 FPS) before muting to absorb momentary camera tracking blips
+      if (silentFramesCount >= 3) {
         if (audio.isPlaying) {
           audio.stopVoice();
         }
