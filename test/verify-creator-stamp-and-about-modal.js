@@ -17,8 +17,12 @@ assert(indexHtml.includes('Crafted by Aditya · Get in touch'), 'creatorStampBtn
 assert(indexHtml.includes('id="creatorModal"'), 'creatorModal should exist in index.html');
 assert(indexHtml.includes('id="closeCreatorModalBtn"'), 'closeCreatorModalBtn should exist in index.html');
 assert(indexHtml.includes('Aditya Nayak'), 'creatorModal should display creator name');
-assert(indexHtml.includes('I make colorful powerpoint decks for a living and play the flute at other times'), 'creatorModal should include powerpoint and flute bio');
+assert(!indexHtml.includes('creator-tagline'), 'creator-tagline should be completely removed');
+assert(indexHtml.includes('I am a carnatic flautist but i align colorful boxes on a powerpoint deck for a living'), 'creatorModal should include powerpoint/flautist bio');
 assert(indexHtml.includes('SPJIMR') && indexHtml.includes('NITK'), 'creatorModal should mention SPJIMR and NITK degrees');
+assert(indexHtml.includes('MBA degree') && !indexHtml.includes('mba degree'), 'creatorModal should have capitalized MBA');
+assert(indexHtml.includes('learnt about entropy at') && !indexHtml.includes('managed to learn'), 'creatorModal should include learnt about entropy without managed');
+assert(indexHtml.includes('Got ideas? Want to collaborate? Want to build?'), 'creatorModal should have Got ideas? Want to collaborate? Want to build? CTA title');
 assert(indexHtml.includes('https://www.linkedin.com/in/aditya-nayak23'), 'creatorModal should contain LinkedIn profile link');
 assert(indexHtml.includes('https://www.instagram.com/aditya.nayakk?stkn=MWV6M2QwZmU1NnFicw%3D%3D&utm_source=qr'), 'creatorModal should contain Instagram profile link');
 console.log('✅ PASS: HTML elements, bio text, and verified social links confirmed!');
@@ -28,11 +32,13 @@ console.log('\n--- 2. Testing CSS Styling in style.css ---');
 const styleCss = fs.readFileSync(path.join(baseDir, 'style.css'), 'utf8');
 
 assert(styleCss.includes('.creator-stamp-btn {'), 'creator-stamp-btn CSS class defined');
+assert(styleCss.includes('@keyframes stampPulseAura'), 'stampPulseAura breathing animation defined');
+assert(styleCss.includes('.creator-cta-title {'), 'creator-cta-title CSS class defined');
 assert(styleCss.includes('.creator-modal-backdrop {'), 'creator-modal-backdrop CSS class defined');
 assert(styleCss.includes('.creator-modal-card {'), 'creator-modal-card CSS class defined');
 assert(styleCss.includes('.linkedin-btn {'), 'linkedin-btn CSS class defined');
 assert(styleCss.includes('.insta-btn {'), 'insta-btn CSS class defined');
-console.log('✅ PASS: Floating glass button and modal styling verified!');
+console.log('✅ PASS: Floating glass button breathing aura and modal styling verified!');
 
 // 3. Check src/app.js
 console.log('\n--- 3. Testing Logic & Handlers in src/app.js ---');
