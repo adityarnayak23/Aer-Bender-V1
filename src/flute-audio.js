@@ -294,16 +294,26 @@ class FluteAudioEngine {
     }
 
     const isTaraOctave = sampleId.endsWith('_high') || this.octaveShift === 1 || this.isOverblown;
+    const isMandraOctave = sampleId.startsWith('bass_') || this.octaveShift === -1 || targetFreq < 240;
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
-    // Smooth acoustic balance: Scale Tara higher octave (0.54 vs 0.65) to match human ear equal-loudness perception
-    const targetGain = (isTaraOctave ? 0.54 : 0.65) * this.breathPressure;
+    // Smooth acoustic balance: Scale Tara higher octave (0.54), Madhya (0.65), Mandra lower octave (0.85) for good physical weight
+    const targetGain = (isTaraOctave ? 0.54 : (isMandraOctave ? 0.85 : 0.65)) * this.breathPressure;
     // Crisp 14ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
     const attackTime = this.isJazzMode ? 0.055 : 0.014;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
-    // Warm body shaping & Hall reverb: 100% Pure, Unaltered Original Recording
-    source.connect(voiceGain);
+    // Warm body shaping & Mandra Bass Weight (+8.5dB low shelf in lower octave)
+    if (isMandraOctave) {
+      const mandraBassFilter = this.ctx.createBiquadFilter();
+      mandraBassFilter.type = 'lowshelf';
+      mandraBassFilter.frequency.setValueAtTime(240, now);
+      mandraBassFilter.gain.setValueAtTime(8.5, now);
+      source.connect(mandraBassFilter);
+      mandraBassFilter.connect(voiceGain);
+    } else {
+      source.connect(voiceGain);
+    }
     voiceGain.connect(this.dryGain);
 
     // Tara higher octave gets spacious concert hall bloom (warm Sabha acoustics)
@@ -351,6 +361,7 @@ class FluteAudioEngine {
 
     // If currently playing and legato glide, glide the existing electric voice
     if (this.isPlaying && this.activeElectricVoice && isLegato) {
+      const isLowerOctave = (this.octaveShift === -1 || targetFreq < 240);
       const glideTime = 0.048;
       this.activeElectricVoice.oscillators.forEach(osc => {
         const mult = osc._freqMultiplier || 1.0;
@@ -360,6 +371,12 @@ class FluteAudioEngine {
       });
       const baseCutoff = Math.min(8800, Math.max(1600, targetFreq * 4.2));
       this.activeElectricVoice.filter.frequency.setTargetAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now, 0.04);
+      if (this.activeElectricVoice.bassEQ) {
+        this.activeElectricVoice.bassEQ.gain.setTargetAtTime(isLowerOctave ? 9.0 : 1.5, now, 0.04);
+      }
+      if (this.activeElectricVoice.oscMixGainSub) {
+        this.activeElectricVoice.oscMixGainSub.gain.setTargetAtTime(isLowerOctave ? 0.72 : 0.22, now, 0.04);
+      }
       if (this.activeElectricVoice.boreBreathFilter) {
         this.activeElectricVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, 0.04);
       }
@@ -414,6 +431,8 @@ class FluteAudioEngine {
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
 
+    const isLowerOctave = (this.octaveShift === -1 || targetFreq < 240);
+
     // 1. Dual Harmonic Oscillators + Sub-Harmonic (Classic EWI Synthesizer Architecture)
     // Primary Lead: Pure Sawtooth Wave (phase-aligned)
     const oscSaw = this.ctx.createOscillator();
@@ -427,20 +446,20 @@ class FluteAudioEngine {
     oscSquare._baseDetune = 0;
     oscSquare._freqMultiplier = 1.0;
 
-    // Sub-Harmonic Octave: Triangle Wave (0.5x frequency) for thick electric body
+    // Sub-Harmonic Octave: Triangle Wave (0.5x frequency) with massive boost in Lower Octave for good physical weight
     const oscSub = this.ctx.createOscillator();
     oscSub.type = 'triangle';
     oscSub._baseDetune = 0;
     oscSub._freqMultiplier = 0.5;
 
     const oscMixGainSaw = this.ctx.createGain();
-    oscMixGainSaw.gain.setValueAtTime(0.50, now);
+    oscMixGainSaw.gain.setValueAtTime(isLowerOctave ? 0.58 : 0.50, now);
 
     const oscMixGainSquare = this.ctx.createGain();
-    oscMixGainSquare.gain.setValueAtTime(0.35, now);
+    oscMixGainSquare.gain.setValueAtTime(isLowerOctave ? 0.48 : 0.35, now);
 
     const oscMixGainSub = this.ctx.createGain();
-    oscMixGainSub.gain.setValueAtTime(0.22, now);
+    oscMixGainSub.gain.setValueAtTime(isLowerOctave ? 0.72 : 0.22, now);
 
     if (isLegato && fromFreq && Math.abs(fromFreq - targetFreq) > 3) {
       oscSaw.frequency.setValueAtTime(fromFreq, now);
@@ -484,9 +503,16 @@ class FluteAudioEngine {
     waveShaper.curve = this.electricDistortionCurve;
     waveShaper.oversample = '2x';
 
+    // 3b. Mandra Bass Weight: Resonant Low-Shelf Boost (+9.0dB in lower octave)
+    const bassEQ = this.ctx.createBiquadFilter();
+    bassEQ.type = 'lowshelf';
+    bassEQ.frequency.setValueAtTime(240, now);
+    bassEQ.gain.setValueAtTime(isLowerOctave ? 9.0 : 1.5, now);
+
     oscSum.connect(filter);
     filter.connect(waveShaper);
-    waveShaper.connect(voiceGain);
+    waveShaper.connect(bassEQ);
+    bassEQ.connect(voiceGain);
 
     // 4. 🌬️ CONTINUOUS ORGANIC FLUTE WIND & BORE TURBULENCE ENGINE
     // Breathes life into the electric sound with natural bamboo wind texture!
@@ -550,8 +576,8 @@ class FluteAudioEngine {
     voiceGain.connect(electricReverbSend);
     electricReverbSend.connect(this.reverbNode);
 
-    // 7. Volume Attack Envelope
-    const targetGain = 0.52 * this.breathPressure;
+    // 7. Volume Attack Envelope (Equal-loudness compensated: +35% energy in lower octave for thick chest weight)
+    const targetGain = (isLowerOctave ? 0.70 : 0.52) * this.breathPressure;
     const attackTime = isLegato ? 0.020 : 0.012;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
@@ -568,6 +594,8 @@ class FluteAudioEngine {
       vibratoOsc,
       gain: voiceGain,
       filter,
+      bassEQ,
+      oscMixGainSub,
       baseCutoff,
       targetFreq
     };
@@ -1099,6 +1127,8 @@ class FluteAudioEngine {
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
 
+    const isLowerOctave = (this.octaveShift === -1 || freq < 240);
+
     const primaryOsc = this.ctx.createOscillator();
     const wave = this.isOverblown ? this.venuWaveTara : this.venuWaveMadhya;
     primaryOsc.setPeriodicWave(wave);
@@ -1108,7 +1138,7 @@ class FluteAudioEngine {
     bodyOsc.type = 'sine';
     bodyOsc.frequency.setValueAtTime(freq, now);
     const bodyGain = this.ctx.createGain();
-    bodyGain.gain.setValueAtTime(0.22, now);
+    bodyGain.gain.setValueAtTime(isLowerOctave ? 0.52 : 0.22, now);
     bodyOsc.connect(bodyGain);
 
     const waveShaper = this.ctx.createWaveShaper();
@@ -1165,14 +1195,21 @@ class FluteAudioEngine {
     bambooDamping.frequency.setValueAtTime(cutoff, now);
     bambooDamping.Q.setValueAtTime(0.65, now);
 
+    // Mandra Bass Weight Filter (+8.5dB low shelf in lower octave)
+    const bassWeightFilter = this.ctx.createBiquadFilter();
+    bassWeightFilter.type = 'lowshelf';
+    bassWeightFilter.frequency.setValueAtTime(240, now);
+    bassWeightFilter.gain.setValueAtTime(isLowerOctave ? 8.5 : 1.5, now);
+
     voiceGain.connect(woodResonance);
     woodResonance.connect(holeRadiation);
     holeRadiation.connect(bambooDamping);
+    bambooDamping.connect(bassWeightFilter);
 
-    bambooDamping.connect(this.dryGain);
-    bambooDamping.connect(this.reverbNode);
+    bassWeightFilter.connect(this.dryGain);
+    bassWeightFilter.connect(this.reverbNode);
 
-    const targetGain = 0.42 * this.breathPressure;
+    const targetGain = (isLowerOctave ? 0.62 : 0.42) * this.breathPressure;
     voiceGain.gain.cancelScheduledValues(now);
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + 0.032);
 

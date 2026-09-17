@@ -147,6 +147,15 @@ assert(css.includes('.tala-card-header h3 {\n  font-family: var(--font-display) 
 assert(css.includes('.btn-tala-play {') && css.includes('font-size: 8px;') && css.includes('padding: 1px 5px;'), 'Start Tala button size is reduced');
 console.log('✔ All right pane headers have same font size and start tala button size is reduced.');
 
+// 10. Lower Octave Bass Weight & Sub-Harmonic Punch
+console.log('\n10. Checking Lower Octave Bass Weight & Sub-Harmonic Boost...');
+assert(audioJs.includes("bassEQ.type = 'lowshelf';"), 'flute-audio.js defines bassEQ lowshelf filter');
+assert(audioJs.includes("mandraBassFilter.type = 'lowshelf';"), 'flute-audio.js defines mandraBassFilter for acoustic samples');
+assert(audioJs.includes("bassWeightFilter.type = 'lowshelf';"), 'flute-audio.js defines bassWeightFilter for physical model');
+assert(audioJs.includes("isLowerOctave ? 9.0 : 1.5"), 'flute-audio.js boosts lower octave with +9dB low shelf');
+assert(audioJs.includes("isLowerOctave ? 0.72 : 0.22"), 'flute-audio.js uses 0.72 sub-harmonic weight for lower octave');
+console.log('✔ Lower octave bass weight and sub-harmonic punch verified.');
+
 console.log('\n================================================================');
 console.log('🎉 ALL USER REQUIREMENTS VERIFIED AND PASSED 100%!');
 console.log('================================================================\n');
