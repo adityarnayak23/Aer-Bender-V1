@@ -52,27 +52,25 @@ assert(css.includes('.tala-speed-btn') && css.includes('color: #e2e8f0 !importan
 assert(css.includes('.tala-speed-btn.active {') && css.includes('background: #ccff00 !important;'), 'Active 1x/2x button highlights in bright neon lime');
 console.log('✔ Carnatic Tala neon styling and controls verified.');
 
-// 4. Step 1: Upper-Half Body Stance & Air Jet Strike / Split / Rebound
-console.log('\n4. Checking Step 1 Upper-Half Body Stance & Fluid Embouchure Dynamics...');
+// 4. Step 1: Upper-Half Body Stance & Clean Embouchure (No air coming out of blow hole)
+console.log('\n4. Checking Step 1 Upper-Half Body Stance & Clean Embouchure...');
 assert(html.includes('id="playerUpperBodyStance"'), 'Upper-half body silhouette stance SVG must be present');
 assert(html.includes('id="step1PostureSvg"'), 'step1PostureSvg must be present for backward compatibility');
 assert(html.includes('PALM FACES YOU'), 'Left wrist inward turn indicator present');
 assert(html.includes('PALM FACES FORWARD'), 'Right hand forward reach indicator present');
 assert(html.includes('Pinky Up'), 'Left pinky up tag present');
-assert(html.includes('anim-air-jet'), 'Air jet stream from lips present');
-assert(html.includes('anim-air-split-top'), 'Air split stream over top rim present');
-assert(html.includes('anim-air-rebound'), 'Air rebound wave surging off inner bore wall present');
-assert(html.includes('SPLITS OVER TOP'), 'Text callout for top split present');
-assert(html.includes('REBOUNDS OFF INNER WALL'), 'Text callout for bore rebound present');
-assert(css.includes('.anim-air-split-top') && css.includes('.anim-air-rebound'), 'CSS animations for air split & rebound present');
-console.log('✔ Step 1 upper-half body stance & air rebound dynamics verified.');
+assert(html.includes('breath-wave'), 'Breath waves entering blow hole present');
+assert(!html.includes('SPLITS OVER TOP'), 'No air coming out of blow hole over top in HTML');
+assert(!html.includes('anim-air-split-top'), 'No anim-air-split-top class in HTML');
+assert(!html.includes('REBOUNDS OFF INNER WALL'), 'No bore wall rebound callout in HTML');
+console.log('✔ Step 1 upper-half body stance & clean embouchure verified.');
 
-// 5. Realistic Embouchure in Tracker Canvas
-console.log('\n5. Checking Embouchure Air Strike, Split, & Rebound in Canvas Tracker...');
-assert(trackerJs.includes('// Dynamic Acoustic Air Jet Strike, Split & Rebound Dynamics'), 'Tracker includes dynamic acoustic air jet strike & rebound');
-assert(trackerJs.includes('Top Split Stream: Aerodynamic wake curling over the top'), 'Tracker draws top split wake');
-assert(trackerJs.includes('strikes bottom bore wall & REBOUNDS'), 'Tracker draws chimney plunge & bore floor rebound');
-console.log('✔ Canvas tracker acoustic air dynamics verified.');
+// 5. Clean Embouchure in Tracker Canvas (No air coming out of blow hole)
+console.log('\n5. Checking Embouchure in Canvas Tracker...');
+assert(!trackerJs.includes('Top Split Stream: Aerodynamic wake curling over the top into the room'), 'No air wake curling out of blow hole into room in canvas');
+assert(!trackerJs.includes('strikes bottom bore wall & REBOUNDS'), 'No air strike & rebound in canvas');
+assert(trackerJs.includes('Dynamic Acoustic Vortex & Concentric Breath Waves'), 'Subtle concentric aperture breath waves present');
+console.log('✔ Canvas tracker clean embouchure (zero air coming out of blow hole) verified.');
 
 // 6. Step 3: Zero Scroll
 console.log('\n6. Checking Step 3 Zero Scroll...');

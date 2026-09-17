@@ -370,19 +370,6 @@
             <!-- Upper-Half Body Animated Player Stance SVG Graphic -->
             <div class="step-illustration-container player-perspective-container">
               <svg viewBox="0 0 800 245" class="step-flute-posture-svg" id="step1PostureSvg">
-                <defs>
-                  <!-- Air stream gradients -->
-                  <linearGradient id="airJetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
-                    <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.75"/>
-                  </linearGradient>
-                  <linearGradient id="airReboundGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#00f0ff" stop-opacity="0.9"/>
-                    <stop offset="40%" stop-color="#ccff00" stop-opacity="0.85"/>
-                    <stop offset="100%" stop-color="#00f0ff" stop-opacity="0.15"/>
-                  </linearGradient>
-                </defs>
-
                 <!-- Upper-Half Body Silhouette (Head, Neck, Torso, Both Arms in Flute Stance) -->
                 <g class="player-upper-body" id="playerUpperBodyStance">
                   <!-- Torso / Chest Silhouette -->
@@ -426,39 +413,19 @@
                 <rect x="140" y="132" width="590" height="34" rx="17" fill="#0c1324" stroke="#000000" stroke-width="3"/>
                 <line x1="150" y1="149" x2="720" y2="149" stroke="#00f0ff" stroke-width="3.5" stroke-linecap="round" opacity="0.5"/>
 
-                <!-- REAL ACOUSTICS: Embouchure Air Jet Strike, Top Split & Inner Rebound -->
-                <!-- Mouth Blow Hole (◎) -->
+                <!-- Blow Hole (◎) with Animated Breath Stream -->
                 <g class="step-embouchure-marker" transform="translate(210, 149)">
                   <!-- Chimney Hole Outer Bevel -->
                   <circle cx="0" cy="0" r="14" fill="#030712" stroke="#000000" stroke-width="3"/>
                   <!-- Deep Acoustic Bore Aperture -->
                   <circle cx="0" cy="0" r="7" fill="#00f0ff" class="pulse-blow-core"/>
 
-                  <!-- Razor-Sharp Strike Edge / Labium blade (Opposite rim) -->
-                  <line x1="5" y1="-12" x2="5" y2="12" stroke="#ffffff" stroke-width="2.5"/>
+                  <!-- Lips Breath Waves -->
+                  <path class="breath-wave anim-b1" d="M -14 -24 Q -7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b2" d="M 0 -28 Q 0 -10 0 0" stroke="#ccff00" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+                  <path class="breath-wave anim-b3" d="M 14 -24 Q 7 -8 0 0" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
 
-                  <!-- Lips Air Jet hitting Strike Edge -->
-                  <line x1="-16" y1="-12" x2="5" y2="0" stroke="url(#airJetGrad)" stroke-width="3" stroke-linecap="round" class="anim-air-jet"/>
-
-                  <!-- Backward-compatible breath waves -->
-                  <path class="breath-wave anim-b1" d="M -14 -24 Q -7 -8 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b2" d="M 0 -28 Q 0 -10 0 0" stroke="#ccff00" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                  <path class="breath-wave anim-b3" d="M 14 -24 Q 7 -8 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none"/>
-
-                  <!-- A. TOP SPLIT STREAM (Curling into the atmosphere above flute) -->
-                  <path d="M 5 0 Q 18 -18 35 -24" stroke="#38bdf8" stroke-width="2.4" fill="none" stroke-linecap="round" class="anim-air-split-top"/>
-                  <text x="38" y="-28" font-size="8.5" font-weight="800" fill="#38bdf8" font-family="var(--font-mono)">SPLITS OVER TOP ↗</text>
-
-                  <!-- B. BOTTOM SPLIT STREAM & REBOUND (Plunges down, hits bottom bore, rebounds forward) -->
-                  <!-- Down plunge -->
-                  <path d="M 5 0 L 7 11" stroke="#00f0ff" stroke-width="2.2" fill="none"/>
-                  <!-- Bore floor strike bounce flash -->
-                  <ellipse cx="7" cy="11" rx="4" ry="2" fill="#ffffff" opacity="0.8"/>
-                  <!-- Rebound wave surge into bore tube -->
-                  <path d="M 7 11 Q 20 2 40 5 T 75 4" stroke="url(#airReboundGrad)" stroke-width="2.8" fill="none" stroke-linecap="round" class="anim-air-rebound"/>
-                  <text x="15" y="30" font-size="8.5" font-weight="800" fill="#ccff00" font-family="var(--font-mono)">↘ REBOUNDS OFF INNER WALL</text>
-
-                  <text x="0" y="44" font-size="9" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">BLOW HERE (◎)</text>
+                  <text x="0" y="32" font-size="9.5" font-weight="800" fill="#00f0ff" text-anchor="middle" font-family="var(--font-mono)">BLOW HERE (◎)</text>
                 </g>
 
                 <!-- LEFT HAND VISUAL: Wrist Turn Arc & Palm Facing You Indicator -->

@@ -2990,34 +2990,7 @@ body {
   100% { stroke-dashoffset: -20; opacity: 0.2; }
 }
 
-/* Real Flute Air Jet Strike, Split & Rebound Acoustics */
-.anim-air-jet {
-  stroke-dasharray: 10, 5;
-  animation: airJetStream 0.7s linear infinite;
-}
-@keyframes airJetStream {
-  0% { stroke-dashoffset: 30; opacity: 0.9; }
-  100% { stroke-dashoffset: 0; opacity: 0.9; }
-}
 
-.anim-air-split-top {
-  stroke-dasharray: 8, 4;
-  animation: airSplitTop 0.9s ease-out infinite;
-}
-@keyframes airSplitTop {
-  0% { stroke-dashoffset: 24; opacity: 0.85; stroke: #00f0ff; }
-  100% { stroke-dashoffset: 0; opacity: 0.2; stroke: #38bdf8; }
-}
-
-.anim-air-rebound {
-  stroke-dasharray: 9, 4;
-  animation: airReboundCycle 1.1s ease-in-out infinite;
-}
-@keyframes airReboundCycle {
-  0% { stroke-dashoffset: 26; opacity: 0.9; stroke: #00f0ff; }
-  50% { opacity: 1; stroke: #ccff00; }
-  100% { stroke-dashoffset: 0; opacity: 0.35; stroke: #00f0ff; }
-}
 
 /* Floating finger gentle hover */
 .anim-floating-finger {
