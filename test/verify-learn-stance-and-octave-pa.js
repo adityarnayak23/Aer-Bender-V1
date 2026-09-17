@@ -129,16 +129,23 @@ assert(appJs.includes('const paRatio = 1.5;'), 'app.js uses Pa ratio 1.5 for oct
 
 console.log('✔ Step 4 Note Pa, dynamic colors, tone descriptors, and 3000ms engine verified.');
 
-// 8. Panel Proportions: Harmonic 1.5x, Swaram 65% & Centered, Raga 65%, Camera clearance below panel
-console.log('\n8. Checking Right Panel Proportions, Swaram Centering & Bottom Clearance...');
+// 8. Panel Proportions, Bigger Note Boxes in Compact Raga, Identical Header Font Size, Reduced Tala Button
+console.log('\n8. Checking Right Panel Proportions, Swaram Centering, Raga Note Boxes & Uniform Headers...');
 assert(html.includes('id="visualizerCanvas" width="560" height="90"'), 'visualizerCanvas height increased by 1.5x to 90');
 assert(css.includes('.visualizer-card canvas') && css.includes('height: 90px;'), 'CSS sets visualizer canvas height to 90px');
 assert(css.includes('.swara-card {') && css.includes('justify-content: center;') && css.includes('align-items: center;'), 'swara-card centers notes and pips in the middle');
 assert(css.includes('.card-pips-row {') && css.includes('justify-content: center;'), 'card-pips-row is centered');
-assert(css.includes('.raga-builder-card {') && css.includes('padding: 3px 6px;'), 'raga-builder-card scaled down to 65%');
-assert(css.includes('.swara-matrix-row {') && css.includes('height: 11px;'), 'swara-matrix-row height scaled to 11px');
+assert(css.includes('.raga-builder-card {') && css.includes('padding: 3px 6px;'), 'raga-builder-card is compact');
+assert(css.includes('.swara-matrix-row {') && css.includes('height: 18px;'), 'swara-matrix-row height increased to 18px for bigger note boxes');
 assert(css.includes('.controls-panel {') && css.includes('bottom: clamp(75px, 11vh, 95px);'), 'controls-panel provides bottom gap for camera screen');
-console.log('✔ Proportions, swaram center, and bottom clearance verified.');
+
+// 9. All 4 Right Pane Section Headers have same font size (11.5px) and Start Tala button is reduced
+console.log('\n9. Checking Right Pane Headers Identical Font Size & Reduced Start Tala Button...');
+assert(css.includes('.section-subhead h3 {\n  font-family: var(--font-display) !important;\n  font-size: 11.5px;'), 'Recognised swaram subhead is 11.5px');
+assert(css.includes('.raga-builder-header h3 {\n  font-family: var(--font-display) !important;\n  font-size: 11.5px !important;'), 'Raga builder header is 11.5px');
+assert(css.includes('.tala-card-header h3 {\n  font-family: var(--font-display) !important;\n  font-size: 11.5px !important;'), 'Tala card header is 11.5px');
+assert(css.includes('.btn-tala-play {') && css.includes('font-size: 8px;') && css.includes('padding: 1px 5px;'), 'Start Tala button size is reduced');
+console.log('✔ All right pane headers have same font size and start tala button size is reduced.');
 
 console.log('\n================================================================');
 console.log('🎉 ALL USER REQUIREMENTS VERIFIED AND PASSED 100%!');
