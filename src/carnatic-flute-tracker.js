@@ -1411,9 +1411,11 @@ class CarnaticFluteTracker {
         : (swara.short || swara.swara || 'Sa');
     }
 
+    const noteColor = (swara && swara.color) ? swara.color : (octaveColor || '#38bdf8');
     const scale = Math.max(1.0, canvasW / 640);
     this.floatingNotes.push({
       text: text,
+      color: noteColor,
       x: originX + (Math.random() - 0.5) * 8 * scale,
       y: originY - 14 * scale,
       vx: (Math.random() - 0.5) * 0.3 * scale,
@@ -2810,15 +2812,16 @@ class CarnaticFluteTracker {
         const alpha = Math.max(0, 1.0 - Math.pow(progress, 1.35));
 
         ctx.save();
-        // Small, elegant typography (11.5px) - NO background box!
-        ctx.font = `600 ${fSize(11.5)}px "Plus Jakarta Sans", -apple-system, sans-serif`;
+        ctx.globalAlpha = alpha;
+        // 50% size (5.8px), Space Grotesk font matching the tool, in pitch color
+        ctx.font = `700 ${fSize(5.8)}px "Space Grotesk", sans-serif`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         // Soft text drop shadow for pristine legibility against camera feed
-        ctx.shadowColor = `rgba(0, 0, 0, ${alpha * 0.75})`;
-        ctx.shadowBlur = 3.5 * scale;
-        ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.95})`;
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+        ctx.shadowBlur = 3 * scale;
+        ctx.fillStyle = note.color || '#38bdf8';
         ctx.fillText(note.text, note.x, note.y);
         ctx.restore();
 

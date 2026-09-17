@@ -216,17 +216,17 @@
                 <h3>Carnatic Raga & 16 Swarasthanas</h3>
               </div>
               <div class="raga-scale-summary">
-                <span class="raga-name-badge" id="ragaNameBadge">Mayamalavagowla</span>
-                <span class="raga-notes-list" id="ragaNotesList">S · R₁ · G₃ · M₁ · P · D₁ · N₃</span>
+                <span class="raga-name-badge" id="ragaNameBadge">Hanumatodi</span>
+                <span class="raga-notes-list" id="ragaNotesList">S · R₁ · G₂ · M₁ · P · D₁ · N₂</span>
               </div>
             </div>
             <div class="raga-preset-dropdown-wrap">
               <select id="ragaSelect" class="form-select raga-select" title="Choose a classical Carnatic Raga preset or create your own custom scale">
-                <option value="mayamalavagowla" selected>Mayamalavagowla (15th Melakarta)</option>
+                <option value="mayamalavagowla">Mayamalavagowla (15th Melakarta)</option>
                 <option value="shankarabharanam">Shankarabharanam (29th Melakarta)</option>
                 <option value="kalyani">Kalyani (65th Melakarta)</option>
                 <option value="kharaharapriya">Kharaharapriya (22nd Melakarta)</option>
-                <option value="hanumatodi">Hanumatodi (8th Melakarta)</option>
+                <option value="hanumatodi" selected>Hanumatodi (8th Melakarta)</option>
                 <option value="mohanam">Mohanam (Audava: S R₂ G₃ P D₂)</option>
                 <option value="hamsadhwani">Hamsadhwani (Audava: S R₂ G₃ P N₃)</option>
                 <option value="hindolam">Hindolam (Audava: S G₂ M₁ D₁ N₂)</option>
@@ -342,7 +342,7 @@
                   <span class="hand-badge left-badge">LEFT HAND</span>
                   <span class="orient-key-pill">PALM FACES YOU</span>
                 </div>
-                <p class="orient-action-text">Turn left wrist <strong>inward towards your face</strong> so index, middle, and ring curve over Holes 1, 2, and 3.</p>
+                <p class="orient-action-text">Turn left wrist <strong>inward toward your face</strong>. Index, middle, and ring fingers curve over Holes 1, 2, and 3 from above.</p>
                 <div class="orient-pinky-tag"><strong>Left Pinky:</strong> Free in the air (relaxed, not on flute)</div>
               </div>
 
@@ -351,7 +351,7 @@
                   <span class="hand-badge right-badge">RIGHT HAND</span>
                   <span class="orient-key-pill">PALM FACES FORWARD</span>
                 </div>
-                <p class="orient-action-text">Keep right hand <strong>facing forward naturally</strong> (away from you). 4 fingers rest over Holes 4, 5, 6, and 7.</p>
+                <p class="orient-action-text">Keep right hand <strong>facing forward naturally</strong>. Thumb supports underneath; 4 fingers wrap over Holes 4, 5, 6, and 7 from the front.</p>
                 <div class="orient-pinky-tag"><strong>Right Hand:</strong> Uses Index, Middle, Ring &amp; Pinky</div>
               </div>
             </div>
@@ -359,50 +359,56 @@
             <!-- Upper-Half Body Animated Player Stance SVG Graphic -->
             <div class="step-illustration-container player-perspective-container">
               <svg viewBox="0 0 800 245" class="step-flute-posture-svg" id="step1PostureSvg">
-                <!-- Upper-Half Body Silhouette (Head, Neck, Torso, Both Arms in Flute Stance) -->
+                <!-- Upper-Half Body Silhouette of Musician Holding Flute in 3rd-Person -->
                 <g class="player-upper-body" id="playerUpperBodyStance">
                   <!-- Torso / Chest Silhouette -->
-                  <path d="M 50 245 C 50 185 90 160 145 156 L 225 156 C 275 160 310 185 310 245 Z" fill="#080f20" stroke="#000000" stroke-width="2.5"/>
-                  <!-- Collar / Stance accent -->
-                  <path d="M 145 156 Q 185 180 225 156" stroke="#1e293b" stroke-width="2" fill="none"/>
+                  <path d="M 50 245 C 50 182 88 156 142 154 L 228 154 C 282 156 318 182 318 245 Z" fill="#080f20" stroke="#000000" stroke-width="2.5"/>
+                  <path d="M 142 154 Q 185 178 228 154" stroke="#1e293b" stroke-width="2" fill="none"/>
 
-                  <!-- Head in Side Profile Facing Flute Head (Mouth near x=210, y=149) -->
+                  <!-- Musician Head in Side Profile Facing Flute (Lips at x=218, y=144) -->
                   <g transform="translate(0, 0)">
                     <!-- Neck -->
-                    <path d="M 160 160 L 160 144 L 198 144 L 198 160 Z" fill="#141d33" stroke="#000000" stroke-width="2"/>
-                    <!-- Head Contour with clear jaw, nose, and lips -->
-                    <path d="M 138 142 C 128 114 142 78 178 70 C 212 62 232 82 232 110 L 226 122 L 236 128 L 220 136 L 224 148 C 202 158 170 158 138 142 Z" fill="#141d33" stroke="#000000" stroke-width="2.5"/>
-                    <!-- Focused Eye looking along flute -->
+                    <path d="M 160 160 L 160 142 L 200 142 L 200 160 Z" fill="#141d33" stroke="#000000" stroke-width="2"/>
+                    <!-- Head Contour with jaw, nose, and lips profile -->
+                    <path d="M 138 142 C 128 114 142 76 178 68 C 214 62 232 82 232 110 L 226 122 L 236 128 L 220 136 L 224 148 C 202 158 170 158 138 142 Z" fill="#141d33" stroke="#000000" stroke-width="2.5"/>
+                    <!-- Eye looking along the flute bore -->
                     <circle cx="206" cy="104" r="3.5" fill="#00f0ff"/>
                     <circle cx="207" cy="103" r="1.2" fill="#ffffff"/>
-                    <!-- Ear / Monitor Headphone -->
-                    <rect x="154" cy="100" y="100" width="16" height="28" rx="8" fill="#0284c7" stroke="#000000" stroke-width="2"/>
-                    <!-- Lips / Embouchure Resting against Flute Blow Hole -->
-                    <ellipse cx="218" cy="138" rx="4.5" ry="3" fill="#f43f5e" opacity="0.9"/>
+                    <!-- Musician Ear / Studio Monitor Headphone -->
+                    <rect x="154" cy="98" width="16" height="28" rx="8" fill="#0284c7" stroke="#000000" stroke-width="2"/>
+                    <!-- Lips Resting against Flute Blow Hole -->
+                    <ellipse cx="218" cy="140" rx="4.5" ry="3" fill="#f43f5e" opacity="0.9"/>
                     <!-- Chin under flute shelf -->
                     <path d="M 205 146 Q 212 156 220 156" stroke="#000000" stroke-width="2" fill="none"/>
                   </g>
 
-                  <!-- Left Arm & Hand Raised (Wrist Turned Inward towards Face ⟲) -->
+                  <!-- Left Arm & Hand: Elbow bent down, forearm rising up, wrist turned INWARD -->
                   <g class="left-arm-group">
                     <!-- Left Shoulder to Elbow -->
-                    <path d="M 125 178 Q 105 210 130 226" stroke="#0b1730" stroke-width="20" stroke-linecap="round" fill="none"/>
-                    <path d="M 125 178 Q 105 210 130 226" stroke="#000000" stroke-width="2.5" fill="none"/>
-                    <!-- Left Forearm curving upward & inward to flute -->
-                    <path d="M 130 226 Q 170 236 270 168" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
-                    <path d="M 130 226 Q 170 236 270 168" stroke="#000000" stroke-width="2.5" fill="none"/>
-                    <!-- Left Wrist Turn Indicator Arc -->
-                    <path d="M 252 188 A 16 16 0 0 1 278 160" stroke="#38bdf8" stroke-width="2.2" fill="none" stroke-dasharray="3,2"/>
+                    <path d="M 125 178 Q 102 215 125 232" stroke="#0b1730" stroke-width="22" stroke-linecap="round" fill="none"/>
+                    <path d="M 125 178 Q 102 215 125 232" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Left Forearm rising up toward flute -->
+                    <path d="M 125 232 Q 165 240 270 172" stroke="#0b1730" stroke-width="20" stroke-linecap="round" fill="none"/>
+                    <path d="M 125 232 Q 165 240 270 172" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Left Wrist Turned Inward Indicator Arc -->
+                    <path d="M 250 190 A 16 16 0 0 1 278 162" stroke="#38bdf8" stroke-width="2.2" fill="none" stroke-dasharray="3,2"/>
+                    <!-- Left Hand Palm Body draped over top of flute -->
+                    <path d="M 270 172 Q 285 145 320 138 L 400 138 Q 415 148 395 168 Z" fill="#131e36" stroke="#000000" stroke-width="2"/>
                   </g>
 
-                  <!-- Right Arm Extended Forward along Flute -->
+                  <!-- Right Arm & Hand: Extends forward, thumb supports underneath, 4 fingers wrap from other side -->
                   <g class="right-arm-group">
                     <!-- Right Shoulder to Elbow extending forward -->
-                    <path d="M 225 178 Q 280 216 350 212" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
-                    <path d="M 225 178 Q 280 216 350 212" stroke="#000000" stroke-width="2.5" fill="none"/>
-                    <!-- Right Forearm extending forward along flute body -->
-                    <path d="M 350 212 Q 430 206 530 172" stroke="#0b1730" stroke-width="16" stroke-linecap="round" fill="none"/>
-                    <path d="M 350 212 Q 430 206 530 172" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <path d="M 225 178 Q 285 220 365 215" stroke="#0b1730" stroke-width="20" stroke-linecap="round" fill="none"/>
+                    <path d="M 225 178 Q 285 220 365 215" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Right Forearm reaching forward along flute -->
+                    <path d="M 365 215 Q 435 210 515 186" stroke="#0b1730" stroke-width="18" stroke-linecap="round" fill="none"/>
+                    <path d="M 365 215 Q 435 210 515 186" stroke="#000000" stroke-width="2.5" fill="none"/>
+                    <!-- Right Hand Supporting Thumb Underneath Flute -->
+                    <path d="M 455 168 Q 470 185 480 168" stroke="#fed7aa" stroke-width="10" stroke-linecap="round" fill="none"/>
+                    <path d="M 455 168 Q 470 185 480 168" stroke="#ea580c" stroke-width="1.8" fill="none"/>
+                    <!-- Right Palm Body Facing Forward (Underside support) -->
+                    <path d="M 480 190 Q 535 200 625 185 L 635 168 L 475 168 Z" fill="#131e36" stroke="#000000" stroke-width="2"/>
                   </g>
                 </g>
 
@@ -426,21 +432,21 @@
                 </g>
 
                 <!-- LEFT HAND VISUAL: Wrist Turn Arc & Palm Facing You Indicator -->
-                <g transform="translate(320, 68)">
+                <g transform="translate(335, 52)">
                   <rect x="-95" y="-18" width="190" height="24" rx="5" fill="#0284c7" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES YOU (INWARD)</text>
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES YOU</text>
                   <path d="M -18 10 Q 0 18 18 10" stroke="#38bdf8" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
                 <!-- RIGHT HAND VISUAL: Straight Natural Reach Indicator -->
-                <g transform="translate(565, 68)">
+                <g transform="translate(565, 52)">
                   <rect x="-105" y="-18" width="210" height="24" rx="5" fill="#7c3aed" stroke="#000000" stroke-width="2" />
-                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES FORWARD (OUTWARD)</text>
+                  <text x="0" y="-2" font-size="9.5" font-weight="800" fill="#ffffff" text-anchor="middle" font-family="var(--font-display)">PALM FACES FORWARD</text>
                   <path d="M -16 10 L 16 10" stroke="#c084fc" stroke-width="2" fill="none" stroke-linecap="round"/>
                 </g>
 
-                <!-- Left Hand Holes (1, 2, 3) -->
-                <!-- H1 -->
+                <!-- Left Hand Holes (1, 2, 3) - Fingers curve from above -->
+                <!-- H1 (Index) -->
                 <g class="step-posture-node" transform="translate(285, 149)">
                   <g class="anim-floating-finger f-anim-1">
                     <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
@@ -450,7 +456,7 @@
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H1</text>
                   <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Idx</text>
                 </g>
-                <!-- H2 -->
+                <!-- H2 (Middle) -->
                 <g class="step-posture-node" transform="translate(335, 149)">
                   <g class="anim-floating-finger f-anim-2">
                     <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
@@ -460,7 +466,7 @@
                   <text x="0" y="24" font-size="10" font-weight="800" fill="#38bdf8" text-anchor="middle" font-family="var(--font-mono)">H2</text>
                   <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">L-Mid</text>
                 </g>
-                <!-- H3 -->
+                <!-- H3 (Ring) -->
                 <g class="step-posture-node" transform="translate(385, 149)">
                   <g class="anim-floating-finger f-anim-3">
                     <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
@@ -477,46 +483,46 @@
                   <text x="0" y="-36" font-size="8.5" font-weight="800" fill="#fde68a" text-anchor="middle" font-family="var(--font-mono)">Pinky Up</text>
                 </g>
 
-                <!-- Right Hand Holes (4, 5, 6, 7) -->
-                <!-- H4 -->
+                <!-- Right Hand Holes (4, 5, 6, 7) - Fingers wrap from the other side (front/underside) -->
+                <!-- H4 (Index) -->
                 <g class="step-posture-node" transform="translate(470, 149)">
                   <g class="anim-floating-finger f-anim-4">
-                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="12" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="18" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
-                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
-                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Idx</text>
+                  <text x="0" y="-16" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
+                  <text x="0" y="-28" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Idx</text>
                 </g>
-                <!-- H5 -->
+                <!-- H5 (Middle) -->
                 <g class="step-posture-node" transform="translate(520, 149)">
                   <g class="anim-floating-finger f-anim-5">
-                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="12" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="18" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
-                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
-                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Mid</text>
+                  <text x="0" y="-16" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
+                  <text x="0" y="-28" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Mid</text>
                 </g>
-                <!-- H6 -->
+                <!-- H6 (Ring) -->
                 <g class="step-posture-node" transform="translate(570, 149)">
                   <g class="anim-floating-finger f-anim-6">
-                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="12" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="18" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
-                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
-                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Rng</text>
+                  <text x="0" y="-16" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
+                  <text x="0" y="-28" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Rng</text>
                 </g>
-                <!-- H7 -->
+                <!-- H7 (Pinky) -->
                 <g class="step-posture-node" transform="translate(620, 149)">
                   <g class="anim-floating-finger f-anim-7">
-                    <rect x="-9" y="-46" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
-                    <ellipse cx="0" cy="-14" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
+                    <rect x="-9" y="12" width="18" height="34" rx="8" fill="#fed7aa" stroke="#000000" stroke-width="2"/>
+                    <ellipse cx="0" cy="18" rx="4.5" ry="3" fill="#f43f5e" opacity="0.6"/>
                   </g>
                   <circle cx="0" cy="0" r="10" fill="#0f172a" stroke="#000000" stroke-width="2.5"/>
-                  <text x="0" y="24" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
-                  <text x="0" y="36" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Pnk</text>
+                  <text x="0" y="-16" font-size="10" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
+                  <text x="0" y="-28" font-size="9" font-weight="700" fill="#cbd5e1" text-anchor="middle">R-Pnk</text>
                 </g>
               </svg>
             </div>
@@ -693,7 +699,7 @@
 
                   <!-- Right Hand Group Bracket -->
                   <path d="M 405 48 L 405 40 L 625 40 L 625 48" stroke="#c084fc" stroke-width="1.8" fill="none" opacity="0.75"/>
-                  <text x="515" y="32" font-size="11.5" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">RIGHT HAND (Holes 4, 5, 6, 7)</text>
+                  <text x="515" y="32" font-size="11.5" font-weight="800" fill="#c084fc" text-anchor="middle" font-family="var(--font-display)">RIGHT HAND (Holes 4, 5, 6, 7) — FROM OTHER SIDE</text>
 
                   <!-- 7 Animated Holes with Hero Finger Down/Up Animation -->
                   <!-- Hole 1 (Left Index) -->
@@ -735,56 +741,56 @@
                     <text x="0" y="46" font-size="9.5" font-weight="700" fill="#38bdf8" text-anchor="middle">L-Rng</text>
                   </g>
 
-                  <!-- Hole 4 (Right Index) -->
+                  <!-- Hole 4 (Right Index - From Other Side) -->
                   <g class="anim-hole-node" id="holeNode4" transform="translate(425, 87)">
-                    <g class="anim-pressing-finger" id="finger4">
-                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
-                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
-                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
+                    <g class="anim-pressing-finger finger-other-side" id="finger4">
+                      <rect x="-11" y="10" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="24" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
                     <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
                     <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
-                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Idx</text>
+                    <text x="0" y="4" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H4</text>
+                    <text x="0" y="-18" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Idx</text>
                   </g>
 
-                  <!-- Hole 5 (Right Middle) -->
+                  <!-- Hole 5 (Right Middle - From Other Side) -->
                   <g class="anim-hole-node" id="holeNode5" transform="translate(485, 87)">
-                    <g class="anim-pressing-finger" id="finger5">
-                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
-                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
-                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
+                    <g class="anim-pressing-finger finger-other-side" id="finger5">
+                      <rect x="-11" y="10" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="24" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
                     <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
                     <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
-                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Mid</text>
+                    <text x="0" y="4" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H5</text>
+                    <text x="0" y="-18" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Mid</text>
                   </g>
 
-                  <!-- Hole 6 (Right Ring) -->
+                  <!-- Hole 6 (Right Ring - From Other Side) -->
                   <g class="anim-hole-node" id="holeNode6" transform="translate(545, 87)">
-                    <g class="anim-pressing-finger" id="finger6">
-                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
-                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
-                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
+                    <g class="anim-pressing-finger finger-other-side" id="finger6">
+                      <rect x="-11" y="10" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="24" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
                     <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
                     <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
-                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Rng</text>
+                    <text x="0" y="4" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H6</text>
+                    <text x="0" y="-18" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Rng</text>
                   </g>
 
-                  <!-- Hole 7 (Right Pinky) -->
+                  <!-- Hole 7 (Right Pinky - From Other Side) -->
                   <g class="anim-hole-node" id="holeNode7" transform="translate(605, 87)">
-                    <g class="anim-pressing-finger" id="finger7">
-                      <rect x="-11" y="-58" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
-                      <ellipse cx="0" cy="-14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
-                      <rect x="-6" y="-30" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
+                    <g class="anim-pressing-finger finger-other-side" id="finger7">
+                      <rect x="-11" y="10" width="22" height="48" rx="11" fill="rgba(254, 215, 170, 0.98)" stroke="#ea580c" stroke-width="2"/>
+                      <ellipse cx="0" cy="14" rx="7" ry="5" fill="#f43f5e" opacity="0.65"/>
+                      <rect x="-6" y="24" width="12" height="10" rx="4" fill="rgba(255, 255, 255, 0.45)"/>
                     </g>
                     <circle cx="0" cy="0" r="14" class="hole-disc-bg" fill="#0f172a" stroke="#ffffff" stroke-width="2.5"/>
                     <circle cx="0" cy="0" r="14" class="hole-disc-fill" fill="#10b981" opacity="0"/>
-                    <text x="0" y="32" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
-                    <text x="0" y="46" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Pnk</text>
+                    <text x="0" y="4" font-size="11" font-weight="800" fill="#f8fafc" text-anchor="middle" font-family="var(--font-mono)">H7</text>
+                    <text x="0" y="-18" font-size="9.5" font-weight="700" fill="#c084fc" text-anchor="middle">R-Pnk</text>
                   </g>
                 </svg>
               </div>

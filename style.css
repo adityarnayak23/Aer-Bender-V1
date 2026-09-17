@@ -1583,20 +1583,21 @@ body {
   transform: scale(1.15);
 }
 
-/* Card 4: Carnatic Raga & 16 Swarasthanas Builder (Compact Section & Bigger Note Boxes) */
+/* Card 4: Carnatic Raga & 16 Swarasthanas Builder (Compact Section & Full-Width Dropdown) */
 .raga-builder-card {
-  padding: 3px 6px;
+  padding: 4px 6px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  margin-bottom: 6px;
 }
 
 .raga-builder-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 1px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  margin-bottom: 2px;
 }
 
 .raga-builder-header h3 {
@@ -1634,38 +1635,42 @@ body {
   letter-spacing: 0.2px;
 }
 
+.raga-preset-dropdown-wrap {
+  width: 100%;
+}
+
 .raga-preset-dropdown-wrap .raga-select {
-  min-width: 125px;
-  max-width: 155px;
-  font-size: 8px;
-  padding: 1.5px 4px;
-  height: 20px;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  font-size: 8.5px;
+  padding: 2px 6px;
+  height: 22px;
 }
 
 .swarasthanas-matrix {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  flex: 1;
+  justify-content: flex-start;
   min-height: 0;
-  gap: 2px;
+  gap: 1.5px;
   background: #0a0c13;
   border: 1.5px solid #202636;
   border-radius: 0px;
-  padding: 2.5px 3px;
+  padding: 2px 3px;
 }
 
 .swara-matrix-row {
   display: grid;
-  grid-template-columns: 16px 1fr;
+  grid-template-columns: 15px 1fr;
   align-items: center;
-  gap: 3px;
-  height: 18px;
+  gap: 2.5px;
+  height: 13.5px;
 }
 
 .matrix-type-label {
   font-family: var(--font-mono);
-  font-size: 8.5px;
+  font-size: 8px;
   font-weight: 800;
   color: #a0aec0;
   text-align: center;
@@ -1675,7 +1680,7 @@ body {
 .matrix-cells-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 2.5px;
+  gap: 2px;
   height: 100%;
 }
 
@@ -2756,6 +2761,17 @@ body {
 }
 
 .anim-pressing-finger.finger-down {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+/* Right-hand fingers entering from the other side (bottom wrap) */
+.anim-pressing-finger.finger-other-side {
+  transform: translateY(22px);
+  opacity: 0.35;
+}
+
+.anim-pressing-finger.finger-other-side.finger-down {
   transform: translateY(0px);
   opacity: 1;
 }

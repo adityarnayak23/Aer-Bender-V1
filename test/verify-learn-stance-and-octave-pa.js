@@ -135,8 +135,9 @@ assert(html.includes('id="visualizerCanvas" width="560" height="90"'), 'visualiz
 assert(css.includes('.visualizer-card canvas') && css.includes('height: 90px;'), 'CSS sets visualizer canvas height to 90px');
 assert(css.includes('.swara-card {') && css.includes('justify-content: center;') && css.includes('align-items: center;'), 'swara-card centers notes and pips in the middle');
 assert(css.includes('.card-pips-row {') && css.includes('justify-content: center;'), 'card-pips-row is centered');
-assert(css.includes('.raga-builder-card {') && css.includes('padding: 3px 6px;'), 'raga-builder-card is compact');
-assert(css.includes('.swara-matrix-row {') && css.includes('height: 18px;'), 'swara-matrix-row height increased to 18px for bigger note boxes');
+assert(css.includes('.raga-builder-card {') && css.includes('margin-bottom: 6px;'), 'raga-builder-card has margin-bottom for clean space above tala card');
+assert(css.includes('.swara-matrix-row {') && css.includes('height: 13.5px;'), 'swara-matrix-row height is 13.5px keeping note lines compact and close together');
+assert(css.includes('.raga-preset-dropdown-wrap .raga-select {') && css.includes('width: 100%;') && css.includes('max-width: none;'), 'raga select is full width for full unclipped names');
 assert(css.includes('.controls-panel {') && css.includes('bottom: clamp(75px, 11vh, 95px);'), 'controls-panel provides bottom gap for camera screen');
 
 // 9. All 4 Right Pane Section Headers have same font size (11.5px) and Start Tala button is reduced
@@ -155,6 +156,15 @@ assert(audioJs.includes("bassWeightFilter.type = 'lowshelf';"), 'flute-audio.js 
 assert(audioJs.includes("isLowerOctave ? 9.0 : 1.5"), 'flute-audio.js boosts lower octave with +9dB low shelf');
 assert(audioJs.includes("isLowerOctave ? 0.72 : 0.22"), 'flute-audio.js uses 0.72 sub-harmonic weight for lower octave');
 console.log('✔ Lower octave bass weight and sub-harmonic punch verified.');
+
+// 11. Hanumatodi Default, 50% Pitch-Colored Flying Notes & Step 3 Other-Side Fingers
+console.log('\n11. Checking Hanumatodi Default, 50% Pitch-Colored Flying Notes & Other-Side Fingers...');
+assert(appJs.includes("activeRagaKey: 'hanumatodi'"), 'app.js has hanumatodi as activeRagaKey');
+assert(html.includes('<span class="raga-name-badge" id="ragaNameBadge">Hanumatodi</span>'), 'index.html has Hanumatodi badge');
+assert(html.includes('<option value="hanumatodi" selected>Hanumatodi (8th Melakarta)</option>'), 'index.html has Hanumatodi option selected');
+assert(trackerJs.includes('fSize(5.8)') && trackerJs.includes('"Space Grotesk"') && trackerJs.includes('note.color'), 'Flying notes rendered at 50% size (5.8px), in Space Grotesk, using pitch note.color');
+assert(html.includes('finger-other-side') && css.includes('.anim-pressing-finger.finger-other-side'), 'Step 3 right-hand fingers marked with finger-other-side and animated');
+console.log('✔ Hanumatodi default, 50% pitch flying notes, and other side right fingers verified.');
 
 console.log('\n================================================================');
 console.log('🎉 ALL USER REQUIREMENTS VERIFIED AND PASSED 100%!');

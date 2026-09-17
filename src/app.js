@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     isElectricMode: true,
     recordTimerInterval: null,
     recSeconds: 0,
-    activeRagaKey: 'mayamalavagowla',
-    activeSwarasSet: new Set(['sa', 'ri1', 'ga3', 'ma1', 'pa', 'dha1', 'ni3'])
+    activeRagaKey: 'hanumatodi',
+    activeSwarasSet: new Set(['sa', 'ri1', 'ga2', 'ma1', 'pa', 'dha1', 'ni2'])
   };
 
   // 1. Initialize Audio Engine
