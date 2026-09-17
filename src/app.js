@@ -78,6 +78,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const audio = new window.FluteAudioEngine();
   if (kattaiSelect) audio.setKattai(kattaiSelect.value);
 
+  // Universal Mobile & Desktop touch/gesture unlock for WebAudio AudioContext
+  const unlockAudioContext = () => {
+    if (audio && typeof audio.resume === 'function') {
+      audio.resume().catch(() => {});
+    }
+  };
+  ['touchstart', 'touchend', 'pointerdown', 'keydown'].forEach(evt => {
+    window.addEventListener(evt, unlockAudioContext, { once: true, passive: true });
+  });
+
   // 2. Initialize Visualizer with cached buffers (Zero GC overhead)
   const visualizerCtx = visualizerCanvas.getContext('2d');
   let isVisRunning = true;
@@ -2044,6 +2054,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       idx++;
     }, 360);
+  }
+
+  // Mobile Portrait Orientation Tip Dismissal
+  const mobileLandscapeHint = document.getElementById('mobileLandscapeHint');
+  const closeMobileHintBtn = document.getElementById('closeMobileHintBtn');
+  if (closeMobileHintBtn && mobileLandscapeHint) {
+    closeMobileHintBtn.addEventListener('click', () => {
+      mobileLandscapeHint.classList.add('dismissed');
+    });
   }
 
   // Initial render: Build 16 Swarasthanas Matrix, active Raga, Tala, and tone holes

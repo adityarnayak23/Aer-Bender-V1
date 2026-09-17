@@ -65,7 +65,9 @@
 
 html, body {
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   width: 100vw;
   max-width: 100vw;
   margin: 0;
@@ -88,7 +90,9 @@ body {
   width: 100vw;
   max-width: 100vw;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   margin: 0;
   padding: 0;
   display: flex;
@@ -3803,6 +3807,9 @@ body {
   box-shadow: 0 32px 90px rgba(0, 0, 0, 0.85), 0 0 45px rgba(6, 182, 212, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   max-width: 460px;
   width: 100%;
+  max-height: 90dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 30px 32px;
   display: flex;
   flex-direction: column;
@@ -3974,5 +3981,251 @@ body {
   color: #ffffff;
   box-shadow: 0 8px 24px rgba(225, 48, 108, 0.45);
 }
+
+/* ============================================================== */
+/* MOBILE & MOBILE DESKTOP RESPONSIVENESS                         */
+/* ============================================================== */
+
+/* Mobile Portrait Landscape Orientation Suggestion Chip */
+.mobile-landscape-hint {
+  display: none;
+}
+
+@keyframes rotateNudge {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-22deg); }
+  75% { transform: rotate(22deg); }
+}
+
+@keyframes hintBounceIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+/* Portrait Mobile (phones held vertically) */
+@media (max-width: 768px) and (orientation: portrait) {
+  .mobile-landscape-hint {
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 95;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(10, 15, 28, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 999px;
+    padding: 6px 14px 6px 12px;
+    color: #f1f5f9;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.25);
+    pointer-events: auto;
+    animation: hintBounceIn 0.3s ease-out;
+    white-space: nowrap;
+  }
+
+  .mobile-landscape-hint.dismissed {
+    display: none !important;
+  }
+
+  .mobile-landscape-hint .hint-icon {
+    font-size: 13px;
+    animation: rotateNudge 3s ease-in-out infinite;
+  }
+
+  .mobile-landscape-hint .hint-close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 0 0 0 4px;
+    line-height: 1;
+  }
+
+  .mobile-landscape-hint .hint-close:hover {
+    color: #ffffff;
+  }
+}
+
+/* General Mobile Phone Viewport (Portrait & Small Screens) */
+@media (max-width: 768px) {
+  .app-header.spatial-nav-bar {
+    top: 6px;
+    left: 8px;
+    right: 8px;
+    gap: 6px;
+  }
+
+  .header-corner-pod {
+    padding: 4px 10px;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .logo-mark svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .brand-name {
+    font-size: 15px;
+  }
+
+  .header-right-pod {
+    padding: 3px 8px;
+    gap: 4px;
+    max-width: calc(100vw - 160px);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .header-btn {
+    padding: 5px 8px !important;
+    font-size: 11px !important;
+    white-space: nowrap;
+  }
+
+  .record-mode-select {
+    display: none; /* In small mobile screens, default to camera recording */
+  }
+
+  /* Bottom Controls: Non-overlapping Stacked Layout */
+  .calibration-row {
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - 20px);
+    max-width: 380px;
+    padding: 4px 10px;
+    gap: 8px;
+  }
+
+  .hud-holes-bar {
+    bottom: 10px;
+    left: 12px;
+    transform: none;
+    padding: 4px 8px;
+  }
+
+  .hole-pip {
+    width: 17px;
+    height: 17px;
+    font-size: 7px;
+  }
+
+  .holes-hand-group {
+    gap: 6px;
+  }
+
+  .holes-row {
+    gap: 3px;
+  }
+
+  .creator-stamp-btn {
+    bottom: 10px;
+    right: 12px;
+    padding: 5px 11px;
+    font-size: 10px;
+    gap: 5px;
+  }
+
+  .creator-stamp-btn .stamp-icon {
+    font-size: 10px;
+  }
+
+  /* Modals on Mobile Phones */
+  .creator-modal-card {
+    max-width: 92vw;
+    max-height: 88dvh;
+    padding: 22px 18px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .creator-name {
+    font-size: 22px;
+  }
+
+  .creator-bio-line {
+    font-size: 12.5px;
+  }
+
+  .creator-cta-title {
+    font-size: 12px;
+  }
+
+  .creator-social-btn {
+    padding: 10px 14px;
+    font-size: 12.5px;
+  }
+
+  .learn-modal-card {
+    max-width: 94vw !important;
+    max-height: 90dvh !important;
+    padding: 14px 14px !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Landscape Phone Mode (horizontal screen for optimal 2-hand flute posture) */
+@media (max-width: 920px) and (orientation: landscape) {
+  .app-header.spatial-nav-bar {
+    top: 6px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .header-left-pod {
+    padding: 3px 10px;
+  }
+
+  .header-right-pod {
+    padding: 3px 8px;
+  }
+
+  .brand-name {
+    font-size: 14px;
+  }
+
+  .calibration-row {
+    bottom: 8px;
+    left: 10px;
+    transform: none;
+    width: 260px;
+    padding: 3px 8px;
+    gap: 6px;
+  }
+
+  .hud-holes-bar {
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 8px;
+  }
+
+  .creator-stamp-btn {
+    bottom: 8px;
+    right: 10px;
+    padding: 4px 10px;
+    font-size: 9.5px;
+  }
+}
+
 
 

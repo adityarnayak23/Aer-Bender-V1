@@ -359,7 +359,7 @@ class CarnaticFluteTracker {
 
   getSpanScale(width, height) {
     if (width <= 800) {
-      return Math.min(width, height * 1.33);
+      return Math.min(width * 0.92, height * 1.1);
     }
     const panelWidth = Math.max(340, Math.min(width * 0.28, 420)) + 14;
     const stageWidth = width - panelWidth;
@@ -702,16 +702,61 @@ class CarnaticFluteTracker {
     this.onTrackingStatus({ status: 'loading', message: 'Starting dual-hand AI tracking...' });
 
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          width: { ideal: 1280, max: 1280 },
-          height: { ideal: 720, max: 720 },
-          frameRate: { ideal: 60, min: 30 },
-          facingMode: 'user'
+      // Multi-tier camera constraints for mobile (iOS Safari / Android Chrome) & desktop
+      const constraintTiers = [
+        // Tier 1: Ideal HD 60fps for desktop & high-end mobile
+        {
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 60 },
+            facingMode: 'user'
+          },
+          audio: false
         },
-        audio: false
-      });
+        // Tier 2: Standard ideal dimensions (no strict frameRate)
+        {
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: 'user'
+          },
+          audio: false
+        },
+        // Tier 3: Universal front camera (works on all iOS/Android portrait orientations)
+        {
+          video: {
+            facingMode: 'user'
+          },
+          audio: false
+        },
+        // Tier 4: Universal fallback
+        {
+          video: true,
+          audio: false
+        }
+      ];
 
+      let stream = null;
+      let lastErr = null;
+      for (const tier of constraintTiers) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia(tier);
+          if (stream) break;
+        } catch (tierErr) {
+          lastErr = tierErr;
+          console.warn('Camera tier constraint failed, trying fallback tier...', tierErr);
+        }
+      }
+      if (!stream) {
+        throw lastErr || new Error('Could not access camera with any constraints.');
+      }
+      this.stream = stream;
+
+      if (this.videoElement) {
+        this.videoElement.setAttribute('playsinline', 'true');
+        this.videoElement.setAttribute('webkit-playsinline', 'true');
+      }
       this.videoElement.srcObject = this.stream;
       await new Promise(resolve => {
         this.videoElement.onloadedmetadata = () => {
@@ -722,7 +767,8 @@ class CarnaticFluteTracker {
 
       if (this.canvasElement) {
         const rect = this.canvasElement.getBoundingClientRect ? this.canvasElement.getBoundingClientRect() : null;
-        const dpr = (typeof window !== 'undefined' && window.devicePixelRatio) ? Math.max(2, window.devicePixelRatio) : 2;
+        const rawDpr = (typeof window !== 'undefined' && window.devicePixelRatio) ? window.devicePixelRatio : 1;
+        const dpr = Math.min(Math.max(1, rawDpr), 2.0); // Cap at 2.0 to prevent mobile GPU OOM
         const baseW = (rect && rect.width > 0) ? rect.width : (this.videoElement.videoWidth || 1280);
         const baseH = (rect && rect.height > 0) ? rect.height : (this.videoElement.videoHeight || 720);
         this.canvasElement.width = Math.round(baseW * dpr);
@@ -820,7 +866,14 @@ class CarnaticFluteTracker {
             createImageBitmap(this.videoElement).then(bitmap => {
               this.faceIframe.contentWindow.postMessage({ type: 'PROCESS_FRAME', bitmap }, '*', [bitmap]);
             }).catch(() => {
-              this.isProcessingFace = false;
+              // Direct fallback if createImageBitmap throws on mobile WebKit
+              if (this.faceDetector) {
+                this.faceDetector.send({ image: this.videoElement })
+                  .catch(e => console.warn('Face detection warning:', e))
+                  .finally(() => { this.isProcessingFace = false; });
+              } else {
+                this.isProcessingFace = false;
+              }
             });
           } else if (this.faceDetector) {
             this.isProcessingFace = true;
@@ -853,7 +906,8 @@ class CarnaticFluteTracker {
       if (!this._lastCanvasCheck || (this.frameCount - this._lastCanvasCheck >= 60)) {
         this._lastCanvasCheck = this.frameCount;
         const rect = this.canvasElement.getBoundingClientRect ? this.canvasElement.getBoundingClientRect() : null;
-        const dpr = window.devicePixelRatio ? Math.max(2, window.devicePixelRatio) : 2;
+        const rawDpr = window.devicePixelRatio || 1;
+        const dpr = Math.min(Math.max(1, rawDpr), 2.0); // Cap at 2.0 to prevent mobile GPU OOM
         const baseW = (rect && rect.width > 0) ? rect.width : (this.videoElement && this.videoElement.videoWidth > 0 ? this.videoElement.videoWidth : 1280);
         const baseH = (rect && rect.height > 0) ? rect.height : (this.videoElement && this.videoElement.videoHeight > 0 ? this.videoElement.videoHeight : 720);
         const targetW = Math.round(baseW * dpr);

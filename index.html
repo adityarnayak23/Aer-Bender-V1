@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Aer Bender V1 — Vision Flute Controller</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,13 @@
 </head>
 <body>
   <div class="app-wrapper">
+    <!-- Mobile Portrait Orientation Suggestion Chip -->
+    <div id="mobileLandscapeHint" class="mobile-landscape-hint" role="status" aria-live="polite">
+      <span class="hint-icon">🔄</span>
+      <span class="hint-text">Rotate to landscape for optimal two-handed flute play</span>
+      <button id="closeMobileHintBtn" class="hint-close" aria-label="Dismiss orientation tip">&times;</button>
+    </div>
+
     <!-- Spatial Floating Corner Navigation (Unobtrusive AR Canvas) -->
     <header class="app-header spatial-nav-bar">
       <!-- Top-Left Brand Pod -->
@@ -92,7 +99,7 @@
       <section class="performance-panel">
         <div class="card camera-card">
           <div class="camera-container" id="cameraContainer">
-            <video id="webcamVideo" playsinline muted autoplay></video>
+            <video id="webcamVideo" playsinline webkit-playsinline muted autoplay></video>
             <!-- Center Camera Launch / Welcome Glass Card with Huge Celestial Sphere Aura -->
             <div class="camera-welcome-overlay" id="cameraWelcomeOverlay">
               <div class="welcome-sphere-aura" aria-hidden="true"></div>
