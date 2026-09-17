@@ -357,7 +357,7 @@
             </div>
 
             <!-- Upper-Half Body Animated Player Stance SVG Graphic -->
-            <!-- First-Person POV Hand Placement Graphic (Option 3 Slanted Aer Bender Flute) -->
+            <!-- First-Person POV Hand Placement Graphic (Friendly Translucent Flute & Clean L1-L3, R1-R4) -->
             <div class="step-illustration-container player-perspective-container">
               <div class="step1-visual-canvas">
                 <img src="assets/images/flute_first_person_pov.jpg" alt="First-Person POV Slanted Flute Hand Placement" class="step1-base-img" />
@@ -368,92 +368,132 @@
                   <!-- Player Upper Body / Hand Stance Interactive Overlay -->
                   <g class="player-upper-body" id="playerUpperBodyStance">
                     <!-- Embouchure Blow Marker & Concentric Breath Waves -->
-                    <g class="step-embouchure-marker" transform="translate(215, 205)">
-                      <circle cx="0" cy="0" r="16" fill="#00f0ff" class="pulse-blow-core" opacity="0.35"/>
-                      <path class="breath-wave anim-b1" d="M -14 -22 Q -7 -7 0 0" stroke="#00f0ff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-                      <path class="breath-wave anim-b2" d="M 0 -26 Q 0 -9 0 0" stroke="#ccff00" stroke-width="3" stroke-linecap="round" fill="none"/>
-                      <path class="breath-wave anim-b3" d="M 14 -22 Q 7 -7 0 0" stroke="#00f0ff" stroke-width="2.6" stroke-linecap="round" fill="none"/>
-                      <text x="0" y="-36" font-family="'Space Grotesk', sans-serif" font-size="14" font-weight="800" fill="#00f0ff" text-anchor="middle" letter-spacing="1">BLOW (◎)</text>
+                    <g class="step-embouchure-marker" transform="translate(195, 275)">
+                      <ellipse cx="0" cy="0" rx="18" ry="12" transform="rotate(-12)" fill="none" stroke="#00f0ff" stroke-width="1.8" opacity="0.75" class="pulse-blow-core"/>
+                      <!-- Subtle breath streams (reduced glow) -->
+                      <path class="breath-wave anim-b1" d="M -10 -20 Q -5 -6 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.75"/>
+                      <path class="breath-wave anim-b2" d="M 0 -24 Q 0 -8 0 0" stroke="#ccff00" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.75"/>
+                      <path class="breath-wave anim-b3" d="M 10 -20 Q 5 -6 0 0" stroke="#00f0ff" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.75"/>
+                      <g transform="translate(0, -36)">
+                        <rect x="-42" y="-12" width="84" height="22" rx="4" fill="#081226" stroke="#00f0ff" stroke-width="1.4"/>
+                        <text x="0" y="3.5" font-family="'Space Grotesk', sans-serif" font-size="11" font-weight="800" fill="#00f0ff" text-anchor="middle" letter-spacing="1">BLOW (◎)</text>
+                      </g>
                     </g>
 
-                    <!-- Left Hand Hovering Finger Rings (Slanted Hole Placement) -->
+                    <!-- Left Hand Holes (Clean L1, L2, L3 + Pinky Up) -->
                     <g class="left-hand-pov-group">
-                      <!-- H1 -->
-                      <g transform="translate(520, 375)">
+                      <!-- L1 -->
+                      <g transform="translate(410, 321)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(8, 18, 38, 0.75)" stroke="#00f0ff" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-1">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#00f0ff" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(0, 240, 255, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">1</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#081226" stroke="#00f0ff" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">L1</text>
+                        </g>
                       </g>
-                      <!-- H2 -->
-                      <g transform="translate(585, 410)">
+                      <!-- L2 -->
+                      <g transform="translate(495, 339)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(8, 18, 38, 0.75)" stroke="#00f0ff" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-2">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#00f0ff" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(0, 240, 255, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">2</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#081226" stroke="#00f0ff" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">L2</text>
+                        </g>
                       </g>
-                      <!-- H3 -->
-                      <g transform="translate(655, 445)">
+                      <!-- L3 -->
+                      <g transform="translate(540, 349)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(8, 18, 38, 0.75)" stroke="#00f0ff" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-3">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#00f0ff" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(0, 240, 255, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">3</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#081226" stroke="#00f0ff" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#00f0ff" text-anchor="middle">L3</text>
+                        </g>
                       </g>
                       <!-- Pinky Up in the air -->
-                      <g transform="translate(730, 315)">
+                      <g transform="translate(615, 275)">
                         <g class="anim-floating-finger f-anim-1">
-                          <circle cx="0" cy="0" r="14" fill="none" stroke="#ccff00" stroke-width="1.8" stroke-dasharray="3,3" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="12" fill="none" stroke="#ccff00" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.7"/>
                         </g>
-                        <text x="0" y="-22" font-family="'JetBrains Mono', monospace" font-size="13" font-weight="800" fill="#ccff00" text-anchor="middle" letter-spacing="0.5">Pinky Up</text>
+                        <g transform="translate(0, -24)">
+                          <rect x="-38" y="-12" width="76" height="22" rx="4" fill="#141f10" stroke="#ccff00" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="11" font-weight="800" fill="#ccff00" text-anchor="middle">Pinky Up</text>
+                        </g>
                       </g>
                     </g>
 
-                    <!-- Right Hand Hovering Finger Rings (Slanted Hole Placement) -->
+                    <!-- Right Hand Holes (Clean R1, R2, R3, R4) -->
                     <g class="right-hand-pov-group">
-                      <!-- H4 -->
-                      <g transform="translate(875, 545)">
+                      <!-- R1 -->
+                      <g transform="translate(775, 399)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(24, 12, 38, 0.75)" stroke="#c084fc" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-4">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(192, 132, 252, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">4</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#1b102e" stroke="#c084fc" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">R1</text>
+                        </g>
                       </g>
-                      <!-- H5 -->
-                      <g transform="translate(935, 575)">
+                      <!-- R2 -->
+                      <g transform="translate(865, 418)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(24, 12, 38, 0.75)" stroke="#c084fc" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-5">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(192, 132, 252, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">5</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#1b102e" stroke="#c084fc" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">R2</text>
+                        </g>
                       </g>
-                      <!-- H6 -->
-                      <g transform="translate(1020, 610)">
+                      <!-- R3 -->
+                      <g transform="translate(940, 434)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(24, 12, 38, 0.75)" stroke="#c084fc" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-6">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(192, 132, 252, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">6</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#1b102e" stroke="#c084fc" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">R3</text>
+                        </g>
                       </g>
-                      <!-- H7 -->
-                      <g transform="translate(1100, 650)">
+                      <!-- R4 -->
+                      <g transform="translate(1020, 451)">
+                        <circle cx="0" cy="0" r="14" fill="rgba(24, 12, 38, 0.75)" stroke="#c084fc" stroke-width="1.8" opacity="0.85"/>
                         <g class="anim-floating-finger f-anim-7">
-                          <circle cx="0" cy="0" r="18" fill="none" stroke="#c084fc" stroke-width="2" opacity="0.7"/>
+                          <circle cx="0" cy="0" r="8" fill="rgba(192, 132, 252, 0.3)"/>
                         </g>
-                        <text x="0" y="-24" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">7</text>
+                        <g transform="translate(0, -28)">
+                          <rect x="-18" y="-12" width="36" height="22" rx="4" fill="#1b102e" stroke="#c084fc" stroke-width="1.4"/>
+                          <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="800" fill="#c084fc" text-anchor="middle">R4</text>
+                        </g>
+                      </g>
+                      <!-- Thumb Support Tag -->
+                      <g transform="translate(730, 560)">
+                        <rect x="-48" y="-12" width="96" height="22" rx="4" fill="#1b102e" stroke="#c084fc" stroke-width="1.2" opacity="0.85"/>
+                        <text x="0" y="3.5" font-family="'JetBrains Mono', monospace" font-size="10.5" font-weight="700" fill="#c084fc" text-anchor="middle">Thumb Under</text>
                       </g>
                     </g>
 
-                    <!-- Left Hand HUD Banner (Space Grotesk & JetBrains Mono) -->
+                    <!-- Left Hand HUD Banner (Space Grotesk) -->
                     <g transform="translate(360, 85)">
                       <rect x="-135" y="-16" width="270" height="34" rx="5" fill="#081226" stroke="#000000" stroke-width="2.5"/>
                       <rect x="-133" y="-14" width="266" height="30" rx="4" fill="none" stroke="#00f0ff" stroke-width="1.8"/>
                       <text x="0" y="6" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1">LEFT: <tspan fill="#00f0ff">PALM FACES YOU</tspan></text>
-                      <path d="M 0 18 L 40 120" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+                      <path d="M 0 18 L 10 140" stroke="#00f0ff" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
                     </g>
 
-                    <!-- Right Hand HUD Banner (Space Grotesk & JetBrains Mono) -->
+                    <!-- Right Hand HUD Banner (Space Grotesk) -->
                     <g transform="translate(1010, 85)">
                       <rect x="-145" y="-16" width="290" height="34" rx="5" fill="#170c2a" stroke="#000000" stroke-width="2.5"/>
                       <rect x="-143" y="-14" width="286" height="30" rx="4" fill="none" stroke="#c084fc" stroke-width="1.8"/>
                       <text x="0" y="6" font-family="'Space Grotesk', sans-serif" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="1">RIGHT: <tspan fill="#c084fc">PALM FACES FORWARD</tspan></text>
-                      <path d="M 0 18 L -30 220" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
+                      <path d="M 0 18 L -110 240" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5"/>
                     </g>
                   </g>
                 </svg>

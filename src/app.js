@@ -1777,6 +1777,11 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const RAGA_PRACTICE_PHRASES = {
+    hanumatodi: [
+      { name: 'Sarali 1', phrase: ['sa', 'ri1', 'ga2', 'ma1', 'pa', 'dha1', 'ni2', 'sa'], label: 'S R₁ G₂ M₁ · P D₁ N₂ Ṡ' },
+      { name: 'Todi Catch', phrase: ['ga2', 'ri1', 'sa', 'ni2', 'dha1', 'pa'], label: 'G₂ R₁ S · Ṇ₂ Ḍ₁ P' },
+      { name: 'Mandra', phrase: ['sa', 'ni2', 'dha1', 'pa', 'dha1', 'ni2', 'sa'], label: 'S N₂ D₁ P · D₁ N₂ S' }
+    ],
     mayamalavagowla: [
       { name: 'Sarali 1', phrase: ['sa', 'ri1', 'ga3', 'ma1', 'pa', 'dha1', 'ni3', 'sa'], label: 'S R₁ G₃ M₁ · P D₁ N₃ Ṡ' },
       { name: 'Janta 1', phrase: ['sa', 'sa', 'ri1', 'ri1', 'ga3', 'ga3', 'ma1', 'ma1'], label: 'SS R₁R₁ G₃G₃ M₁M₁' },

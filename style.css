@@ -958,8 +958,9 @@ body {
   z-index: 30;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
-  grid-template-rows: auto auto 1fr auto;
-  gap: 8px;
+  grid-template-rows: auto auto auto auto;
+  align-content: start;
+  gap: 6px;
   height: auto;
   overflow: hidden !important;
   scrollbar-width: none !important;
@@ -1585,10 +1586,13 @@ body {
 
 /* Card 4: Carnatic Raga & 16 Swarasthanas Builder (Compact Section & Full-Width Dropdown) */
 .raga-builder-card {
-  padding: 4px 6px;
+  height: auto !important;
+  min-height: 0;
+  justify-content: flex-start !important;
+  padding: 3px 6px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   margin-bottom: 6px;
 }
 
@@ -1596,7 +1600,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 3px;
+  gap: 1px;
   margin-bottom: 2px;
 }
 
@@ -1757,12 +1761,12 @@ body {
 .tala-card {
   flex: 1;
   padding: 4px 8px;
-  height: 100%;
+  height: auto !important;
   min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
 }
 
 .tala-card-header {
