@@ -33,22 +33,28 @@ assert(css.includes('.card-header h3') && css.includes('var(--font-display)'), '
 assert(css.includes('.section-subhead h3') && css.includes('text-transform: none'), 'Recognized swaras subhead must be text-transform: none !important');
 console.log('✔ Typography & Title Case verified.');
 
-// 2. Square Swara Boxes & 2nd Line Wrapping
+// 1b. Audio Spectrum Live line removed & Neon Collapse / Studio Controls
+assert(!html.includes('AUDIO.SPECTRUM // LIVE'), 'Audio spectrum live text removed from index.html');
+assert(css.includes('.dock-toggle-btn {') && css.includes('background: #ccff00 !important;'), 'Collapse / dock toggle button is neon #ccff00');
+assert(css.includes('.floating-dock-open-btn {') && css.includes('background: #ccff00 !important;'), 'Studio Controls floating button is neon #ccff00');
+
+// 2. Square Swara Boxes & 2nd Line Wrapping (Top Aligned)
 console.log('\n2. Checking Square Swara Boxes & 2nd Line Wrapping...');
 assert(appJs.includes('swarasCardsContainer.dataset.count = String(list.length);'), 'app.js sets dataset.count on container');
 assert(appJs.includes("swarasCardsContainer.classList.add('wrap-2-lines');"), 'app.js toggles wrap-2-lines class for 8+ notes');
 assert(css.includes('.swara-card {') && css.includes('aspect-ratio: 1 / 1;'), 'swara-card must be a square with aspect-ratio: 1 / 1');
 assert(css.includes('.swaras-grid.wrap-2-lines') || css.includes('.swaras-grid[data-count="8"]'), 'CSS defines 2nd line wrapping for 8+ swaras');
-console.log('✔ Square swara cards and 2nd line wrapping verified.');
+assert(css.includes('.swaras-section {') && css.includes('justify-content: flex-start !important;'), 'swaras-section aligns swarams to top');
+console.log('✔ Square swara cards, top alignment, and 2nd line wrapping verified.');
 
-// 3. Carnatic Tala Card (Only Talas, Metronome Clutter Removed)
-console.log('\n3. Checking Carnatic Tala Card (Only Talas)...');
+// 3. Carnatic Tala Card (Compact Box with 1x & 2x Controls)
+console.log('\n3. Checking Carnatic Tala Card (Compact with 1x, 2x)...');
 assert(css.includes('--accent-acid: #ccff00;'), '--accent-acid declared in root as #ccff00');
 assert(css.includes('.btn-tala-play {') && css.includes('background: #ccff00 !important;'), 'Start Tala button is neon #ccff00');
-assert(html.includes('<h3>Carnatic Tala</h3>'), 'Carnatic Tala header without metronome clutter');
-assert(!html.includes('tala-speed-group'), 'Non-tala speed controls removed from HTML');
+assert(html.includes('<h3>Carnatic Tala</h3>'), 'Carnatic Tala header');
+assert(html.includes('tala-speed-group'), 'Tala speed controls (1x, 2x) restored in HTML');
 assert(!html.includes('tala-bpm-group'), 'Non-tala BPM controls removed from HTML');
-console.log('✔ Carnatic Tala (only talas, metronome removed) verified.');
+console.log('✔ Carnatic Tala (compact with 1x, 2x restored) verified.');
 
 // 4. Step 1: Upper-Half Body Stance & Clean Embouchure (No air coming out of blow hole)
 console.log('\n4. Checking Step 1 Upper-Half Body Stance & Clean Embouchure...');

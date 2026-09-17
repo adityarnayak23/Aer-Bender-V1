@@ -189,7 +189,6 @@
               <h3>Harmonic Spectrum</h3>
             </div>
             <div class="card-header-actions">
-              <span class="pill-info">AUDIO.SPECTRUM // LIVE</span>
               <button type="button" id="dockToggleBtn" class="dock-toggle-btn active" title="Toggle Studio Controls Dock (Shortcut: 'H' or 'D')" aria-expanded="false">◫ Expand</button>
             </div>
           </div>
@@ -255,7 +254,7 @@
             </div>
           </div>
 
-          <!-- Tala Selector -->
+          <!-- Tala Selector & Speed Controls -->
           <div class="tala-controls-row">
             <div class="tala-select-wrap">
               <select id="talaSelect" class="form-select tala-select" title="Select Carnatic Tala">
@@ -266,13 +265,15 @@
                 <option value="tisra_eka">Tisra Eka (3 Beats · 1 Laghu)</option>
               </select>
             </div>
+
+            <!-- 1x and 2x Speed Controls -->
+            <div class="tala-speed-group">
+              <button type="button" class="tala-speed-btn active" data-speed="2" title="1st Speed">1x</button>
+              <button type="button" class="tala-speed-btn" data-speed="1" title="2nd Speed">2x</button>
+            </div>
           </div>
 
-          <!-- Hidden compatibility hooks for audio state and test suites -->
-          <div style="display: none !important;">
-            <button type="button" class="tala-speed-btn active" data-speed="2" title="1st Speed">1x</button>
-            <button type="button" class="tala-speed-btn" data-speed="1" title="2nd Speed">2x</button>
-          </div>
+          <!-- Hidden compatibility hooks for audio state -->
           <div id="talaPipsRow" style="display: none;"></div>
           <div id="talaPhrasesChips" style="display: none;"></div>
         </div>

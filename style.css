@@ -958,6 +958,7 @@ body {
   z-index: 30;
   display: grid;
   grid-template-rows: repeat(4, 1fr);
+  grid-template-rows: 0.9fr 1.3fr 1.3fr auto;
   gap: 8px;
   height: auto;
   overflow: hidden !important;
@@ -1010,7 +1011,7 @@ body {
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Dock Toggle Button in Visualizer Header */
+/* Dock Toggle Button in Visualizer Header (Neon Collapse / Expand) */
 .card-header-actions {
   display: flex;
   align-items: center;
@@ -1018,59 +1019,57 @@ body {
 }
 
 .dock-toggle-btn {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-  color: #e2e8f0;
+  background: #ccff00 !important;
+  border: 1.5px solid #000000 !important;
+  border-radius: 0px !important;
+  color: #000000 !important;
   font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: 600;
-  padding: 2px 8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2.5px 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 2px 6px rgba(0, 0, 0, 0.2);
-  transition: all 0.18s ease;
+  box-shadow: 2px 2px 0px #000000;
+  transition: all 0.12s ease;
 }
 
 .dock-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.35);
-  color: #ffffff;
-  transform: translateY(-1px);
+  background: #ddff33 !important;
+  color: #000000 !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px #000000;
 }
 
-/* Floating Studio Dock Expand Button (Visible when dock is collapsed) */
+/* Floating Studio Dock Expand Button (Visible when dock is collapsed - Neon) */
 .floating-dock-open-btn {
   position: absolute;
   top: 58px;
   right: 14px;
   z-index: 35;
-  background: rgba(10, 14, 26, 0.68);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  color: #ffffff;
+  background: #ccff00 !important;
+  border: 2px solid #000000 !important;
+  border-radius: 0px !important;
+  color: #000000 !important;
   font-family: var(--font-mono);
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   padding: 6px 14px;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 3px 3px 0px #000000;
   display: none;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .floating-dock-open-btn:hover {
-  background: rgba(20, 28, 48, 0.85);
-  border-color: #38bdf8;
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+  background: #ddff33 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #000000;
 }
 
 .main-content.dock-collapsed .floating-dock-open-btn {
@@ -1106,6 +1105,8 @@ body {
 /* Card 2: 7 Swaras Recognized Strip */
 .swaras-section {
   padding: 5px 8px;
+  justify-content: flex-start !important;
+  gap: 4px;
 }
 
 .section-subhead {
@@ -1154,7 +1155,7 @@ body {
 .swaras-grid[data-count="15"],
 .swaras-grid[data-count="16"] {
   grid-template-columns: repeat(8, 1fr);
-  gap: 3.5px;
+  gap: 3px;
 }
 
 .swara-card {
@@ -1179,37 +1180,42 @@ body {
 }
 
 /* Dynamic auto-shrink when 8 to 10 notes are active */
+.swaras-grid.wrap-2-lines .swara-card,
 .swaras-grid[data-count="8"] .swara-card,
 .swaras-grid[data-count="9"] .swara-card,
 .swaras-grid[data-count="10"] .swara-card,
 .swaras-grid.dense-8 .swara-card {
-  padding: 2px 1px;
+  padding: 1.5px 0.5px;
   gap: 0.5px;
 }
+.swaras-grid.wrap-2-lines .swara-symbol,
 .swaras-grid[data-count="8"] .swara-symbol,
 .swaras-grid[data-count="9"] .swara-symbol,
 .swaras-grid[data-count="10"] .swara-symbol,
 .swaras-grid.dense-8 .swara-symbol {
-  font-size: 11px;
+  font-size: 10px;
 }
+.swaras-grid.wrap-2-lines .swara-titles h4,
 .swaras-grid[data-count="8"] .swara-titles h4,
 .swaras-grid[data-count="9"] .swara-titles h4,
 .swaras-grid[data-count="10"] .swara-titles h4,
 .swaras-grid.dense-8 .swara-titles h4 {
-  font-size: 7.5px;
+  font-size: 7px;
 }
+.swaras-grid.wrap-2-lines .western-sub,
 .swaras-grid[data-count="8"] .western-sub,
 .swaras-grid[data-count="9"] .western-sub,
 .swaras-grid[data-count="10"] .western-sub,
 .swaras-grid.dense-8 .western-sub {
-  font-size: 6.5px;
+  font-size: 6px;
 }
+.swaras-grid.wrap-2-lines .mini-pip,
 .swaras-grid[data-count="8"] .mini-pip,
 .swaras-grid[data-count="9"] .mini-pip,
 .swaras-grid[data-count="10"] .mini-pip,
 .swaras-grid.dense-8 .mini-pip {
-  width: 3px;
-  height: 3px;
+  width: 2.8px;
+  height: 2.8px;
 }
 
 /* Dynamic auto-shrink when 11 to 16 notes are active */
@@ -1714,13 +1720,13 @@ body {
 /* Card 5: Carnatic Tala & Metronome (Crucial: retains flex: 1 for test) */
 .tala-card {
   flex: 1;
-  padding: 6px 8px;
+  padding: 4px 8px;
   height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .tala-card-header {
@@ -1732,7 +1738,7 @@ body {
 
 .tala-card-header h3 {
   font-family: var(--font-display) !important;
-  font-size: 12.5px;
+  font-size: 12px;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 0.3px;
@@ -1744,9 +1750,9 @@ body {
   border: 2px solid #000000 !important;
   border-radius: 0px !important;
   color: #000000 !important;
-  padding: 2.5px 8px;
+  padding: 2px 7px;
   font-family: var(--font-display) !important;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -1777,18 +1783,19 @@ body {
 .tala-controls-row {
   display: flex;
   align-items: center;
+  gap: 6px;
   width: 100%;
 }
 
 .tala-select-wrap {
-  width: 100%;
   flex: 1;
+  min-width: 0;
 }
 
 .tala-select {
   width: 100%;
-  padding: 5px 8px;
-  font-size: 10.5px;
+  padding: 3.5px 6px;
+  font-size: 10px;
   font-weight: 600;
   background: #10141f;
   border: 1.5px solid #2a334a;
@@ -1802,6 +1809,7 @@ body {
   border-radius: 0px;
   overflow: hidden;
   box-shadow: 1.5px 1.5px 0px #000000;
+  flex-shrink: 0;
 }
 
 .tala-speed-btn {
