@@ -2477,10 +2477,11 @@ class CarnaticFluteTracker {
     // 5. Active state vs Inactive state
     if (isEmbouchureActive) {
       // Dynamic Acoustic Air Jet Strike, Split & Rebound Dynamics
+      // IDEA 3: Cork Cavity Aerodynamic Vortex Loop (Contained 100% inside bore, zero external air)
       const jetPhase = (now * 0.008) % (2 * Math.PI);
       const vortexPulse = (Math.sin(now * 0.006) + 1.0) * 0.5;
 
-      // A. Laminar Air Jet from Lips striking the Labium edge
+      // A. Laminar Air Jet from Lips entering Blow Hole Aperture
       ctx.save();
       const lipsX = surfBlowPos.x - ux * (9 * scale) - nx * (12 * scale);
       const lipsY = surfBlowPos.y - uy * (9 * scale) - ny * (12 * scale);
@@ -2494,62 +2495,86 @@ class CarnaticFluteTracker {
       ctx.shadowBlur = 6 * scale;
       ctx.stroke();
 
-      // B. Top Split Stream: Aerodynamic wake curling over the top into the room
+      // B. Plunge into chimney bore & stream leftward toward closed cork stopper (pStart)
+      // All streamlines remain strictly INSIDE the cylinder bore (zero external plumes)
+      const boreInnerY = tubeRadius * 0.45;
+      const corkStopX = pStart.x + ux * (4.5 * scale);
+      const corkStopY = pStart.y + uy * (4.5 * scale);
+
+      // Main Cork Cavity Vortex Streamline
       ctx.beginPath();
+      // Enters aperture
       ctx.moveTo(surfBlowPos.x, surfBlowPos.y);
+      // Plunges to lower bore lane
+      const plungeX = blowPos.x + nx * boreInnerY;
+      const plungeY = blowPos.y + ny * boreInnerY;
+      ctx.lineTo(plungeX, plungeY);
+      // Streams leftward along -ux to closed cork stopper wall
+      const corkLowerX = corkStopX + nx * boreInnerY;
+      const corkLowerY = corkStopY + ny * boreInnerY;
+      const corkUpperX = corkStopX - nx * boreInnerY;
+      const corkUpperY = corkStopY - ny * boreInnerY;
+      ctx.lineTo(corkLowerX, corkLowerY);
+      // Aerodynamic 180° Vortex Loop around cork wall
       ctx.bezierCurveTo(
-        surfBlowPos.x + ux * (4 * scale) - nx * (8 * scale),
-        surfBlowPos.y + uy * (4 * scale) - ny * (8 * scale),
-        surfBlowPos.x + ux * (14 * scale) - nx * (16 * scale),
-        surfBlowPos.y + uy * (14 * scale) - ny * (16 * scale),
-        surfBlowPos.x + ux * (24 * scale) - nx * (18 * scale),
-        surfBlowPos.y + uy * (24 * scale) - ny * (18 * scale)
+        corkStopX - ux * (2.5 * scale) + nx * (boreInnerY * 0.6),
+        corkStopY - uy * (2.5 * scale) + ny * (boreInnerY * 0.6),
+        corkStopX - ux * (2.5 * scale) - nx * (boreInnerY * 0.6),
+        corkStopY - uy * (2.5 * scale) - ny * (boreInnerY * 0.6),
+        corkUpperX,
+        corkUpperY
       );
-      ctx.strokeStyle = 'rgba(186, 230, 253, ' + (0.65 + 0.25 * Math.cos(jetPhase)) + ')';
-      ctx.lineWidth = 1.4 * scale;
-      ctx.setLineDash([4 * scale, 3 * scale]);
-      ctx.lineDashOffset = -(now * 0.03) % (7 * scale);
+      // Rebounds 180° and surges along +ux down the acoustic tube bore past tone holes
+      const surgeExitX = blowPos.x + ux * (38 * scale) - nx * (boreInnerY * 0.5);
+      const surgeExitY = blowPos.y + uy * (38 * scale) - ny * (boreInnerY * 0.5);
+      ctx.bezierCurveTo(
+        blowPos.x - ux * (4 * scale) - nx * boreInnerY,
+        blowPos.y - uy * (4 * scale) - ny * boreInnerY,
+        blowPos.x + ux * (18 * scale) - nx * (boreInnerY * 0.8),
+        blowPos.y + uy * (18 * scale) - ny * (boreInnerY * 0.8),
+        surgeExitX,
+        surgeExitY
+      );
+      ctx.strokeStyle = 'rgba(0, 240, 255, ' + (0.75 + 0.25 * Math.sin(jetPhase)) + ')';
+      ctx.lineWidth = 1.8 * scale;
+      ctx.setLineDash([5.5 * scale, 3 * scale]);
+      ctx.lineDashOffset = -(now * 0.045) % (8.5 * scale);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // C. Bottom Split Stream: Dives into chimney, strikes bottom bore wall & REBOUNDS
-      const boreFloorDist = tubeRadius * 1.6;
-      const strikeX = surfBlowPos.x + nx * boreFloorDist;
-      const strikeY = surfBlowPos.y + ny * boreFloorDist;
-
-      // Downward plunge into chimney
+      // Secondary Harmonic Filament for depth inside the bore cavity
       ctx.beginPath();
-      ctx.moveTo(surfBlowPos.x, surfBlowPos.y);
-      ctx.lineTo(strikeX, strikeY);
-      ctx.strokeStyle = octaveAura;
-      ctx.lineWidth = 1.8 * scale;
+      ctx.moveTo(plungeX - ux * (2 * scale), plungeY);
+      ctx.lineTo(corkLowerX + ux * (2 * scale), corkLowerY);
+      ctx.bezierCurveTo(
+        corkStopX - ux * (1.2 * scale) + nx * (boreInnerY * 0.3),
+        corkStopY - uy * (1.2 * scale) + ny * (boreInnerY * 0.3),
+        corkStopX - ux * (1.2 * scale) - nx * (boreInnerY * 0.3),
+        corkStopY - uy * (1.2 * scale) - ny * (boreInnerY * 0.3),
+        corkUpperX + ux * (2 * scale),
+        corkUpperY
+      );
+      ctx.lineTo(surgeExitX, surgeExitY - ny * (1.5 * scale));
+      ctx.strokeStyle = 'rgba(204, 255, 0, ' + (0.55 + 0.3 * vortexPulse) + ')';
+      ctx.lineWidth = 1.2 * scale;
+      ctx.setLineDash([4 * scale, 2.5 * scale]);
+      ctx.lineDashOffset = -(now * 0.04) % (6.5 * scale);
       ctx.stroke();
+      ctx.setLineDash([]);
 
-      // Bore floor impact bounce flash
+      // C. Closed End Impact & Acoustic Reflection Flash (at inner cork wall)
       ctx.beginPath();
       if (typeof ctx.ellipse === 'function') {
-        ctx.ellipse(strikeX, strikeY, 3.5 * scale, 1.8 * scale, angleRad, 0, 2 * Math.PI, false);
+        ctx.ellipse(corkStopX, corkStopY, 3.0 * scale, 1.8 * scale, angleRad, 0, 2 * Math.PI, false);
+      } else if (typeof ctx.arc === 'function') {
+        ctx.arc(corkStopX, corkStopY, 2.4 * scale, 0, 2 * Math.PI, false);
       }
-      ctx.fillStyle = 'rgba(255, 255, 255, ' + (0.5 + 0.3 * vortexPulse) + ')';
+      ctx.fillStyle = 'rgba(204, 255, 0, ' + (0.55 + 0.35 * vortexPulse) + ')';
+      ctx.shadowColor = '#ccff00';
+      ctx.shadowBlur = 6 * scale;
       ctx.fill();
+      ctx.shadowBlur = 0;
 
-      // Upward & forward REBOUND off bore floor sending acoustic vortex down the tube
-      ctx.beginPath();
-      ctx.moveTo(strikeX, strikeY);
-      ctx.bezierCurveTo(
-        strikeX + ux * (8 * scale) - nx * (boreFloorDist * 0.6),
-        strikeY + uy * (8 * scale) - ny * (boreFloorDist * 0.6),
-        strikeX + ux * (18 * scale) - nx * (boreFloorDist * 0.3),
-        strikeY + uy * (18 * scale) - ny * (boreFloorDist * 0.3),
-        strikeX + ux * (32 * scale),
-        strikeY + uy * (32 * scale)
-      );
-      ctx.strokeStyle = 'rgba(204, 255, 0, ' + (0.7 + 0.25 * Math.sin(jetPhase)) + ')';
-      ctx.lineWidth = 1.6 * scale;
-      ctx.setLineDash([5 * scale, 3 * scale]);
-      ctx.lineDashOffset = -(now * 0.04) % (8 * scale);
-      ctx.stroke();
-      ctx.setLineDash([]);
       ctx.restore();
 
       // Dynamic Acoustic Vortex & Concentric Breath Waves (semi-oval waves radiating softly into bore)

@@ -3019,6 +3019,17 @@ body {
   100% { stroke-dashoffset: 0; opacity: 0.35; stroke: #00f0ff; }
 }
 
+.anim-cork-vortex-loop {
+  stroke-dasharray: 8, 4;
+  animation: corkVortexFlow 1.2s linear infinite;
+}
+@keyframes corkVortexFlow {
+  0% { stroke-dashoffset: 48; opacity: 0.85; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0.85; }
+}
+
+
 /* Floating finger gentle hover */
 .anim-floating-finger {
   animation: fingerHover 2.4s ease-in-out infinite alternate;
