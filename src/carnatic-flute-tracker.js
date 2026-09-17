@@ -1141,17 +1141,32 @@ class CarnaticFluteTracker {
             this.detectJantiGesture(leftHand, rightHand);
           }
         } else {
-          // Active playing once Sa is unlocked: immediate response across all swaras
+          // Active playing once Sa is unlocked:
+          // Intelligent Velocity-Aware Hysteresis:
+          // 1. Decisive finger movements (maxCurlDelta >= 0.08, e.g. intentional tap or lift):
+          //    Commit note transition on Frame 1 (sub-20ms near-instant response)!
+          // 2. Slight finger movements or micro-tremor false signals (maxCurlDelta < 0.08):
+          //    Require 2 consecutive frames to confirm before switching, eliminating Sa/Ri/Ni flickering!
           if (matched && matched.swara) {
+            let maxCurlDelta = 0;
+            if (this.prevFingerCurlScores) {
+              for (let i = 0; i < 7; i++) {
+                const d = Math.abs((this.fingerCurlScores[i] || 0) - (this.prevFingerCurlScores[i] || 0));
+                if (d > maxCurlDelta) maxCurlDelta = d;
+              }
+            }
+            const isNoteTransition = Boolean(this.activeSwara && prevSwaraId && matched.swara.id !== prevSwaraId);
+            const requiredFrames = (!isNoteTransition || maxCurlDelta >= 0.08) ? 1 : 2;
+
             if (matched.swara.id === this.candidateSwaraId) {
               this.candidateFrames++;
-              if (this.candidateFrames >= this.minFramesToSwitch) {
+              if (this.candidateFrames >= requiredFrames) {
                 this.activeSwara = matched.swara;
               }
             } else {
               this.candidateSwaraId = matched.swara.id;
               this.candidateFrames = 1;
-              if (this.minFramesToSwitch <= 1) {
+              if (requiredFrames <= 1) {
                 this.activeSwara = matched.swara;
               }
             }
@@ -1534,64 +1549,49 @@ class CarnaticFluteTracker {
     const prevScore = this.fingerCurlScores[holeIdx] || 0.0;
     const delta = Math.abs(rawScore - prevScore);
 
-    // Adaptive Dual-Rate Temporal Filter with Edge-Sharpening:
-    // Fast response (alpha = 0.92 - 0.95) on active intentional moves for instant zero-lag note transitions.
-    // Smooth filter (alpha = 0.35) when stationary to eliminate micro-jitter and flickering.
-    const alpha = delta > 0.06
-      ? (rawScore < prevScore ? 0.95 : 0.92)
-      : 0.35;
+    // Adaptive Dual-Rate Temporal Filter:
+    // Fast response on active intentional moves (delta > 0.08) for crisp 1-frame transitions.
+    // Strong smoothing on slight movements or stationary fingers (delta <= 0.08) to completely eliminate false signals and flickering.
+    const alpha = delta > 0.08
+      ? (rawScore < prevScore ? 0.88 : 0.84)
+      : 0.25;
     const smoothScore = alpha * rawScore + (1.0 - alpha) * prevScore;
     this.fingerCurlScores[holeIdx] = smoothScore;
 
     const currentlyClosed = Boolean(this.rawHoleStates ? this.rawHoleStates[holeIdx] : this.currentHoleStates[holeIdx]);
 
-    // Finger-calibrated Schmitt trigger thresholds:
-    // L1 (Index): Effortless closure (0.34) and crisp venting (0.22)
-    // L2 (Middle): Effortless pad closure (0.36) and crisp venting (0.26)
-    // L3 (Ring): User mandate: when index and middle are not open, it has to be SA!
-    //   Must be DELIBERATELY curled (>= 0.56) to close for Ni, with solid hysteresis (0.42)
-    // R1 (Right Index): Hover immunity (0.48 / 0.35) prevents hovering right hand from turning Ni into Dha!
-    // R2..R4: 0.44 / 0.30
+    // Finger-calibrated Schmitt trigger thresholds with robust anti-flicker hysteresis margins:
+    // L1 (Index): Effortless closure (0.38) and crisp venting (0.24)
+    // L2 (Middle): Solid closure (0.44) and venting (0.28). Prevents hovering middle finger during Ri from triggering Sa!
+    // L3 (Ring): Immune to natural resting drape during Sa (~0.35 - 0.44).
+    //   Must be DELIBERATELY curled (>= 0.52) to close for Ni, with solid open threshold (0.36).
+    //   Fixes the primary cause of rapid Sa <-> Ni flickering!
+    // R1 (Right Index): Hover immunity (0.52 / 0.36) prevents hovering right hand from turning Ni into Dha!
+    // R2..R4: Responsive closure (0.44 / 0.30)
     let closeThreshold = 0.44;
     let openThreshold = 0.30;
 
     if (holeIdx === 0) {
-      closeThreshold = 0.34;
-      openThreshold = 0.22;
+      closeThreshold = 0.38;
+      openThreshold = 0.24;
     } else if (holeIdx === 1) {
-      closeThreshold = 0.36;
-      openThreshold = 0.26;
+      closeThreshold = 0.44;
+      openThreshold = 0.28;
     } else if (holeIdx === 2) {
-      // L3 (Ring): Effortless pad closure (0.44) and crisp venting (0.30)
+      closeThreshold = 0.52;
+      openThreshold = 0.36;
+    } else if (holeIdx === 3) {
+      closeThreshold = 0.52;
+      openThreshold = 0.36;
+    } else if (holeIdx > 3) {
       closeThreshold = 0.44;
       openThreshold = 0.30;
-    } else if (holeIdx === 3) {
-      // R1 (Right Index): Hover immunity (0.50 / 0.34) prevents hovering right hand from turning Ni into Dha!
-      closeThreshold = 0.50;
-      openThreshold = 0.34;
-    } else if (holeIdx > 3) {
-      // R2..R4 (Right Hand): Responsive thresholds so right hand curls effortlessly close holes!
-      closeThreshold = 0.40;
-      openThreshold = 0.28;
-    }
-
-    // Instantaneous Threshold Bypass:
-    // When a player performs a clear finger down (rawScore >= closeThreshold) or release (rawScore < openThreshold),
-    // immediately adopt rawScore to bypass all filter delay.
-    // When within the hysteresis deadband or stationary, smoothScore eliminates all camera noise.
-    let finalScore = smoothScore;
-    if (!currentlyClosed && rawScore >= closeThreshold) {
-      finalScore = rawScore;
-      this.fingerCurlScores[holeIdx] = rawScore;
-    } else if (currentlyClosed && rawScore < openThreshold) {
-      finalScore = rawScore;
-      this.fingerCurlScores[holeIdx] = rawScore;
     }
 
     if (currentlyClosed) {
-      return finalScore >= openThreshold;
+      return smoothScore >= openThreshold;
     } else {
-      return finalScore >= closeThreshold;
+      return smoothScore >= closeThreshold;
     }
   }
 
