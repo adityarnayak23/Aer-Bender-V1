@@ -20,7 +20,7 @@ class FluteAudioEngine {
     this.currentFreq = 261.63; // Sa C4 (1 Kattai)
     this.currentSwaraObj = null;
     this.isPlaying = false;
-    this.breathPressure = 0.88;
+    this.breathPressure = 1.0;
     this.gamakaCents = 0;
     this.kattai = '1.5';
     this.octaveShift = 0;
@@ -76,14 +76,14 @@ class FluteAudioEngine {
 
     // 1. Dynamics Compressor (Transparent limiter to prevent digital clipping)
     const compressor = this.ctx.createDynamicsCompressor();
-    compressor.threshold.setValueAtTime(-10, this.ctx.currentTime);
+    compressor.threshold.setValueAtTime(-6, this.ctx.currentTime);
     compressor.knee.setValueAtTime(20, this.ctx.currentTime);
-    compressor.ratio.setValueAtTime(6, this.ctx.currentTime);
+    compressor.ratio.setValueAtTime(4, this.ctx.currentTime);
     compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
     compressor.release.setValueAtTime(0.12, this.ctx.currentTime);
 
     this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.setValueAtTime(0.90, this.ctx.currentTime);
+    this.masterGain.gain.setValueAtTime(1.25, this.ctx.currentTime);
 
     // 2. Visualizer Analyser
     this.analyser = this.ctx.createAnalyser();
@@ -98,7 +98,7 @@ class FluteAudioEngine {
     this.reverbGain.gain.setValueAtTime(0.30, this.ctx.currentTime);
 
     this.dryGain = this.ctx.createGain();
-    this.dryGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
+    this.dryGain.gain.setValueAtTime(1.15, this.ctx.currentTime);
 
     // Audio Graph Wiring
     this.reverbNode.connect(this.reverbGain);
@@ -183,11 +183,13 @@ class FluteAudioEngine {
 
   playSwara(swaraObj, transitionMeta = null, prevFreq = null, prevSwaraObj = null) {
     this.resume();
+    const fromSwara = prevSwaraObj || this.currentSwaraObj;
     this.currentSwaraObj = swaraObj;
 
     const family = (swaraObj.family || swaraObj.id || 'sa').toLowerCase();
+    const isTaraSa = swaraObj.id === 'tara_sa';
     // User Requirement: "let lower octave sa match the mid octave - for technical purpose do this modification"
-    const isLowerSa = (family === 'sa' && this.octaveShift === -1);
+    const isLowerSa = (family === 'sa' && !isTaraSa && this.octaveShift === -1);
     const effectiveOctaveShift = isLowerSa ? 0 : this.octaveShift;
 
     const freq = window.SwarasData.getSwaraFreq(
@@ -212,10 +214,12 @@ class FluteAudioEngine {
     const baseFamilyRatio = BASE_SAMPLE_FAMILY_RATIOS[family] || 1.0;
     const swaraRatio = swaraObj.freqRatio || 1.0;
     // Microtonal detuning relative to the acoustic master sample:
-    const swaraDetuneCents = 1200 * Math.log2(swaraRatio / baseFamilyRatio);
+    const swaraDetuneCents = 1200 * Math.log2(swaraRatio / (isTaraSa ? 2.0 : baseFamilyRatio));
 
     let sampleId = family;
-    if (this.octaveShift === -1) {
+    if (isTaraSa || (family === 'sa' && (this.octaveShift === 1 || this.isOverblown))) {
+      sampleId = 'sa_high';
+    } else if (this.octaveShift === -1) {
       const bassId = 'bass_' + family;
       if (this.sampleBuffers[bassId]) {
         sampleId = bassId;
@@ -227,10 +231,14 @@ class FluteAudioEngine {
       }
     }
 
+    const fromFamily = fromSwara ? (fromSwara.family || fromSwara.id || '').toLowerCase() : '';
+    const toFamily = family;
+    const isGaMaTransition = (fromFamily === 'ga' && toFamily === 'ma') || (fromFamily === 'ma' && toFamily === 'ga');
+
     if (this.isElectricMode) {
-      this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, prevSwaraObj || this.currentSwaraObj, swaraObj);
+      this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, fromSwara, swaraObj, isGaMaTransition);
     } else if (this.samplesLoaded && this.sampleBuffers[sampleId]) {
-      this.playAcousticSample(sampleId, freq, swaraDetuneCents);
+      this.playAcousticSample(sampleId, freq, swaraDetuneCents, isGaMaTransition, swaraObj);
     } else {
       // Instant physical modeling fallback
       if (!this.isPlaying || !this.activeVoice) {
@@ -242,7 +250,7 @@ class FluteAudioEngine {
     this.currentFreq = freq;
   }
 
-  playAcousticSample(sampleId, targetFreq, swaraDetuneCents = 0) {
+  playAcousticSample(sampleId, targetFreq, swaraDetuneCents = 0, isGaMaTransition = false, swaraObj = null) {
     const now = this.ctx.currentTime;
     const item = this.manifest[sampleId];
     const buffer = this.sampleBuffers[sampleId];
@@ -260,8 +268,11 @@ class FluteAudioEngine {
     // Strict Octave Enforcement:
     // When in Higher Octave (+1), ensure pitch is strictly higher octave (x2 if fallback sample used)
     // When in Lower Octave (-1), ensure pitch is strictly lower octave (x0.5 if fallback sample used)
-    if ((this.octaveShift === 1 || this.isOverblown) && !sampleId.endsWith('_high')) {
-      playbackRate *= 2.0;
+    const isTaraSa = swaraObj && swaraObj.id === 'tara_sa';
+    if ((this.octaveShift === 1 || this.isOverblown)) {
+      if (!sampleId.endsWith('_high') || isTaraSa) {
+        playbackRate *= 2.0;
+      }
     } else if (this.octaveShift === -1 && !sampleId.startsWith('bass_')) {
       playbackRate *= 0.5;
     }
@@ -286,9 +297,9 @@ class FluteAudioEngine {
     source.playbackRate.setValueAtTime(playbackRate, now);
 
     // 🎷 JAZZ MODE: DRAGGED NOTES PORTAMENTO (GLISSANDO)
-    // When transitioning between notes in jazz mode, start at the previous pitch
+    // When transitioning between notes in jazz mode (unless it's Ga-Ma transition), start at the previous pitch
     // and smoothly slide into target pitch over ~120ms for warm legato phrasing!
-    if (this.isJazzMode && this.isPlaying && this.currentFreq && targetFreq && Math.abs(this.currentFreq - targetFreq) > 3) {
+    if (!isGaMaTransition && this.isJazzMode && this.isPlaying && this.currentFreq && targetFreq && Math.abs(this.currentFreq - targetFreq) > 3) {
       const centsDiff = Math.max(-700, Math.min(700, 1200 * Math.log2(this.currentFreq / targetFreq)));
       const startDetune = totalDetune + centsDiff;
       source.detune.setValueAtTime(startDetune, now);
@@ -301,10 +312,11 @@ class FluteAudioEngine {
     const isMandraOctave = sampleId.startsWith('bass_') || this.octaveShift === -1 || targetFreq < 240;
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
-    // Smooth acoustic balance: Scale Tara higher octave (0.64), Madhya (0.72), Mandra lower octave (0.88) for good physical weight
-    const targetGain = (isTaraOctave ? 0.64 : (isMandraOctave ? 0.88 : 0.72)) * this.breathPressure;
-    // Crisp 8ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
-    const attackTime = this.isJazzMode ? 0.055 : 0.008;
+    // User Requirement: "give more gain to all notes"
+    // Punchy high-gain acoustic balance: Scale Tara higher octave (1.18), Madhya (1.25), Mandra lower octave (1.35) for deep physical weight
+    const targetGain = (isTaraOctave ? 1.18 : (isMandraOctave ? 1.35 : 1.25)) * this.breathPressure;
+    // Crisp attack: 5ms on Ga-Ma cut, 8ms in Carnatic classical mode, 55ms in Jazz Mode
+    const attackTime = isGaMaTransition ? 0.005 : (this.isJazzMode ? 0.055 : 0.008);
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
     // Warm body shaping, Massive Bass Weight, and Tamed Highs across all octaves
@@ -344,8 +356,8 @@ class FluteAudioEngine {
 
     source.start(now);
 
-    // Fade out previous voices cleanly: 16ms in Carnatic mode so rapid ornament notes (e.g. Ni in Sa-Ni-Sa) stop promptly
-    this.fadePreviousVoice(this.isJazzMode ? 0.080 : 0.016);
+    // Fade out previous voices cleanly: 8ms on Ga-Ma transition to prevent swoop, 16ms in Carnatic mode, 80ms in jazz
+    this.fadePreviousVoice(isGaMaTransition ? 0.008 : (this.isJazzMode ? 0.080 : 0.016));
 
     this.activeSampleVoice = {
       source,
@@ -361,17 +373,53 @@ class FluteAudioEngine {
   // -------------------------------------------------------------------------
   // ⚡ ELECTRIC FLUTE AUDIO SYNTHESIZER ENGINE (EWI / Synth Lead Fusion)
   // -------------------------------------------------------------------------
-  playElectricFlute(sampleId, targetFreq, swaraDetuneCents = 0, transitionMeta = null, prevFreq = null, prevSwaraObj = null, swaraObj = null) {
+  playElectricFlute(sampleId, targetFreq, swaraDetuneCents = 0, transitionMeta = null, prevFreq = null, prevSwaraObj = null, swaraObj = null, isGaMaTransition = false) {
     const now = this.ctx.currentTime;
     const fromFreq = prevFreq || this.currentFreq;
     const fromSwara = prevSwaraObj || this.currentSwaraObj;
-    const isLegato = Boolean(
+    const isLegato = !isGaMaTransition && Boolean(
       (transitionMeta && transitionMeta.isLegato) ||
       (this.isPlaying && fromSwara && fromFreq && targetFreq && Math.abs(fromFreq - targetFreq) > 3)
     );
 
     // If currently playing the electric voice and pitch is identical, skip
     if (this.isPlaying && this.activeElectricVoice && Math.abs(this.activeElectricVoice.targetFreq - targetFreq) < 1) {
+      return;
+    }
+
+    // User Requirement: "remove the ga ma transition gamaka"
+    // Instantaneous pitch jump on Ga <-> Ma transition: zero exponential glide, zero portamento
+    if (this.isPlaying && this.activeElectricVoice && isGaMaTransition) {
+      const isLowerOctave = (this.octaveShift === -1 || targetFreq < 240);
+      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || targetFreq > 600);
+      this.activeElectricVoice.oscillators.forEach(osc => {
+        const mult = osc._freqMultiplier || 1.0;
+        osc.frequency.cancelScheduledValues(now);
+        osc.frequency.setValueAtTime(Math.max(20, targetFreq * mult), now);
+      });
+      const baseCutoff = Math.min(3600, Math.max(1000, targetFreq * 2.2));
+      this.activeElectricVoice.filter.frequency.cancelScheduledValues(now);
+      this.activeElectricVoice.filter.frequency.setValueAtTime(baseCutoff * (0.65 + 0.45 * this.breathPressure), now);
+      if (this.activeElectricVoice.bassEQ) {
+        const targetBassGain = isLowerOctave ? 11.5 : (isTaraOctave ? 9.0 : 10.2);
+        const targetBassFreq = isLowerOctave ? 220 : (isTaraOctave ? 360 : 300);
+        this.activeElectricVoice.bassEQ.frequency.setValueAtTime(targetBassFreq, now);
+        this.activeElectricVoice.bassEQ.gain.setValueAtTime(targetBassGain, now);
+      }
+      if (this.activeElectricVoice.bodyWeightEQ) {
+        const bodyFreq = isLowerOctave ? 280 : (isTaraOctave ? 440 : 340);
+        this.activeElectricVoice.bodyWeightEQ.frequency.setValueAtTime(bodyFreq, now);
+        this.activeElectricVoice.bodyWeightEQ.gain.setValueAtTime(isLowerOctave ? 5.0 : 6.8, now);
+      }
+      if (this.activeElectricVoice.oscMixGainSub) {
+        const targetSubGain = isLowerOctave ? 0.82 : (isTaraOctave ? 0.58 : 0.66);
+        this.activeElectricVoice.oscMixGainSub.gain.setValueAtTime(targetSubGain, now);
+      }
+      if (this.activeElectricVoice.boreBreathFilter) {
+        this.activeElectricVoice.boreBreathFilter.frequency.setValueAtTime(targetFreq, now);
+      }
+      this.activeElectricVoice.targetFreq = targetFreq;
+      this.currentFreq = targetFreq;
       return;
     }
 
@@ -411,9 +459,9 @@ class FluteAudioEngine {
       return;
     }
 
-    // Crossfade from previous voices
-    this.fadePreviousVoice(isLegato ? 0.032 : 0.012);
-    this.startElectricVoice(targetFreq, isLegato, fromFreq, swaraObj);
+    // Crossfade from previous voices: 8ms on Ga-Ma transition, 32ms legato, 12ms standard
+    this.fadePreviousVoice(isGaMaTransition ? 0.008 : (isLegato ? 0.032 : 0.012));
+    this.startElectricVoice(targetFreq, isLegato, fromFreq, swaraObj, isGaMaTransition);
 
     // Layer organic acoustic sample chiff attack if sample is available
     if (this.samplesLoaded && this.sampleBuffers[sampleId] && this.manifest && this.manifest[sampleId]) {
@@ -452,7 +500,7 @@ class FluteAudioEngine {
     this.currentFreq = targetFreq;
   }
 
-  startElectricVoice(targetFreq, isLegato = false, fromFreq = null, swaraObj = null) {
+  startElectricVoice(targetFreq, isLegato = false, fromFreq = null, swaraObj = null, isGaMaTransition = false) {
     const now = this.ctx.currentTime;
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
@@ -480,17 +528,18 @@ class FluteAudioEngine {
 
     const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || targetFreq > 600);
 
+    // User Requirement: "give more gain to all notes" - punchy oscillator mix gains
     const oscMixGainSaw = this.ctx.createGain();
-    oscMixGainSaw.gain.setValueAtTime(isLowerOctave ? 0.55 : 0.40, now);
+    oscMixGainSaw.gain.setValueAtTime(isLowerOctave ? 0.68 : 0.58, now);
 
     const oscMixGainSquare = this.ctx.createGain();
-    oscMixGainSquare.gain.setValueAtTime(isLowerOctave ? 0.48 : 0.44, now);
+    oscMixGainSquare.gain.setValueAtTime(isLowerOctave ? 0.58 : 0.54, now);
 
     const oscMixGainSub = this.ctx.createGain();
     // Sub-Harmonic Bass Weight: Heavy physical weight in Mandra (0.82), deep bass foundation in Madhya (0.66) and Tara (0.58)
     oscMixGainSub.gain.setValueAtTime(isLowerOctave ? 0.82 : (isTaraOctave ? 0.58 : 0.66), now);
 
-    if (isLegato && fromFreq && Math.abs(fromFreq - targetFreq) > 3) {
+    if (isLegato && !isGaMaTransition && fromFreq && Math.abs(fromFreq - targetFreq) > 3) {
       oscSaw.frequency.setValueAtTime(fromFreq, now);
       oscSquare.frequency.setValueAtTime(fromFreq, now);
       oscSub.frequency.setValueAtTime(fromFreq * 0.5, now);
@@ -629,9 +678,9 @@ class FluteAudioEngine {
     voiceGain.connect(electricReverbSend);
     electricReverbSend.connect(this.reverbNode);
 
-    // 7. Volume Attack Envelope (Equal-loudness compensated: strong chest weight across all octaves)
-    const targetGain = (isLowerOctave ? 0.72 : (isTaraOctave ? 0.62 : 0.66)) * this.breathPressure;
-    const attackTime = isLegato ? 0.012 : 0.005;
+    // 7. Volume Attack Envelope - User Requirement: "give more gain to all notes"
+    const targetGain = (isLowerOctave ? 1.25 : (isTaraOctave ? 1.15 : 1.20)) * this.breathPressure;
+    const attackTime = (isLegato && !isGaMaTransition) ? 0.012 : 0.005;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
     oscSaw.start(now);
@@ -734,7 +783,7 @@ class FluteAudioEngine {
     if (this.activeSampleVoice) {
       const g = this.activeSampleVoice.gain.gain;
       const d = this.activeSampleVoice.source.detune;
-      const baseGain = 0.65 * this.breathPressure;
+      const baseGain = 1.15 * this.breathPressure;
 
       // Volume envelope:
       // t0 -> t0+10ms: micro-dip to mark strike boundary (down to 35%)
@@ -766,7 +815,7 @@ class FluteAudioEngine {
 
     if (this.activeElectricVoice) {
       const g = this.activeElectricVoice.gain.gain;
-      const baseGain = 0.52 * this.breathPressure;
+      const baseGain = 1.05 * this.breathPressure;
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value || baseGain, now);
       g.linearRampToValueAtTime(0.32 * baseGain, now + 0.010);
@@ -791,7 +840,7 @@ class FluteAudioEngine {
     // 2. Physical Modeling Voice Fallback
     if (this.activeVoice) {
       const g = this.activeVoice.gain.gain;
-      const baseGain = 0.70 * this.breathPressure;
+      const baseGain = 1.10 * this.breathPressure;
 
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value, now);
@@ -1022,11 +1071,15 @@ class FluteAudioEngine {
     this.breathPressure = Math.max(0, Math.min(1.0, pressure));
     const now = this.ctx.currentTime;
     if (this.activeSampleVoice && this.isPlaying) {
-      const targetGain = 0.58 * this.breathPressure;
+      const isTara = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.endsWith('_high')) || this.octaveShift === 1;
+      const isMandra = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.startsWith('bass_')) || this.octaveShift === -1;
+      const targetGain = (isTara ? 1.18 : (isMandra ? 1.35 : 1.25)) * this.breathPressure;
       this.activeSampleVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
     if (this.activeElectricVoice && this.isPlaying) {
-      const targetGain = 0.66 * this.breathPressure;
+      const isLower = (this.octaveShift === -1 || (this.activeElectricVoice.targetFreq && this.activeElectricVoice.targetFreq < 240));
+      const isTara = (this.octaveShift === 1 || this.isOverblown || (this.activeElectricVoice.targetFreq && this.activeElectricVoice.targetFreq > 600));
+      const targetGain = (isLower ? 1.25 : (isTara ? 1.15 : 1.20)) * this.breathPressure;
       this.activeElectricVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
       if (this.activeElectricVoice.filter) {
         const baseCutoff = this.activeElectricVoice.baseCutoff || 2200;
@@ -1039,7 +1092,8 @@ class FluteAudioEngine {
       }
     }
     if (this.activeVoice && this.isPlaying) {
-      const targetGain = 0.42 * this.breathPressure;
+      const isLower = (this.octaveShift === -1);
+      const targetGain = (isLower ? 1.25 : 1.18) * this.breathPressure;
       this.activeVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
   }
@@ -1265,7 +1319,7 @@ class FluteAudioEngine {
     bassWeightFilter.connect(this.dryGain);
     bassWeightFilter.connect(this.reverbNode);
 
-    const targetGain = (isLowerOctave ? 0.65 : 0.52) * this.breathPressure;
+    const targetGain = (isLowerOctave ? 1.25 : 1.18) * this.breathPressure;
     voiceGain.gain.cancelScheduledValues(now);
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + 0.032);
 

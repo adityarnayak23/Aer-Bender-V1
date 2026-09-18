@@ -280,6 +280,22 @@ const CARNATIC_16_SWARASTHANAS = [
     pattern: [true, true, true, false, false, false, false],
     ruleDescription: 'Left all close (Right all open)',
     color: '#818cf8'
+  },
+  {
+    id: 'tara_sa',
+    family: 'sa',
+    varietyIndex: 1,
+    swara: 'Tara Sa',
+    name: 'Tara Shadjam',
+    short: 'Ṡ',
+    sanskrit: 'तारा स',
+    tamil: 'தாரா ஸ',
+    western: 'C',
+    freqRatio: 2.0, // 1200 cents (+1 octave above root Sa)
+    cents: 1200,
+    pattern: [false, true, false, false, false, false, false],
+    ruleDescription: 'L2 closed (or Sa in Tara higher octave)',
+    color: '#38bdf8'
   }
 ];
 
@@ -420,6 +436,12 @@ const CARNATIC_SWARAS = [
     id: 'ni',
     variety: 'ni3',
     swara: 'Ni'
+  },
+  {
+    ...SWARA_BY_ID['tara_sa'],
+    id: 'tara_sa',
+    variety: 'tara_sa',
+    swara: 'Tara Sa'
   }
 ];
 
@@ -458,19 +480,46 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
     }
   }
 
-  // 2. All-Closed is MA (Carnatic Venu rule: all closed is Ma)
+  // 2. All-Closed is MA (Carnatic Venu rule: all 7 closed is Ma, or L1 open with tone holes 1-5 closed)
   const closedCount = fingerStates.filter(v => v === true || v === 'half').length;
-  if (closedCount === 7 || (fingerStates[0] && fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] && fingerStates[5])) {
+  if (closedCount === 7 || (fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] && fingerStates[5])) {
     const maCandidate = candidates.find(s => s.family === 'ma') || SWARA_BY_ID['ma1'];
     if (maCandidate && candidates.includes(maCandidate)) {
       return { swara: maCandidate, exact: true, distance: 0 };
     }
   }
 
+  // 2b. Suppress Ga <-> Ma intermediate transition glitches:
+  // When transitioning between Ga (all open) and Ma (all closed), prevent intermediate Ri/Sa/Ni flickering!
+  if (previousSwaraId && (previousSwaraId === 'ga' || previousSwaraId.startsWith('ga'))) {
+    if (closedCount >= 3) {
+      const maCandidate = candidates.find(s => s.family === 'ma') || SWARA_BY_ID['ma1'];
+      if (maCandidate && candidates.includes(maCandidate)) {
+        return { swara: maCandidate, exact: true, distance: 0 };
+      }
+    }
+  } else if (previousSwaraId && (previousSwaraId === 'ma' || previousSwaraId.startsWith('ma'))) {
+    const openCount = fingerStates.filter(v => !v).length;
+    if (openCount >= 4) {
+      const gaCandidate = candidates.find(s => s.family === 'ga') || SWARA_BY_ID['ga3'];
+      if (gaCandidate && candidates.includes(gaCandidate)) {
+        return { swara: gaCandidate, exact: true, distance: 0 };
+      }
+    }
+  }
+
   // 3. Authentic Standing Wave Rules for Open Holes:
-  // "when finger is not curled - or is open, then there is no role for that in the note playing - so remove any noise if it is coming from there"
-  // - First hole (L1) open => Ga (all open)
-  if (!fingerStates[0]) {
+  // - Tara Sa (Higher Sa): L1 open, L2 closed (classic Carnatic high Sa fingering with right hand open)
+  if (!fingerStates[0] && Boolean(fingerStates[1]) && !fingerStates[3] && !fingerStates[4] && !fingerStates[5]) {
+    const taraCandidate = candidates.find(s => s.id === 'tara_sa') || 
+                          (candidates.some(s => s.family === 'sa' || s.id === 'sa') ? SWARA_BY_ID['tara_sa'] : null);
+    if (taraCandidate) {
+      return { swara: taraCandidate, exact: true, distance: 0 };
+    }
+  }
+
+  // - L1 open & L2 open => Ga (all open)
+  if (!fingerStates[0] && !fingerStates[1]) {
     const gaCandidate = candidates.find(s => s.family === 'ga') || SWARA_BY_ID['ga3'];
     if (gaCandidate && candidates.includes(gaCandidate)) {
       return { swara: gaCandidate, exact: true, distance: 0 };

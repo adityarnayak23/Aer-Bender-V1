@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     recordTimerInterval: null,
     recSeconds: 0,
     activeRagaKey: 'hanumatodi',
-    activeSwarasSet: new Set(['sa', 'ri1', 'ga2', 'ma1', 'pa', 'dha1', 'ni2'])
+    activeSwarasSet: new Set(['sa', 'ri1', 'ga2', 'ma1', 'pa', 'dha1', 'ni2', 'tara_sa'])
   };
 
   // 1. Initialize Audio Engine
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Never re-trigger or hammer playSwara on an already sustaining note!
     if (!isSameSwara || !audio.isPlaying) {
       state.currentSwara = sw;
-      audio.setBreathPressure(0.85);
+      audio.setBreathPressure(1.0);
       audio.playSwara(sw, res.transitionMeta);
       highlightActiveCard(sw.id);
     }
@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🎶 CARNATIC 16 SWARASTHANAS & RAGA BUILDER ENGINE
   // =========================================================================
   const SWARA_FAMILIES = [
-    { family: 'sa', label: 'Sa', swaras: ['sa'] },
+    { family: 'sa', label: 'Sa', swaras: ['sa', 'tara_sa'] },
     { family: 'ri', label: 'Ri', swaras: ['ri1', 'ri2', 'ri3'] },
     { family: 'ga', label: 'Ga', swaras: ['ga1', 'ga2', 'ga3'] },
     { family: 'ma', label: 'Ma', swaras: ['ma1', 'ma2'] },
@@ -440,6 +440,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const SHORT_SWARA_NAMES = {
     sa: 'Shadjam',
+    tara_sa: 'Tara',
     ri1: 'Suddha',
     ri2: 'Chatusruti',
     ri3: 'Satsruti',
@@ -526,8 +527,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function findMatchingRagaPreset(activeSet) {
     if (!window.SwarasData || !window.SwarasData.CARNATIC_RAGAS) return null;
     const ragas = window.SwarasData.CARNATIC_RAGAS;
+    const setWithoutTaraSa = new Set(Array.from(activeSet).filter(s => s !== 'tara_sa'));
     for (const [key, raga] of Object.entries(ragas)) {
-      if (raga.swaras.length === activeSet.size && raga.swaras.every(s => activeSet.has(s))) {
+      if (raga.swaras.length === setWithoutTaraSa.size && raga.swaras.every(s => setWithoutTaraSa.has(s))) {
         return key;
       }
     }
@@ -543,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const raga = window.SwarasData.CARNATIC_RAGAS[key];
     if (raga) {
       state.activeRagaKey = key;
-      state.activeSwarasSet = new Set(raga.swaras);
+      state.activeSwarasSet = new Set([...raga.swaras, 'tara_sa']);
       updateRagaUI();
     }
   }
@@ -650,7 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('click', () => {
         audio.resume();
         state.currentSwara = sw;
-        audio.setBreathPressure(0.85);
+        audio.setBreathPressure(1.0);
         audio.playSwara(sw);
         highlightActiveCard(sw.id);
         renderHolesDiagram(sw.pattern);
@@ -1709,7 +1711,8 @@ document.addEventListener('DOMContentLoaded', () => {
       'M': 'ma', '4': 'ma',
       'P': 'pa', '5': 'pa',
       'D': 'dha', '6': 'dha',
-      'N': 'ni', '7': 'ni'
+      'N': 'ni', '7': 'ni',
+      '8': 'tara_sa'
     };
 
     if (swaraMap[key]) {
@@ -1732,7 +1735,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastPressedKey = key;
 
         state.currentSwara = sw;
-        audio.setBreathPressure(0.85);
+        audio.setBreathPressure(1.0);
 
         if (isDoubleTap) {
           handleJantiDetected({ swara: sw, octave: state.octave });
@@ -2047,7 +2050,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const sw = window.SwarasData.SWARA_BY_ID[swId];
       if (sw) {
         state.currentSwara = sw;
-        audio.setBreathPressure(0.85);
+        audio.setBreathPressure(1.0);
         audio.playSwara(sw);
         highlightActiveCard(sw.id);
         renderHolesDiagram(sw.pattern);
