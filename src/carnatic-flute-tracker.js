@@ -638,19 +638,7 @@ class CarnaticFluteTracker {
     }
 
     if (targetOctave !== this.currentOctave) {
-      if (targetOctave === this.candidateOctave) {
-        this.candidateOctaveFrames = (this.candidateOctaveFrames || 0) + 1;
-        if (this.candidateOctaveFrames >= 2) {
-          this.selectOctave(targetOctave);
-          this.candidateOctaveFrames = 0;
-        }
-      } else {
-        this.candidateOctave = targetOctave;
-        this.candidateOctaveFrames = 1;
-      }
-    } else {
-      this.candidateOctave = null;
-      this.candidateOctaveFrames = 0;
+      this.selectOctave(targetOctave);
     }
 
     this.onMouthApertureChanged({
@@ -699,19 +687,7 @@ class CarnaticFluteTracker {
     }
 
     if (targetOctave !== this.currentOctave) {
-      if (targetOctave === this.candidateHandsOctave) {
-        this.candidateHandsOctaveFrames = (this.candidateHandsOctaveFrames || 0) + 1;
-        if (this.candidateHandsOctaveFrames >= 2) {
-          this.selectOctave(targetOctave);
-          this.candidateHandsOctaveFrames = 0;
-        }
-      } else {
-        this.candidateHandsOctave = targetOctave;
-        this.candidateHandsOctaveFrames = 1;
-      }
-    } else {
-      this.candidateHandsOctave = null;
-      this.candidateHandsOctaveFrames = 0;
+      this.selectOctave(targetOctave);
     }
   }
 
@@ -1156,6 +1132,21 @@ class CarnaticFluteTracker {
         this.rawHoleStates = [...leftHoles, ...rightHoles];
         holesArray = [...this.rawHoleStates];
 
+        // =========================================================================
+        // 🎼 ACOUSTIC WOODWIND OPEN-HOLE ISOLATION (ZERO NOISE FROM OPEN FINGERS)
+        // User requirement: "when finger is not curled - or is open, then there is
+        // no role for that in the note playing - so remove any noise if it is coming from there"
+        // In a physical flute, the standing air column vents at the first open hole.
+        // Once a hole is open, all subsequent downstream holes have zero acoustic role!
+        // =========================================================================
+        for (let i = 0; i < 7; i++) {
+          if (!holesArray[i]) {
+            for (let j = i + 1; j < 7; j++) {
+              holesArray[j] = false;
+            }
+            break;
+          }
+        }
         this.currentHoleStates = holesArray;
 
         // Round off to nearest valid Swara (constrained to active raga scale)
@@ -1223,8 +1214,7 @@ class CarnaticFluteTracker {
               }
             }
             const isNoteTransition = Boolean(this.activeSwara && prevSwaraId && matched.swara.id !== prevSwaraId);
-            // 2-frame confirmation on note transitions prevents camera noise and single-frame flickering
-            const requiredFrames = isNoteTransition ? 2 : 1;
+            const requiredFrames = (!isNoteTransition || maxCurlDelta >= 0.08) ? 1 : 2;
 
             if (matched.swara.id === this.candidateSwaraId) {
               this.candidateFrames++;
@@ -1676,6 +1666,15 @@ class CarnaticFluteTracker {
     let l2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 1); // L2 (Middle)
     let l3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 2);  // L3 (Ring)
 
+    // Woodwind Acoustic Rule:
+    // When finger is not curled / open, all subsequent downstream holes have NO acoustic role!
+    if (!l1Closed) {
+      l2Closed = false;
+      l3Closed = false;
+    } else if (!l2Closed) {
+      l3Closed = false;
+    }
+
     return [l1Closed, l2Closed, l3Closed];
   }
 
@@ -1685,6 +1684,19 @@ class CarnaticFluteTracker {
     let r2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 4); // R2 (Middle)
     let r3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 5);// R3 (Ring)
     let r4Closed = this.isHoleClosed(landmarks, 17, 18, 19, 20, 6);// R4 (Pinky)
+
+    // Woodwind Acoustic Rule:
+    // When finger is not curled / open, all subsequent downstream holes have NO acoustic role!
+    if (!r1Closed) {
+      r2Closed = false;
+      r3Closed = false;
+      r4Closed = false;
+    } else if (!r2Closed) {
+      r3Closed = false;
+      r4Closed = false;
+    } else if (!r3Closed) {
+      r4Closed = false;
+    }
 
     return [r1Closed, r2Closed, r3Closed, r4Closed];
   }
