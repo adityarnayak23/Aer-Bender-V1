@@ -2938,6 +2938,17 @@ class CarnaticFluteTracker {
   // - Tara Sthayi (+1): Solar Flame Sunset Coral (#fb923c)
   // Features 60 FPS temporal smoothing, natural blink attenuation, and breath pulse
   // ==============================================================
+  // ==============================================================
+  // 👁️ CYBER-SPIRITUAL EYEBALL OCTAVE GLOW ENGINE (SOFT & TRANSLUCENT)
+  // Real-time iris & eyelid tracking from MediaPipe FaceMesh
+  // - Clipped strictly to real eyelid opening path (ZERO bleed onto eyelids or skin)
+  // - Soft, translucent natural tint allowing user's real pupil & iris texture to show through
+  // - Subtly radiates in octave resonance:
+  //     Mandra (-1): Deep Velvet Amethyst / Indigo wash
+  //     Madhya (0):  Ethereal Ocean Cyan / Jade Air wash
+  //     Tara (+1):   Warm Sunset Honey Coral wash
+  // - Features 60 FPS temporal smoothing, blink attenuation, and breath pulse
+  // ==============================================================
   renderEyeballOctaveGlow(ctx, width, height, scale, toScreen, now) {
     if (!this.lastFaceLandmarks || this.lastFaceLandmarks.length < 153) {
       if (this.eyeGlowOpacity > 0) {
@@ -2956,7 +2967,11 @@ class CarnaticFluteTracker {
     const landmarks = this.lastFaceLandmarks;
     if (!landmarks) return;
 
-    // 1. Left Eye Landmarks (MediaPipe indices: 33, 133, 159, 145, 468)
+    // Eyelid Contour Landmarks for realistic eye aperture clipping
+    const leftContourIndices = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
+    const rightContourIndices = [362, 398, 384, 385, 386, 387, 388, 466, 263, 249, 390, 373, 374, 380, 381, 382];
+
+    // 1. Left Eye Landmarks (MediaPipe indices: 33, 133, 159, 145, 468, 469)
     const pLOuter = toScreen(landmarks[33]);
     const pLInner = toScreen(landmarks[133]);
     const pLTop = toScreen(landmarks[159]);
@@ -2964,20 +2979,23 @@ class CarnaticFluteTracker {
 
     const lSpan = Math.hypot(pLOuter.x - pLInner.x, pLOuter.y - pLInner.y);
     const lHeight = Math.hypot(pLTop.x - pLBottom.x, pLTop.y - pLBottom.y);
-    const lOpen = lSpan > 0 ? Math.min(1.0, Math.max(0.05, (lHeight / lSpan - 0.08) / 0.18)) : 1.0;
+    const lOpen = lSpan > 0 ? Math.min(1.0, Math.max(0.04, (lHeight / lSpan - 0.08) / 0.18)) : 1.0;
 
     let lCenter;
-    if (landmarks[468]) {
+    let lRadius;
+    if (landmarks[468] && landmarks[469]) {
       lCenter = toScreen(landmarks[468]);
+      const p469 = toScreen(landmarks[469]);
+      lRadius = Math.max(2.8 * scale, Math.hypot(p469.x - lCenter.x, p469.y - lCenter.y));
     } else {
       lCenter = {
         x: (pLOuter.x + pLInner.x + pLTop.x + pLBottom.x) * 0.25,
         y: (pLOuter.y + pLInner.y + pLTop.y + pLBottom.y) * 0.25
       };
+      lRadius = Math.max(2.8 * scale, lSpan * 0.185);
     }
-    const lRadius = Math.max(3.2 * scale, lSpan * 0.20);
 
-    // 2. Right Eye Landmarks (MediaPipe indices: 362, 263, 386, 374, 473)
+    // 2. Right Eye Landmarks (MediaPipe indices: 362, 263, 386, 374, 473, 474)
     const pRInner = toScreen(landmarks[362]);
     const pROuter = toScreen(landmarks[263]);
     const pRTop = toScreen(landmarks[386]);
@@ -2985,18 +3003,21 @@ class CarnaticFluteTracker {
 
     const rSpan = Math.hypot(pROuter.x - pRInner.x, pROuter.y - pRInner.y);
     const rHeight = Math.hypot(pRTop.x - pRBottom.x, pRTop.y - pRBottom.y);
-    const rOpen = rSpan > 0 ? Math.min(1.0, Math.max(0.05, (rHeight / rSpan - 0.08) / 0.18)) : 1.0;
+    const rOpen = rSpan > 0 ? Math.min(1.0, Math.max(0.04, (rHeight / rSpan - 0.08) / 0.18)) : 1.0;
 
     let rCenter;
-    if (landmarks[473]) {
+    let rRadius;
+    if (landmarks[473] && landmarks[474]) {
       rCenter = toScreen(landmarks[473]);
+      const p474 = toScreen(landmarks[474]);
+      rRadius = Math.max(2.8 * scale, Math.hypot(p474.x - rCenter.x, p474.y - rCenter.y));
     } else {
       rCenter = {
         x: (pROuter.x + pRInner.x + pRTop.x + pRBottom.x) * 0.25,
         y: (pROuter.y + pRInner.y + pRTop.y + pRBottom.y) * 0.25
       };
+      rRadius = Math.max(2.8 * scale, rSpan * 0.185);
     }
-    const rRadius = Math.max(3.2 * scale, rSpan * 0.20);
 
     // 3. Silky 60fps Temporal Smoothing to eliminate landmark micro-jitter
     if (!this.smoothedEyes) {
@@ -3005,7 +3026,7 @@ class CarnaticFluteTracker {
         right: { x: rCenter.x, y: rCenter.y, r: rRadius, open: rOpen }
       };
     } else {
-      const alpha = 0.55;
+      const alpha = 0.52;
       this.smoothedEyes.left.x += (lCenter.x - this.smoothedEyes.left.x) * alpha;
       this.smoothedEyes.left.y += (lCenter.y - this.smoothedEyes.left.y) * alpha;
       this.smoothedEyes.left.r += (lRadius - this.smoothedEyes.left.r) * alpha;
@@ -3017,99 +3038,111 @@ class CarnaticFluteTracker {
       this.smoothedEyes.right.open += (rOpen - this.smoothedEyes.right.open) * 0.35;
     }
 
-    // 4. Resolve Dynamic Octave Palette
+    // 4. Resolve Soft & Translucent Octave Palette
     let octaveColors;
     if (this.currentOctave === 1) {
-      // Tara (+1): Solar Sunset Coral / Radiant Flame Orange
+      // Tara (+1): Warm Sunset Honey Coral
       octaveColors = {
         name: 'Tara',
-        glow: 'rgba(251, 146, 60, 0.95)',
-        core: 'rgba(255, 237, 213, 0.98)',
-        ring: 'rgba(251, 146, 60, 0.92)',
-        outerAura: 'rgba(251, 146, 60, 0.42)',
-        softAura: 'rgba(249, 115, 22, 0.16)'
+        pupilWash: 'rgba(251, 146, 60, 0.05)',
+        irisGlow: 'rgba(251, 146, 60, 0.24)',
+        limbusRing: 'rgba(249, 115, 22, 0.32)',
+        limbusStroke: 'rgba(251, 146, 60, 0.22)',
+        scleraSoft: 'rgba(251, 146, 60, 0.08)',
+        glintColor: 'rgba(255, 237, 213, 0.35)'
       };
     } else if (this.currentOctave === -1) {
-      // Mandra (-1): Deep Royal Velvet Indigo / Amethyst
+      // Mandra (-1): Deep Velvet Indigo / Amethyst
       octaveColors = {
         name: 'Mandra',
-        glow: 'rgba(129, 140, 248, 0.95)',
-        core: 'rgba(238, 242, 255, 0.98)',
-        ring: 'rgba(129, 140, 248, 0.92)',
-        outerAura: 'rgba(129, 140, 248, 0.42)',
-        softAura: 'rgba(99, 102, 241, 0.16)'
+        pupilWash: 'rgba(129, 140, 248, 0.05)',
+        irisGlow: 'rgba(129, 140, 248, 0.24)',
+        limbusRing: 'rgba(99, 102, 241, 0.32)',
+        limbusStroke: 'rgba(129, 140, 248, 0.22)',
+        scleraSoft: 'rgba(129, 140, 248, 0.08)',
+        glintColor: 'rgba(238, 242, 255, 0.35)'
       };
     } else {
-      // Madhya (0): Celestial Cyber Cyan / Jade Air
+      // Madhya (0): Celestial Ocean Cyan / Jade Air
       octaveColors = {
         name: 'Madhya',
-        glow: 'rgba(0, 240, 255, 0.95)',
-        core: 'rgba(224, 247, 255, 0.98)',
-        ring: 'rgba(0, 240, 255, 0.92)',
-        outerAura: 'rgba(0, 240, 255, 0.42)',
-        softAura: 'rgba(16, 185, 129, 0.16)'
+        pupilWash: 'rgba(0, 240, 255, 0.05)',
+        irisGlow: 'rgba(0, 240, 255, 0.22)',
+        limbusRing: 'rgba(16, 185, 129, 0.30)',
+        limbusStroke: 'rgba(0, 240, 255, 0.22)',
+        scleraSoft: 'rgba(0, 240, 255, 0.07)',
+        glintColor: 'rgba(224, 247, 255, 0.35)'
       };
     }
 
     const breathEnergy = (typeof this.breathPressure === 'number') ? this.breathPressure : 0.5;
-    const breathPulse = Math.sin(now * 0.005) * 0.12 + breathEnergy * 0.18;
+    const breathPulse = Math.sin(now * 0.004) * 0.08 + breathEnergy * 0.10; // Settled, gentle breath expansion
     const globalAlpha = this.eyeGlowOpacity;
 
-    const drawEye = (eye) => {
+    const drawEye = (eye, contourIndices) => {
       if (eye.open < 0.10) return; // Eye closed / blinking
-      const r = eye.r * (1.0 + breathPulse * 0.15) * Math.min(1.0, eye.open * 1.3);
+      const r = eye.r * (1.0 + breathPulse * 0.08);
       if (r <= 0) return;
 
       ctx.save();
-      ctx.globalAlpha = globalAlpha * Math.min(1.0, eye.open * 1.5);
+      ctx.globalAlpha = globalAlpha * Math.min(1.0, eye.open * 1.4);
 
-      // Layer 1: Atmospheric Outer Ocular Aura
-      const haloGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.3, eye.x, eye.y, r * 3.5);
-      haloGrad.addColorStop(0, octaveColors.outerAura);
-      haloGrad.addColorStop(0.5, octaveColors.softAura);
-      haloGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = haloGrad;
+      // 1. CLIP TO REAL EYELID CONTOUR PATH:
+      // Glow strictly conforms to visible eyeball surface — NEVER bleeds onto eyelids or skin!
       ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 3.5, 0, 2 * Math.PI);
+      for (let i = 0; i < contourIndices.length; i++) {
+        const lm = landmarks[contourIndices[i]];
+        if (!lm) continue;
+        const pt = toScreen(lm);
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.clip();
+
+      // 2. Soft Sclera Ambient Diffusion (Very subtle inner luminescence inside eye aperture)
+      const scleraGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.5, eye.x, eye.y, r * 2.4);
+      scleraGrad.addColorStop(0.0, octaveColors.scleraSoft);
+      scleraGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = scleraGrad;
+      ctx.beginPath();
+      ctx.arc(eye.x, eye.y, r * 2.4, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Layer 2: Neon Iris Ring with Intense Luminous Bloom
-      ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 1.15, 0, 2 * Math.PI);
-      ctx.strokeStyle = octaveColors.ring;
-      ctx.lineWidth = Math.max(1.2, r * 0.20);
-      ctx.shadowColor = octaveColors.glow;
-      ctx.shadowBlur = r * 2.5;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      // Layer 3: Vibrant Radiant Iris Core
-      const irisGrad = ctx.createRadialGradient(eye.x, eye.y, 0, eye.x, eye.y, r);
-      irisGrad.addColorStop(0, octaveColors.core);
-      irisGrad.addColorStop(0.60, octaveColors.glow);
-      irisGrad.addColorStop(1, octaveColors.ring);
+      // 3. Translucent Iris Tone Wash (Soft, settle, letting natural pupil & eye texture show through)
+      const irisGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.25, eye.x, eye.y, r * 1.05);
+      irisGrad.addColorStop(0.0, octaveColors.pupilWash);
+      irisGrad.addColorStop(0.55, octaveColors.irisGlow);
+      irisGrad.addColorStop(0.92, octaveColors.limbusRing);
+      irisGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = irisGrad;
       ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r, 0, 2 * Math.PI);
+      ctx.arc(eye.x, eye.y, r * 1.05, 0, 2 * Math.PI);
       ctx.fill();
 
-      // Layer 4: Deep Pupil Aperture & Specular Light Reflection
+      // 4. Soft Limbal Ring (Subtle outer boundary of the iris)
       ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 0.40, 0, 2 * Math.PI);
-      ctx.fillStyle = 'rgba(4, 7, 18, 0.75)';
-      ctx.fill();
+      ctx.arc(eye.x, eye.y, r * 0.98, 0, 2 * Math.PI);
+      ctx.strokeStyle = octaveColors.limbusStroke;
+      ctx.lineWidth = Math.max(0.7 * scale, r * 0.10);
+      ctx.stroke();
 
-      // High-tech specular glint
+      // 5. Delicate Corneal Glint (Natural moist light catch)
+      const glintX = eye.x - r * 0.24;
+      const glintY = eye.y - r * 0.24;
+      const glintGrad = ctx.createRadialGradient(glintX, glintY, 0, glintX, glintY, r * 0.40);
+      glintGrad.addColorStop(0.0, octaveColors.glintColor);
+      glintGrad.addColorStop(1.0, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = glintGrad;
       ctx.beginPath();
-      ctx.arc(eye.x - r * 0.28, eye.y - r * 0.28, r * 0.22, 0, 2 * Math.PI);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.arc(glintX, glintY, r * 0.40, 0, 2 * Math.PI);
       ctx.fill();
 
       ctx.restore();
     };
 
-    drawEye(this.smoothedEyes.left);
-    drawEye(this.smoothedEyes.right);
+    drawEye(this.smoothedEyes.left, leftContourIndices);
+    drawEye(this.smoothedEyes.right, rightContourIndices);
   }
 
   stop() {
