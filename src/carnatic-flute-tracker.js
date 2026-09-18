@@ -135,6 +135,10 @@ class CarnaticFluteTracker {
     this.floatingNotes = [];
     this.lastFloatingSwaraId = null;
 
+    // Cyber-Spiritual Eyeball Octave Glow State
+    this.smoothedEyes = null;
+    this.eyeGlowOpacity = 0.0;
+
     // Scientific Fluid Streamline Dynamics (zero moving particle clutter)
     this.cfdParticles = [];
 
@@ -801,7 +805,7 @@ class CarnaticFluteTracker {
 
           this.faceDetector.setOptions({
             maxNumFaces: 1,
-            refineLandmarks: false,
+            refineLandmarks: true, // Refined iris tracking
             minDetectionConfidence: 0.5,
             minTrackingConfidence: 0.5
           });
@@ -2785,6 +2789,15 @@ class CarnaticFluteTracker {
     });
 
     // ==============================================================
+    // 2c. CYBER-SPIRITUAL EYEBALL OCTAVE GLOW
+    // Detects user's eyeballs / irises and glows dynamically in the current octave color!
+    // - Mandra (-1): Deep Royal Velvet Indigo (#818cf8)
+    // - Madhya (0): Celestial Cyber Cyan / Jade Air (#00f0ff)
+    // - Tara (+1): Solar Flame Sunset Coral (#fb923c)
+    // ==============================================================
+    this.renderEyeballOctaveGlow(ctx, width, height, scale, toScreen, now);
+
+    // ==============================================================
     // 3. HAND SKELETONS (Subtle & clean, right thumb excluded)
     // ==============================================================
     const handsToDraw = [
@@ -2916,8 +2929,193 @@ class CarnaticFluteTracker {
     // ==============================================================
   }
 
+  // ==============================================================
+  // 👁️ CYBER-SPIRITUAL EYEBALL OCTAVE GLOW ENGINE
+  // Real-time iris & pupil tracking from MediaPipe FaceMesh
+  // Dynamically radiates in the active octave's signature color:
+  // - Mandra Sthayi (-1): Deep Royal Velvet Indigo (#818cf8)
+  // - Madhya Sthayi (0): Celestial Cyber Cyan / Jade Air (#00f0ff)
+  // - Tara Sthayi (+1): Solar Flame Sunset Coral (#fb923c)
+  // Features 60 FPS temporal smoothing, natural blink attenuation, and breath pulse
+  // ==============================================================
+  renderEyeballOctaveGlow(ctx, width, height, scale, toScreen, now) {
+    if (!this.lastFaceLandmarks || this.lastFaceLandmarks.length < 153) {
+      if (this.eyeGlowOpacity > 0) {
+        this.eyeGlowOpacity = Math.max(0, this.eyeGlowOpacity - 0.08);
+      }
+      if (this.eyeGlowOpacity <= 0) return;
+    } else {
+      if (this.faceMissFrames && this.faceMissFrames > 12) {
+        this.eyeGlowOpacity = Math.max(0, (this.eyeGlowOpacity || 0) - 0.08);
+        if (this.eyeGlowOpacity <= 0) return;
+      } else {
+        this.eyeGlowOpacity = Math.min(1.0, (this.eyeGlowOpacity || 0) + 0.12);
+      }
+    }
+
+    const landmarks = this.lastFaceLandmarks;
+    if (!landmarks) return;
+
+    // 1. Left Eye Landmarks (MediaPipe indices: 33, 133, 159, 145, 468)
+    const pLOuter = toScreen(landmarks[33]);
+    const pLInner = toScreen(landmarks[133]);
+    const pLTop = toScreen(landmarks[159]);
+    const pLBottom = toScreen(landmarks[145]);
+
+    const lSpan = Math.hypot(pLOuter.x - pLInner.x, pLOuter.y - pLInner.y);
+    const lHeight = Math.hypot(pLTop.x - pLBottom.x, pLTop.y - pLBottom.y);
+    const lOpen = lSpan > 0 ? Math.min(1.0, Math.max(0.05, (lHeight / lSpan - 0.08) / 0.18)) : 1.0;
+
+    let lCenter;
+    if (landmarks[468]) {
+      lCenter = toScreen(landmarks[468]);
+    } else {
+      lCenter = {
+        x: (pLOuter.x + pLInner.x + pLTop.x + pLBottom.x) * 0.25,
+        y: (pLOuter.y + pLInner.y + pLTop.y + pLBottom.y) * 0.25
+      };
+    }
+    const lRadius = Math.max(3.2 * scale, lSpan * 0.20);
+
+    // 2. Right Eye Landmarks (MediaPipe indices: 362, 263, 386, 374, 473)
+    const pRInner = toScreen(landmarks[362]);
+    const pROuter = toScreen(landmarks[263]);
+    const pRTop = toScreen(landmarks[386]);
+    const pRBottom = toScreen(landmarks[374]);
+
+    const rSpan = Math.hypot(pROuter.x - pRInner.x, pROuter.y - pRInner.y);
+    const rHeight = Math.hypot(pRTop.x - pRBottom.x, pRTop.y - pRBottom.y);
+    const rOpen = rSpan > 0 ? Math.min(1.0, Math.max(0.05, (rHeight / rSpan - 0.08) / 0.18)) : 1.0;
+
+    let rCenter;
+    if (landmarks[473]) {
+      rCenter = toScreen(landmarks[473]);
+    } else {
+      rCenter = {
+        x: (pROuter.x + pRInner.x + pRTop.x + pRBottom.x) * 0.25,
+        y: (pROuter.y + pRInner.y + pRTop.y + pRBottom.y) * 0.25
+      };
+    }
+    const rRadius = Math.max(3.2 * scale, rSpan * 0.20);
+
+    // 3. Silky 60fps Temporal Smoothing to eliminate landmark micro-jitter
+    if (!this.smoothedEyes) {
+      this.smoothedEyes = {
+        left: { x: lCenter.x, y: lCenter.y, r: lRadius, open: lOpen },
+        right: { x: rCenter.x, y: rCenter.y, r: rRadius, open: rOpen }
+      };
+    } else {
+      const alpha = 0.55;
+      this.smoothedEyes.left.x += (lCenter.x - this.smoothedEyes.left.x) * alpha;
+      this.smoothedEyes.left.y += (lCenter.y - this.smoothedEyes.left.y) * alpha;
+      this.smoothedEyes.left.r += (lRadius - this.smoothedEyes.left.r) * alpha;
+      this.smoothedEyes.left.open += (lOpen - this.smoothedEyes.left.open) * 0.35;
+
+      this.smoothedEyes.right.x += (rCenter.x - this.smoothedEyes.right.x) * alpha;
+      this.smoothedEyes.right.y += (rCenter.y - this.smoothedEyes.right.y) * alpha;
+      this.smoothedEyes.right.r += (rRadius - this.smoothedEyes.right.r) * alpha;
+      this.smoothedEyes.right.open += (rOpen - this.smoothedEyes.right.open) * 0.35;
+    }
+
+    // 4. Resolve Dynamic Octave Palette
+    let octaveColors;
+    if (this.currentOctave === 1) {
+      // Tara (+1): Solar Sunset Coral / Radiant Flame Orange
+      octaveColors = {
+        name: 'Tara',
+        glow: 'rgba(251, 146, 60, 0.95)',
+        core: 'rgba(255, 237, 213, 0.98)',
+        ring: 'rgba(251, 146, 60, 0.92)',
+        outerAura: 'rgba(251, 146, 60, 0.42)',
+        softAura: 'rgba(249, 115, 22, 0.16)'
+      };
+    } else if (this.currentOctave === -1) {
+      // Mandra (-1): Deep Royal Velvet Indigo / Amethyst
+      octaveColors = {
+        name: 'Mandra',
+        glow: 'rgba(129, 140, 248, 0.95)',
+        core: 'rgba(238, 242, 255, 0.98)',
+        ring: 'rgba(129, 140, 248, 0.92)',
+        outerAura: 'rgba(129, 140, 248, 0.42)',
+        softAura: 'rgba(99, 102, 241, 0.16)'
+      };
+    } else {
+      // Madhya (0): Celestial Cyber Cyan / Jade Air
+      octaveColors = {
+        name: 'Madhya',
+        glow: 'rgba(0, 240, 255, 0.95)',
+        core: 'rgba(224, 247, 255, 0.98)',
+        ring: 'rgba(0, 240, 255, 0.92)',
+        outerAura: 'rgba(0, 240, 255, 0.42)',
+        softAura: 'rgba(16, 185, 129, 0.16)'
+      };
+    }
+
+    const breathEnergy = (typeof this.breathPressure === 'number') ? this.breathPressure : 0.5;
+    const breathPulse = Math.sin(now * 0.005) * 0.12 + breathEnergy * 0.18;
+    const globalAlpha = this.eyeGlowOpacity;
+
+    const drawEye = (eye) => {
+      if (eye.open < 0.10) return; // Eye closed / blinking
+      const r = eye.r * (1.0 + breathPulse * 0.15) * Math.min(1.0, eye.open * 1.3);
+      if (r <= 0) return;
+
+      ctx.save();
+      ctx.globalAlpha = globalAlpha * Math.min(1.0, eye.open * 1.5);
+
+      // Layer 1: Atmospheric Outer Ocular Aura
+      const haloGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.3, eye.x, eye.y, r * 3.5);
+      haloGrad.addColorStop(0, octaveColors.outerAura);
+      haloGrad.addColorStop(0.5, octaveColors.softAura);
+      haloGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = haloGrad;
+      ctx.beginPath();
+      ctx.arc(eye.x, eye.y, r * 3.5, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Layer 2: Neon Iris Ring with Intense Luminous Bloom
+      ctx.beginPath();
+      ctx.arc(eye.x, eye.y, r * 1.15, 0, 2 * Math.PI);
+      ctx.strokeStyle = octaveColors.ring;
+      ctx.lineWidth = Math.max(1.2, r * 0.20);
+      ctx.shadowColor = octaveColors.glow;
+      ctx.shadowBlur = r * 2.5;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Layer 3: Vibrant Radiant Iris Core
+      const irisGrad = ctx.createRadialGradient(eye.x, eye.y, 0, eye.x, eye.y, r);
+      irisGrad.addColorStop(0, octaveColors.core);
+      irisGrad.addColorStop(0.60, octaveColors.glow);
+      irisGrad.addColorStop(1, octaveColors.ring);
+      ctx.fillStyle = irisGrad;
+      ctx.beginPath();
+      ctx.arc(eye.x, eye.y, r, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Layer 4: Deep Pupil Aperture & Specular Light Reflection
+      ctx.beginPath();
+      ctx.arc(eye.x, eye.y, r * 0.40, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(4, 7, 18, 0.75)';
+      ctx.fill();
+
+      // High-tech specular glint
+      ctx.beginPath();
+      ctx.arc(eye.x - r * 0.28, eye.y - r * 0.28, r * 0.22, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.fill();
+
+      ctx.restore();
+    };
+
+    drawEye(this.smoothedEyes.left);
+    drawEye(this.smoothedEyes.right);
+  }
+
   stop() {
     this.isRunning = false;
+    this.smoothedEyes = null;
+    this.eyeGlowOpacity = 0.0;
     if (this.videoElement && this.videoFrameCallbackId && typeof this.videoElement.cancelVideoFrameCallback === 'function') {
       this.videoElement.cancelVideoFrameCallback(this.videoFrameCallbackId);
       this.videoFrameCallbackId = null;
