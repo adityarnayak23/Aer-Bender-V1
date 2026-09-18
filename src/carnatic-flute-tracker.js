@@ -460,9 +460,9 @@ class CarnaticFluteTracker {
   // =========================================================================
   // 📐 HEAD PITCH TILT OCTAVE ENGINE (Chin Down / Level / Chin Up)
   // Computes continuous normalized score from 0.0 (Chin Nod Down) to 1.0 (Chin Tilt Up)
-  // - Chin Nod Down (< 0.35) -> Low Octave (-1 / Mandra)
-  // - Level / Neutral Head (0.38..0.62) -> Mid Octave (0 / Madhya)
-  // - Chin Tilt Up (> 0.65) -> High Octave (+1 / Tara)
+  // - Chin Nod Down (< 0.26) -> Low Octave (-1 / Mandra) - requires distinct tilt down
+  // - Level / Neutral Head (0.26..0.74) -> Mid Octave (0 / Madhya) - WIDE CLEAN ERGONOMIC RANGE
+  // - Chin Tilt Up (> 0.74) -> High Octave (+1 / Tara) - requires distinct tilt up
   // Highly robust against webcam noise, yaw angle, facial hair, and distance.
   // =========================================================================
   computeHeadPitchScore(landmarks) {
@@ -601,27 +601,27 @@ class CarnaticFluteTracker {
     this.smoothedMouthRatio = smoothScore;
     this.mouthApertureRatio = rawScore;
 
-    // 3-State Schmitt Trigger with 0.07 hysteresis deadband:
-    // - Bass (Mandra, -1): score < 0.35 (leave > 0.42)
-    // - Mid (Madhya, 0): 0.38 <= score <= 0.62
-    // - High (Tara, +1): score > 0.65 (leave < 0.58)
+    // 3-State Schmitt Trigger with Wide Mid-Octave Range & Robust Hysteresis:
+    // - Bass (Mandra, -1): score < 0.26 (leave > 0.34) -> requires a distinct chin nod down
+    // - Mid (Madhya, 0): 0.26 <= score <= 0.74 -> spacious, stable, clean mid-octave zone
+    // - High (Tara, +1): score > 0.74 (leave < 0.66) -> requires a distinct chin tilt up
     let targetOctave = this.currentOctave;
     if (this.currentOctave === -1) {
-      if (smoothScore > 0.65) {
+      if (smoothScore > 0.74) {
         targetOctave = 1;
-      } else if (smoothScore > 0.42) {
+      } else if (smoothScore > 0.34) {
         targetOctave = 0;
       }
     } else if (this.currentOctave === 0) {
-      if (smoothScore < 0.35) {
+      if (smoothScore < 0.26) {
         targetOctave = -1;
-      } else if (smoothScore > 0.65) {
+      } else if (smoothScore > 0.74) {
         targetOctave = 1;
       }
     } else if (this.currentOctave === 1) {
-      if (smoothScore < 0.35) {
+      if (smoothScore < 0.26) {
         targetOctave = -1;
-      } else if (smoothScore < 0.58) {
+      } else if (smoothScore < 0.66) {
         targetOctave = 0;
       }
     }
