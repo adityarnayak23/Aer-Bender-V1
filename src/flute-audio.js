@@ -301,8 +301,8 @@ class FluteAudioEngine {
     const isMandraOctave = sampleId.startsWith('bass_') || this.octaveShift === -1 || targetFreq < 240;
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
-    // Boosted acoustic output across all 3 octaves: Mandra lower octave (1.15), Madhya mid octave (1.05), Tara higher octave (0.95)
-    const targetGain = (isTaraOctave ? 0.95 : (isMandraOctave ? 1.15 : 1.05)) * this.breathPressure;
+    // Smooth acoustic balance: Scale Tara higher octave (0.64), Madhya (0.72), Mandra lower octave (0.88) for good physical weight
+    const targetGain = (isTaraOctave ? 0.64 : (isMandraOctave ? 0.88 : 0.72)) * this.breathPressure;
     // Crisp 8ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
     const attackTime = this.isJazzMode ? 0.055 : 0.008;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
@@ -406,20 +406,6 @@ class FluteAudioEngine {
       if (this.activeElectricVoice.boreBreathFilter) {
         this.activeElectricVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, 0.015);
       }
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.source) {
-        const nativeRoot = 276.36;
-        const currentRoot = (window.SwarasData && window.SwarasData.KATTAI_ROOTS[this.kattai]) 
-          ? window.SwarasData.KATTAI_ROOTS[this.kattai].freq 
-          : 276.36;
-        let layerRate = currentRoot / nativeRoot;
-        if ((this.octaveShift === 1 || this.isOverblown) && !sampleId.endsWith('_high')) {
-          layerRate *= 2.0;
-        } else if (this.octaveShift === -1 && !sampleId.startsWith('bass_')) {
-          layerRate *= 0.5;
-        }
-        this.activeElectricVoice.acousticLayer.source.playbackRate.setTargetAtTime(layerRate, now, 0.035);
-        this.activeElectricVoice.acousticLayer.source.detune.setTargetAtTime(this.gamakaCents + swaraDetuneCents, now, 0.035);
-      }
       this.activeElectricVoice.targetFreq = targetFreq;
       this.currentFreq = targetFreq;
       return;
@@ -429,8 +415,7 @@ class FluteAudioEngine {
     this.fadePreviousVoice(isLegato ? 0.032 : 0.012);
     this.startElectricVoice(targetFreq, isLegato, fromFreq, swaraObj);
 
-    // 🪈 30% Continuous Earthy Indian Bamboo Flute Acoustic Layer
-    // Continuous blend of Aditya's authentic recorded C# bamboo flute master samples (30% gain)
+    // Layer organic acoustic sample chiff attack if sample is available
     if (this.samplesLoaded && this.sampleBuffers[sampleId] && this.manifest && this.manifest[sampleId]) {
       try {
         const item = this.manifest[sampleId];
@@ -446,54 +431,20 @@ class FluteAudioEngine {
           playbackRate *= 0.5;
         }
 
-        const acousticSource = this.ctx.createBufferSource();
-        acousticSource.buffer = buffer;
-        acousticSource.loop = true;
-        acousticSource.loopStart = item.loopStart || 0.22;
-        acousticSource.loopEnd = item.loopEnd || (buffer.duration - 0.08);
-        acousticSource.playbackRate.setValueAtTime(playbackRate, now);
-        acousticSource.detune.setValueAtTime(this.gamakaCents + swaraDetuneCents, now);
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = false;
+        source.playbackRate.setValueAtTime(playbackRate, now);
+        source.detune.setValueAtTime(this.gamakaCents + swaraDetuneCents, now);
 
-        // Warm earthy wood tone shaping filter (+4.5dB at 520Hz)
-        const acousticEarthFilter = this.ctx.createBiquadFilter();
-        acousticEarthFilter.type = 'peaking';
-        acousticEarthFilter.frequency.setValueAtTime(520, now);
-        acousticEarthFilter.Q.setValueAtTime(1.4, now);
-        acousticEarthFilter.gain.setValueAtTime(4.5, now);
+        const chiffGain = this.ctx.createGain();
+        chiffGain.gain.setValueAtTime(0.001, now);
+        chiffGain.gain.linearRampToValueAtTime(0.24 * this.breathPressure, now + 0.012);
+        chiffGain.gain.exponentialRampToValueAtTime(0.001, now + 0.095);
 
-        // High shelf cut to keep tone warm and velvety
-        const acousticHighCut = this.ctx.createBiquadFilter();
-        acousticHighCut.type = 'highshelf';
-        acousticHighCut.frequency.setValueAtTime(3400, now);
-        acousticHighCut.gain.setValueAtTime(-6.0, now);
-
-        // Exactly 30% Indian flute sound layer
-        const acousticLayerGain = this.ctx.createGain();
-        acousticLayerGain.gain.setValueAtTime(0.001, now);
-        acousticLayerGain.gain.linearRampToValueAtTime(0.30 * this.breathPressure, now + (isLegato ? 0.015 : 0.008));
-
-        acousticSource.connect(acousticEarthFilter);
-        acousticEarthFilter.connect(acousticHighCut);
-        acousticHighCut.connect(acousticLayerGain);
-        acousticLayerGain.connect(this.dryGain);
-
-        // Room reverb bloom for natural hall acoustic presence
-        const acousticReverbSend = this.ctx.createGain();
-        acousticReverbSend.gain.setValueAtTime(0.35, now);
-        acousticLayerGain.connect(acousticReverbSend);
-        acousticReverbSend.connect(this.reverbNode);
-
-        acousticSource.start(now);
-
-        if (this.activeElectricVoice) {
-          this.activeElectricVoice.acousticLayer = {
-            source: acousticSource,
-            gain: acousticLayerGain,
-            sampleId,
-            playbackRate,
-            swaraDetuneCents
-          };
-        }
+        source.connect(chiffGain);
+        chiffGain.connect(this.dryGain);
+        source.start(now);
       } catch (e) {}
     }
 
@@ -616,11 +567,10 @@ class FluteAudioEngine {
     bodyWeightEQ.connect(highCutEQ);
     highCutEQ.connect(voiceGain);
 
-    // 4. 🌬️ CONTINUOUS ORGANIC FLUTE WIND & BORE TURBULENCE ENGINE (30% Earthy Indian Flute Breath)
+    // 4. 🌬️ CONTINUOUS ORGANIC FLUTE WIND & BORE TURBULENCE ENGINE
     // Breathes life into the electric sound with natural bamboo wind texture!
     let windNoise = null;
     let boreBreathFilter = null;
-    let earthyWoodFilter = null;
     let windGain = null;
     if (this.noiseBuffer) {
       try {
@@ -628,55 +578,34 @@ class FluteAudioEngine {
         windNoise.buffer = this.noiseBuffer;
         windNoise.loop = true;
 
-        // Bore column resonant air tracking fundamental swara pitch (rich hollow air core)
+        // Bore column resonant air tracking fundamental swara pitch
         boreBreathFilter = this.ctx.createBiquadFilter();
         boreBreathFilter.type = 'bandpass';
         boreBreathFilter.frequency.setValueAtTime(targetFreq, now);
-        boreBreathFilter.Q.setValueAtTime(2.8, now);
-
-        // Earthy bamboo wood cavity node resonance (warm hollow organic body ~540Hz)
-        earthyWoodFilter = this.ctx.createBiquadFilter();
-        earthyWoodFilter.type = 'bandpass';
-        earthyWoodFilter.frequency.setValueAtTime(540, now);
-        earthyWoodFilter.Q.setValueAtTime(2.2, now);
-
-        const earthyWoodGain = this.ctx.createGain();
-        earthyWoodGain.gain.setValueAtTime(0.35, now);
-        earthyWoodFilter.connect(earthyWoodGain);
+        boreBreathFilter.Q.setValueAtTime(3.6, now);
 
         // Embouchure lip-plate edge wind rush filter (soft warm chiff, tamed highs)
         const edgeBreathFilter = this.ctx.createBiquadFilter();
         edgeBreathFilter.type = 'bandpass';
-        edgeBreathFilter.frequency.setValueAtTime(2200, now);
-        edgeBreathFilter.Q.setValueAtTime(1.5, now);
+        edgeBreathFilter.frequency.setValueAtTime(2400, now);
+        edgeBreathFilter.Q.setValueAtTime(1.6, now);
 
         const edgeGain = this.ctx.createGain();
-        edgeGain.gain.setValueAtTime(0.22, now);
+        edgeGain.gain.setValueAtTime(0.20, now);
         edgeBreathFilter.connect(edgeGain);
 
         windGain = this.ctx.createGain();
-        // Exactly 30% organic Indian flute breath texture
-        const initialWindGain = Math.max(0.001, 0.30 * this.breathPressure);
+        const initialWindGain = Math.max(0.001, 0.085 * this.breathPressure);
         windGain.gain.setValueAtTime(initialWindGain, now);
 
         windNoise.connect(boreBreathFilter);
         boreBreathFilter.connect(windGain);
 
-        windNoise.connect(earthyWoodFilter);
-        earthyWoodGain.connect(windGain);
-
         windNoise.connect(edgeBreathFilter);
         edgeGain.connect(windGain);
 
-        // Feed natural earthy wind turbulence into voiceGain
+        // Feed natural wind turbulence into voiceGain
         windGain.connect(voiceGain);
-
-        // Add subtle hall bloom to the breath turbulence
-        const windReverb = this.ctx.createGain();
-        windReverb.gain.setValueAtTime(0.25, now);
-        windGain.connect(windReverb);
-        windReverb.connect(this.reverbNode);
-
         windNoise.start(now);
       } catch (e) {
         windNoise = null;
@@ -700,8 +629,8 @@ class FluteAudioEngine {
     voiceGain.connect(electricReverbSend);
     electricReverbSend.connect(this.reverbNode);
 
-    // 7. Volume Attack Envelope (Equal-loudness compensated: high punch across all 3 octaves)
-    const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+    // 7. Volume Attack Envelope (Equal-loudness compensated: strong chest weight across all octaves)
+    const targetGain = (isLowerOctave ? 0.72 : (isTaraOctave ? 0.62 : 0.66)) * this.breathPressure;
     const attackTime = isLegato ? 0.012 : 0.005;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
@@ -714,7 +643,6 @@ class FluteAudioEngine {
       oscillators: [oscSaw, oscSquare, oscSub],
       windNoise,
       boreBreathFilter,
-      earthyWoodFilter,
       windGain,
       vibratoOsc,
       gain: voiceGain,
@@ -724,8 +652,7 @@ class FluteAudioEngine {
       highCutEQ,
       oscMixGainSub,
       baseCutoff,
-      targetFreq,
-      acousticLayer: null
+      targetFreq
     };
   }
 
@@ -807,7 +734,7 @@ class FluteAudioEngine {
     if (this.activeSampleVoice) {
       const g = this.activeSampleVoice.gain.gain;
       const d = this.activeSampleVoice.source.detune;
-      const baseGain = 0.95 * this.breathPressure;
+      const baseGain = 0.65 * this.breathPressure;
 
       // Volume envelope:
       // t0 -> t0+10ms: micro-dip to mark strike boundary (down to 35%)
@@ -839,7 +766,7 @@ class FluteAudioEngine {
 
     if (this.activeElectricVoice) {
       const g = this.activeElectricVoice.gain.gain;
-      const baseGain = 0.85 * this.breathPressure;
+      const baseGain = 0.52 * this.breathPressure;
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value || baseGain, now);
       g.linearRampToValueAtTime(0.32 * baseGain, now + 0.010);
@@ -864,7 +791,7 @@ class FluteAudioEngine {
     // 2. Physical Modeling Voice Fallback
     if (this.activeVoice) {
       const g = this.activeVoice.gain.gain;
-      const baseGain = 0.90 * this.breathPressure;
+      const baseGain = 0.70 * this.breathPressure;
 
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value, now);
@@ -980,13 +907,6 @@ class FluteAudioEngine {
           if (oldElectric.vibratoOsc) {
             try { oldElectric.vibratoOsc.stop(); oldElectric.vibratoOsc.disconnect(); } catch (e) {}
           }
-          if (oldElectric.acousticLayer && oldElectric.acousticLayer.source) {
-            try {
-              oldElectric.acousticLayer.source.stop();
-              oldElectric.acousticLayer.source.disconnect();
-              oldElectric.acousticLayer.gain.disconnect();
-            } catch (e) {}
-          }
           oldElectric.gain.disconnect();
         } catch (e) {}
       }, 160);
@@ -1047,13 +967,6 @@ class FluteAudioEngine {
           if (oldElectric.vibratoOsc) {
             try { oldElectric.vibratoOsc.stop(); oldElectric.vibratoOsc.disconnect(); } catch (e) {}
           }
-          if (oldElectric.acousticLayer && oldElectric.acousticLayer.source) {
-            try {
-              oldElectric.acousticLayer.source.stop();
-              oldElectric.acousticLayer.source.disconnect();
-              oldElectric.acousticLayer.gain.disconnect();
-            } catch (e) {}
-          }
           oldElectric.gain.disconnect();
         } catch (e) {}
       }, Math.round((rel + 0.02) * 1000));
@@ -1098,10 +1011,6 @@ class FluteAudioEngine {
         const baseDetune = osc._baseDetune || 0;
         osc.detune.setTargetAtTime(this.gamakaCents + baseDetune, now, 0.035);
       });
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.source) {
-        const swDetune = this.activeElectricVoice.acousticLayer.swaraDetuneCents || 0;
-        this.activeElectricVoice.acousticLayer.source.detune.setTargetAtTime(this.gamakaCents + swDetune, now, 0.035);
-      }
     }
     if (this.activeVoice && this.ctx) {
       this.activeVoice.primaryOsc.detune.setTargetAtTime(this.gamakaCents, now, 0.035);
@@ -1113,35 +1022,24 @@ class FluteAudioEngine {
     this.breathPressure = Math.max(0, Math.min(1.0, pressure));
     const now = this.ctx.currentTime;
     if (this.activeSampleVoice && this.isPlaying) {
-      const isTaraOctave = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.endsWith('_high')) || this.octaveShift === 1 || this.isOverblown;
-      const isMandraOctave = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.startsWith('bass_')) || this.octaveShift === -1 || (this.activeSampleVoice.targetFreq && this.activeSampleVoice.targetFreq < 240);
-      const targetGain = (isTaraOctave ? 0.95 : (isMandraOctave ? 1.15 : 1.05)) * this.breathPressure;
+      const targetGain = 0.58 * this.breathPressure;
       this.activeSampleVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
     if (this.activeElectricVoice && this.isPlaying) {
-      const freq = this.activeElectricVoice.targetFreq || this.currentFreq;
-      const isLowerOctave = (this.octaveShift === -1 || (freq && freq < 240));
-      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || (freq && freq > 600));
-      const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+      const targetGain = 0.66 * this.breathPressure;
       this.activeElectricVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
       if (this.activeElectricVoice.filter) {
         const baseCutoff = this.activeElectricVoice.baseCutoff || 2200;
-        const dynamicCutoff = Math.min(3600, baseCutoff * (0.65 + 0.45 * this.breathPressure));
+        const dynamicCutoff = Math.min(4200, baseCutoff * (0.65 + 0.45 * this.breathPressure));
         this.activeElectricVoice.filter.frequency.setTargetAtTime(dynamicCutoff, now, 0.03);
       }
       if (this.activeElectricVoice.windGain) {
-        const targetWind = Math.max(0.001, 0.30 * this.breathPressure);
+        const targetWind = Math.max(0.001, 0.085 * this.breathPressure);
         this.activeElectricVoice.windGain.gain.setTargetAtTime(targetWind, now, 0.03);
-      }
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.gain) {
-        this.activeElectricVoice.acousticLayer.gain.gain.setTargetAtTime(0.30 * this.breathPressure, now, 0.03);
       }
     }
     if (this.activeVoice && this.isPlaying) {
-      const freq = this.activeVoice.baseFreq || this.currentFreq;
-      const isLowerOctave = (this.octaveShift === -1 || (freq && freq < 240));
-      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || (freq && freq > 600));
-      const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+      const targetGain = 0.42 * this.breathPressure;
       this.activeVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
   }
@@ -1367,8 +1265,7 @@ class FluteAudioEngine {
     bassWeightFilter.connect(this.dryGain);
     bassWeightFilter.connect(this.reverbNode);
 
-    const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || freq > 600);
-    const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+    const targetGain = (isLowerOctave ? 0.65 : 0.52) * this.breathPressure;
     voiceGain.gain.cancelScheduledValues(now);
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + 0.032);
 
