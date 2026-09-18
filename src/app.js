@@ -1159,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "C4",
       holes: [true, true, false, false, false, false, false],
       color: "#38bdf8",
-      desc: "Cover first 2 holes with Left Index & Middle finger. Foundation note of Indian music!"
+      desc: "Cover Holes 1 & 2 with Left Hand."
     },
     {
       swaraKey: "ri",
@@ -1168,7 +1168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "D4",
       holes: [true, false, false, false, false, false, false],
       color: "#2dd4bf",
-      desc: "Lift Left Middle finger; keep only Hole 1 closed with Left Index finger."
+      desc: "Cover Hole 1 with Left Index."
     },
     {
       swaraKey: "ga",
@@ -1177,7 +1177,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "E4",
       holes: [false, false, false, false, false, false, false],
       color: "#4ade80",
-      desc: "Lift all fingers! All 7 holes open for a light, breezy Gandharam resonance."
+      desc: "All holes open (0 fingers down)."
     },
     {
       swaraKey: "ma",
@@ -1186,7 +1186,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "F4",
       holes: [true, true, true, true, true, true, true],
       color: "#facc15",
-      desc: "All 7 fingers closed! Cover all holes with Left Hand (1-3) & Right Hand (4-7) for Ma."
+      desc: "All 7 holes closed (Left 1-3 & Right 4-7)."
     },
     {
       swaraKey: "pa",
@@ -1195,7 +1195,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "G4",
       holes: [true, true, true, true, true, false, false],
       color: "#fb923c",
-      desc: "Close Holes 1 to 5 (Left Hand all 3 closed + Right Hand Index & Middle closed)."
+      desc: "Cover Holes 1 to 5 (5 fingers down)."
     },
     {
       swaraKey: "dha",
@@ -1204,7 +1204,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "A4",
       holes: [true, true, true, true, false, false, false],
       color: "#f43f5e",
-      desc: "Close Holes 1 to 4 (Left Hand all 3 closed + Right Hand Index closed)."
+      desc: "Cover Holes 1 to 4 (4 fingers down)."
     },
     {
       swaraKey: "ni",
@@ -1213,7 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
       note: "B4",
       holes: [true, true, true, false, false, false, false],
       color: "#c084fc",
-      desc: "Close Holes 1 to 3 (Left Hand all 3 closed; all Right Hand fingers lifted)."
+      desc: "Cover Holes 1 to 3 (3 fingers down)."
     }
   ];
 
@@ -1256,24 +1256,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const holeEl = document.getElementById(`holeNode${holeNum}`);
       const fingerEl = document.getElementById(`finger${holeNum}`);
       if (holeEl) {
+        const fill = holeEl.querySelector('.hole-disc-fill');
         if (isClosed) {
           holeEl.classList.add('active-closed');
-          const fill = holeEl.querySelector('.hole-disc-fill');
+          holeEl.classList.remove('active-open');
           if (fill) {
             fill.setAttribute('opacity', '1');
             fill.setAttribute('fill', noteData.color);
           }
         } else {
           holeEl.classList.remove('active-closed');
-          const fill = holeEl.querySelector('.hole-disc-fill');
+          holeEl.classList.add('active-open');
           if (fill) fill.setAttribute('opacity', '0');
         }
       }
       if (fingerEl) {
         if (isClosed) {
           fingerEl.classList.add('finger-down');
+          fingerEl.classList.remove('finger-up');
         } else {
           fingerEl.classList.remove('finger-down');
+          fingerEl.classList.add('finger-up');
         }
       }
     });
@@ -1359,10 +1362,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==============================================================
   let currentLearnStep = 1;
   const STEP_CONFIGS = [
-    { step: 1, subtitle: "Step 1 of 4 • Hand Posture & Finger Placement", nextLabel: "Next: Wake with Sa ➔" },
-    { step: 2, subtitle: "Step 2 of 4 • Wake Up the Flute with Sa", nextLabel: "Next: Play 7 Notes ➔" },
-    { step: 3, subtitle: "Step 3 of 4 • Play All 7 Notes (Sa to Ni)", nextLabel: "Next: Head Tilt Magic ➔" },
-    { step: 4, subtitle: "Step 4 of 4 • Head Tilt Magic (High, Mid, Bass)", nextLabel: null }
+    { step: 1, subtitle: "Step 1 of 4 • Hand Posture", nextLabel: "Next: Wake with Sa ➔" },
+    { step: 2, subtitle: "Step 2 of 4 • Wake Flute with Sa", nextLabel: "Next: Play 7 Notes ➔" },
+    { step: 3, subtitle: "Step 3 of 4 • Play All 7 Notes", nextLabel: "Next: Head Tilt ➔" },
+    { step: 4, subtitle: "Step 4 of 4 • Head Tilt (Octaves)", nextLabel: null }
   ];
 
   function showLearnStep(step) {

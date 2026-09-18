@@ -60,12 +60,11 @@ assert.ok(html.includes('sa-hero-card'), '2 Fingers for Sa hero card present');
 assert.ok(html.includes('2 Fingers Down = SA') || html.includes('2 FINGERS DOWN = SA') || html.includes('2 FINGERS DOWN'), '2 Fingers Down = SA title present');
 assert.ok(html.includes('sa-hero-svg'), 'Visual flute SVG showing 2 fingers closed for Sa');
 
-assert.ok(html.includes('learn-notes-chart-section'), 'All notes chart section present');
-assert.ok(html.includes('swaras-table'), 'All 7 swaras table present');
+assert.ok(html.includes('scale-flute-stage'), 'Animated 7 swaras flute stage present');
 ['Sa', 'Ri', 'Ga', 'Ma', 'Pa', 'Dha', 'Ni'].forEach((swara) => {
   assert.ok(html.includes(`>${swara}</span>`), `Swara ${swara} is present in the fingering chart`);
 });
-console.log('✅ PASS: Learn guide clearly displays hand layout, 2 fingers for Sa, and all 7 notes once');
+console.log('✅ PASS: Learn guide clearly displays hand layout, 2 fingers for Sa, and all 7 notes animated');
 
 // 6. "Got it, Let's Play!" CTA button is neon, rectangular, and older font
 assert.ok(html.includes('id="learnModalStartBtn"'), 'learnModalStartBtn present in HTML');

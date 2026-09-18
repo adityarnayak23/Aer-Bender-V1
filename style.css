@@ -3182,10 +3182,19 @@ body {
   color: #ffffff;
 }
 
+.sa-stage-anim {
+  padding: 28px 20px !important;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .sa-stage-anim .sa-hero-svg {
   max-width: 740px;
+  width: 100%;
   height: auto;
-  max-height: 150px;
+  max-height: 180px;
 }
 
 .anim-sa-pressing-finger {
@@ -3239,8 +3248,8 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: space-between;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 10px;
   overflow: hidden;
 }
 
@@ -3249,7 +3258,7 @@ body {
 }
 
 .scale-swara-tabs {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .scale-swara-tabs .swara-tab {
@@ -3257,7 +3266,7 @@ body {
   border: 1.5px solid #000000 !important;
   box-shadow: 2px 2px 0px #000000 !important;
   border-radius: 6px !important;
-  padding: 4px 8px !important;
+  padding: 6px 8px !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -3290,41 +3299,24 @@ body {
 }
 
 .scale-flute-stage {
-  padding: 8px 12px !important;
-  min-height: 120px;
+  padding: 16px 20px !important;
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .scale-action-banner {
-  margin-bottom: 4px !important;
+  margin-bottom: 6px !important;
 }
 
 .scale-interactive-flute-svg {
-  max-height: 125px;
+  max-height: 180px;
+  width: 100%;
 }
 
 .swaras-table-wrapper {
-  overflow: visible !important;
-  border: 1.5px solid #000000;
-  box-shadow: 3px 3px 0px #000000;
-  border-radius: 6px;
-  background: #0c1324;
-}
-
-.swaras-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 9.5px;
-  margin: 0 !important;
-}
-
-.swaras-table th, 
-.swaras-table td {
-  padding: 1.5px 3.5px !important;
-  line-height: 1.12;
-}
-
-.row-highlight-ma {
-  background: rgba(250, 204, 21, 0.12) !important;
+  display: none !important;
 }
 
 #learnStepPane3,
@@ -3338,23 +3330,23 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   overflow: hidden !important;
-  gap: 6px;
+  gap: 10px;
 }
 
 .head-tilt-anim-container {
   overflow: hidden;
   position: relative;
-  max-height: 135px;
-  padding: 6px 10px !important;
+  max-height: 180px;
+  padding: 10px 14px !important;
 }
 
 .head-tilt-profile-svg {
   width: 100%;
   max-width: 680px;
   height: auto;
-  max-height: 125px;
+  max-height: 160px;
   display: block;
 }
 
@@ -3429,19 +3421,30 @@ body {
 .octave-zones-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .octave-zone-card {
   background: #0d1527 !important;
   border: 1.5px solid #000000 !important;
   box-shadow: 3px 3px 0px #000000 !important;
-  border-radius: 6px !important;
-  padding: 8px 10px;
+  border-radius: 8px !important;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.octave-zone-card:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px #000000 !important;
+  background: #141f36 !important;
 }
 
 /* Authentic Sthayi Octave Colors in Step 4 */
@@ -3982,74 +3985,49 @@ body {
   box-shadow: 0 8px 24px rgba(225, 48, 108, 0.45);
 }
 
-/* Visitor & Unique Counter at Bottom-Right of Get in Touch Modal */
-.creator-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 4px;
-  padding-top: 8px;
-}
-
+/* Discreet Live Reference Counter at Bottom-Right of Entire Page */
+.app-discreet-counter,
 .creator-visitor-counter {
+  position: fixed;
+  bottom: 6px;
+  right: 12px;
+  z-index: 9999;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 3px 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: 999px;
+  gap: 2px;
+  padding: 1px 4px;
+  background: transparent;
+  border-radius: 3px;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 9.5px;
-  color: #64748b;
-  letter-spacing: 0.2px;
+  font-size: 8px;
+  color: rgba(148, 163, 184, 0.4);
+  letter-spacing: 0.3px;
   user-select: none;
-  transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  pointer-events: auto;
+  cursor: default;
+  line-height: 1;
+  transition: all 0.2s ease;
 }
 
+.app-discreet-counter:hover,
 .creator-visitor-counter:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.06);
+  color: rgba(241, 245, 249, 0.9);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
 }
 
-.creator-visitor-counter .counter-pulse-dot {
-  width: 4.5px;
-  height: 4.5px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 5px rgba(16, 185, 129, 0.7);
-  animation: counterPulseDot 2.2s infinite ease-in-out;
-}
-
-@keyframes counterPulseDot {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-
-.creator-visitor-counter .counter-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 3.5px;
-}
-
-.creator-visitor-counter .counter-label {
-  color: #64748b;
-  font-size: 8.5px;
-  text-transform: uppercase;
-  font-weight: 500;
-  letter-spacing: 0.4px;
-}
-
+.app-discreet-counter .counter-val,
 .creator-visitor-counter .counter-val {
-  color: #cbd5e1;
   font-weight: 700;
-  font-size: 9.5px;
-  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 8px;
+  color: inherit;
 }
 
+.app-discreet-counter .counter-sep,
 .creator-visitor-counter .counter-sep {
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 9px;
+  color: inherit;
+  opacity: 0.5;
+  font-size: 7.5px;
   margin: 0 1px;
 }
 
