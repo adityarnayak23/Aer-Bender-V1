@@ -634,7 +634,20 @@ class CarnaticFluteTracker {
     }
 
     if (targetOctave !== this.currentOctave) {
-      this.selectOctave(targetOctave);
+      if (targetOctave === this.candidateOctave) {
+        this.candidateOctaveFrames = (this.candidateOctaveFrames || 0) + 1;
+        if (this.candidateOctaveFrames >= 2) {
+          this.selectOctave(targetOctave);
+          this.candidateOctave = null;
+          this.candidateOctaveFrames = 0;
+        }
+      } else {
+        this.candidateOctave = targetOctave;
+        this.candidateOctaveFrames = 1;
+      }
+    } else {
+      this.candidateOctave = null;
+      this.candidateOctaveFrames = 0;
     }
 
     this.onMouthApertureChanged({
@@ -683,7 +696,20 @@ class CarnaticFluteTracker {
     }
 
     if (targetOctave !== this.currentOctave) {
-      this.selectOctave(targetOctave);
+      if (targetOctave === this.candidateHandsOctave) {
+        this.candidateHandsOctaveFrames = (this.candidateHandsOctaveFrames || 0) + 1;
+        if (this.candidateHandsOctaveFrames >= 2) {
+          this.selectOctave(targetOctave);
+          this.candidateHandsOctave = null;
+          this.candidateHandsOctaveFrames = 0;
+        }
+      } else {
+        this.candidateHandsOctave = targetOctave;
+        this.candidateHandsOctaveFrames = 1;
+      }
+    } else {
+      this.candidateHandsOctave = null;
+      this.candidateHandsOctaveFrames = 0;
     }
   }
 
@@ -702,9 +728,39 @@ class CarnaticFluteTracker {
     this.onTrackingStatus({ status: 'loading', message: 'Starting dual-hand AI tracking...' });
 
     try {
-      // Multi-tier camera constraints for mobile (iOS Safari / Android Chrome) & desktop
+      // Multi-tier camera constraints for 4K/studio webcams, desktop & mobile (iOS Safari / Android Chrome)
       const constraintTiers = [
-        // Tier 1: Ideal HD 60fps for desktop & high-end mobile
+        // Tier 1: 4K Ultra-HD 60fps for studio 4K webcams
+        {
+          video: {
+            width: { ideal: 3840 },
+            height: { ideal: 2160 },
+            frameRate: { ideal: 60 },
+            facingMode: 'user'
+          },
+          audio: false
+        },
+        // Tier 2: 1440p QHD 60fps
+        {
+          video: {
+            width: { ideal: 2560 },
+            height: { ideal: 1440 },
+            frameRate: { ideal: 60 },
+            facingMode: 'user'
+          },
+          audio: false
+        },
+        // Tier 3: 1080p Full HD 60fps
+        {
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 60 },
+            facingMode: 'user'
+          },
+          audio: false
+        },
+        // Tier 4: Ideal HD 60fps for desktop & high-end mobile
         {
           video: {
             width: { ideal: 1280 },
@@ -714,7 +770,7 @@ class CarnaticFluteTracker {
           },
           audio: false
         },
-        // Tier 2: Standard ideal dimensions (no strict frameRate)
+        // Tier 5: Standard ideal dimensions (no strict frameRate)
         {
           video: {
             width: { ideal: 1280 },
@@ -723,14 +779,14 @@ class CarnaticFluteTracker {
           },
           audio: false
         },
-        // Tier 3: Universal front camera (works on all iOS/Android portrait orientations)
+        // Tier 6: Universal front camera (works on all iOS/Android portrait orientations)
         {
           video: {
             facingMode: 'user'
           },
           audio: false
         },
-        // Tier 4: Universal fallback
+        // Tier 7: Universal fallback
         {
           video: true,
           audio: false
@@ -1127,22 +1183,6 @@ class CarnaticFluteTracker {
 
         this.rawHoleStates = [...leftHoles, ...rightHoles];
         holesArray = [...this.rawHoleStates];
-
-        // =========================================================================
-        // 🎼 ACOUSTIC WOODWIND OPEN-HOLE ISOLATION (ZERO NOISE FROM OPEN FINGERS)
-        // User requirement: "when finger is not curled - or is open, then there is
-        // no role for that in the note playing - so remove any noise if it is coming from there"
-        // In a physical flute, the standing air column vents at the first open hole.
-        // Once a hole is open, all subsequent downstream holes have zero acoustic role!
-        // =========================================================================
-        for (let i = 0; i < 7; i++) {
-          if (!holesArray[i]) {
-            for (let j = i + 1; j < 7; j++) {
-              holesArray[j] = false;
-            }
-            break;
-          }
-        }
         this.currentHoleStates = holesArray;
 
         // Round off to nearest valid Swara (constrained to active raga scale)
@@ -1596,7 +1636,8 @@ class CarnaticFluteTracker {
     // Carnatic Hand-Coupling Assist:
     // When playing Sa, Ni, Dha, Pa, or Ma, L2 (middle finger) is firmly down.
     // Via extensor digitorum coupling, L1 naturally lowers onto its hole alongside L2.
-    if (holeIdx === 0 && Boolean(this.rawHoleStates && this.rawHoleStates[1])) {
+    // Only apply assist when L1 is not intentionally extended/lifted (rawScore >= 0.30).
+    if (holeIdx === 0 && rawScore >= 0.30 && Boolean(this.rawHoleStates && this.rawHoleStates[1])) {
       rawScore = Math.min(1.0, rawScore + 0.08);
     }
 
@@ -1658,41 +1699,19 @@ class CarnaticFluteTracker {
   analyzeLeftHand(landmarks) {
     if (!landmarks) return [false, false, false];
 
-    let l1Closed = this.isHoleClosed(landmarks, 5, 6, 7, 8, 0);   // L1 (Index)
-    let l2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 1); // L2 (Middle)
-    let l3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 2);  // L3 (Ring)
-
-    // Woodwind Acoustic Rule:
-    // When finger is not curled / open, all subsequent downstream holes have NO acoustic role!
-    if (!l1Closed) {
-      l2Closed = false;
-      l3Closed = false;
-    } else if (!l2Closed) {
-      l3Closed = false;
-    }
+    const l1Closed = this.isHoleClosed(landmarks, 5, 6, 7, 8, 0);   // L1 (Index)
+    const l2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 1); // L2 (Middle)
+    const l3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 2);  // L3 (Ring)
 
     return [l1Closed, l2Closed, l3Closed];
   }
 
   analyzeRightHand(landmarks) {
     if (!landmarks) return [false, false, false, false];
-    let r1Closed = this.isHoleClosed(landmarks, 5, 6, 7, 8, 3);   // R1 (Index)
-    let r2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 4); // R2 (Middle)
-    let r3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 5);// R3 (Ring)
-    let r4Closed = this.isHoleClosed(landmarks, 17, 18, 19, 20, 6);// R4 (Pinky)
-
-    // Woodwind Acoustic Rule:
-    // When finger is not curled / open, all subsequent downstream holes have NO acoustic role!
-    if (!r1Closed) {
-      r2Closed = false;
-      r3Closed = false;
-      r4Closed = false;
-    } else if (!r2Closed) {
-      r3Closed = false;
-      r4Closed = false;
-    } else if (!r3Closed) {
-      r4Closed = false;
-    }
+    const r1Closed = this.isHoleClosed(landmarks, 5, 6, 7, 8, 3);   // R1 (Index)
+    const r2Closed = this.isHoleClosed(landmarks, 9, 10, 11, 12, 4); // R2 (Middle)
+    const r3Closed = this.isHoleClosed(landmarks, 13, 14, 15, 16, 5);// R3 (Ring)
+    const r4Closed = this.isHoleClosed(landmarks, 17, 18, 19, 20, 6);// R4 (Pinky)
 
     return [r1Closed, r2Closed, r3Closed, r4Closed];
   }

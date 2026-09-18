@@ -33,14 +33,16 @@ class FluteVideoRecorder {
     this.spectrumData = new Uint8Array(32);
   }
 
-  // Get best supported video recording MIME type
+  // Get best supported video recording MIME type (4K VP9 / High-Profile MP4 / HEVC)
   getBestMimeType() {
     const candidateCodecs = [
       'video/webm;codecs=vp9,opus',
+      'video/mp4;codecs=avc1.640028,mp4a.40.2',
+      'video/mp4;codecs=hvc1,mp4a.40.2',
       'video/webm;codecs=vp8,opus',
       'video/webm;codecs=h264,opus',
-      'video/webm',
       'video/mp4;codecs=avc1,mp4a.40.2',
+      'video/webm',
       'video/mp4'
     ];
 
@@ -118,15 +120,33 @@ class FluteVideoRecorder {
 
     const mimeType = this.getBestMimeType();
 
-    try {
-      const options = mimeType
-        ? { mimeType, videoBitsPerSecond: 3000000 }
-        : {};
-      this.mediaRecorder = new MediaRecorder(recordStream, options);
-    } catch (e) {
-      console.warn('FluteVideoRecorder: MediaRecorder options fallback, attempting default:', e);
+    // Studio 4K UHD Bitrate Ladder:
+    // Tier 1: 40 Mbps (Studio 4K UHD 60fps) + 320 kbps Pristine Studio Audio
+    // Tier 2: 28 Mbps (High-Bitrate 4K / QHD) + 256 kbps Audio
+    // Tier 3: 16 Mbps (Crisp FHD 60fps) + 192 kbps Audio
+    // Tier 4: 8 Mbps (Standard HD) + 128 kbps Audio
+    const bitrateTiers = [
+      { videoBitsPerSecond: 40000000, audioBitsPerSecond: 320000 },
+      { videoBitsPerSecond: 28000000, audioBitsPerSecond: 256000 },
+      { videoBitsPerSecond: 16000000, audioBitsPerSecond: 192000 },
+      { videoBitsPerSecond: 8000000, audioBitsPerSecond: 128000 },
+      {}
+    ];
+
+    let recorder = null;
+    for (const tier of bitrateTiers) {
       try {
-        this.mediaRecorder = new MediaRecorder(recordStream);
+        const options = mimeType ? { mimeType, ...tier } : { ...tier };
+        recorder = new MediaRecorder(recordStream, options);
+        if (recorder) break;
+      } catch (tierErr) {
+        // Fallback to next bitrate tier if browser / hardware encoder complains
+      }
+    }
+
+    if (!recorder) {
+      try {
+        recorder = new MediaRecorder(recordStream);
       } catch (err2) {
         console.error('FluteVideoRecorder: Failed to initialize MediaRecorder:', err2);
         this.cleanupStreams();
@@ -134,6 +154,7 @@ class FluteVideoRecorder {
         return false;
       }
     }
+    this.mediaRecorder = recorder;
 
     this.mediaRecorder.ondataavailable = (e) => {
       if (e.data && e.data.size > 0) {
@@ -200,7 +221,7 @@ class FluteVideoRecorder {
     return true;
   }
 
-  // Pure Native Screen Recording (Zero-Lag Hardware Accelerated)
+  // Pure Native Screen Recording (Zero-Lag Hardware Accelerated, Up to 4K UHD 60fps)
   async startScreenStream() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
       console.warn('FluteVideoRecorder: getDisplayMedia is not supported in this browser.');
@@ -211,9 +232,9 @@ class FluteVideoRecorder {
       this.displayStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
           displaySurface: 'browser',
-          frameRate: { ideal: 30, max: 30 },
-          width: { ideal: 1920, max: 1920 },
-          height: { ideal: 1080, max: 1080 }
+          frameRate: { ideal: 60, max: 60 },
+          width: { ideal: 3840, max: 3840 },
+          height: { ideal: 2160, max: 2160 }
         },
         audio: false,
         preferCurrentTab: true,
@@ -227,24 +248,55 @@ class FluteVideoRecorder {
     }
   }
 
-  // Camera-Only Canvas Compositor: Live Camera (Mirrored) + Flute Overlay + Live Swara HUD
+  // Calculate optimal 4K Ultra-HD recording resolution (3840x2160 landscape or 2160x3840 portrait)
+  getOptimalRecordingDimensions() {
+    const camW = (this.videoEl && this.videoEl.videoWidth > 0)
+      ? this.videoEl.videoWidth
+      : 3840;
+    const camH = (this.videoEl && this.videoEl.videoHeight > 0)
+      ? this.videoEl.videoHeight
+      : 2160;
+
+    const isPortrait = camH > camW;
+    let targetW, targetH;
+
+    if (!isPortrait) {
+      // Landscape: Standard 4K UHD (3840 x 2160) or native camera resolution if higher
+      targetW = Math.max(3840, camW);
+      const aspect = camW / camH;
+      targetH = Math.round(targetW / (aspect || (16 / 9)));
+    } else {
+      // Portrait mobile: Standard 4K Portrait (2160 x 3840)
+      targetH = Math.max(3840, camH);
+      const aspect = camW / camH;
+      targetW = Math.round(targetH * (aspect || (9 / 16)));
+    }
+
+    // Ensure even pixel dimensions for video encoders
+    if (targetW % 2 !== 0) targetW += 1;
+    if (targetH % 2 !== 0) targetH += 1;
+
+    return { width: targetW, height: targetH };
+  }
+
+  // Camera-Only Canvas Compositor: Live Camera (Mirrored) + Flute Overlay + Live Swara HUD (4K 60FPS)
   startCompositeCameraStream() {
-    const w = (this.canvasEl && this.canvasEl.width > 0)
-      ? this.canvasEl.width
-      : ((this.videoEl && this.videoEl.videoWidth > 0) ? this.videoEl.videoWidth : 1280);
-    const h = (this.canvasEl && this.canvasEl.height > 0)
-      ? this.canvasEl.height
-      : ((this.videoEl && this.videoEl.videoHeight > 0) ? this.videoEl.videoHeight : 720);
+    const { width: w, height: h } = this.getOptimalRecordingDimensions();
 
     this.compCanvas.width = w;
     this.compCanvas.height = h;
 
-    // Create 30 FPS stream from composite canvas
-    this.compositeStream = this.compCanvas.captureStream(30);
+    if (this.compCtx) {
+      this.compCtx.imageSmoothingEnabled = true;
+      this.compCtx.imageSmoothingQuality = 'high';
+    }
+
+    // Create 60 FPS ultra-smooth stream from 4K composite canvas
+    this.compositeStream = this.compCanvas.captureStream(60);
     return this.compositeStream;
   }
 
-  // Continuous Camera Compositing Loop
+  // Continuous Camera Compositing Loop at 4K Resolution
   startCameraCompositingLoop() {
     if (this.animId) {
       cancelAnimationFrame(this.animId);
@@ -254,18 +306,15 @@ class FluteVideoRecorder {
     const renderLoop = () => {
       if (!this.isRecording) return;
 
-      const w = (this.canvasEl && this.canvasEl.width > 0)
-        ? this.canvasEl.width
-        : ((this.videoEl && this.videoEl.videoWidth > 0) ? this.videoEl.videoWidth : 1280);
-      const h = (this.canvasEl && this.canvasEl.height > 0)
-        ? this.canvasEl.height
-        : ((this.videoEl && this.videoEl.videoHeight > 0) ? this.videoEl.videoHeight : 720);
+      const { width: w, height: h } = this.getOptimalRecordingDimensions();
 
       if (this.compCanvas.width !== w || this.compCanvas.height !== h) {
         this.compCanvas.width = w;
         this.compCanvas.height = h;
       }
 
+      this.compCtx.imageSmoothingEnabled = true;
+      this.compCtx.imageSmoothingQuality = 'high';
       this.compCtx.clearRect(0, 0, w, h);
 
       // 1. Draw webcam feed mirrored (scaleX = -1) to match player perspective
@@ -289,7 +338,7 @@ class FluteVideoRecorder {
         this.compCtx.drawImage(this.canvasEl, 0, 0, w, h);
       }
 
-      // 3. Draw Watermark, Swara Pill, and Live Audio Visualizer
+      // 3. Draw Watermark, Swara Pill, and Live Audio Visualizer scaled for 4K
       this.renderVideoHUD(this.compCtx, w, h);
 
       this.animId = requestAnimationFrame(renderLoop);
@@ -298,21 +347,29 @@ class FluteVideoRecorder {
     renderLoop();
   }
 
-  // Draw elegant brand watermark, live swara badge, and recording indicator on video
+  // Draw elegant brand watermark, live swara badge, and recording indicator on video (4K UHD scaled)
   renderVideoHUD(ctx, w, h) {
     ctx.save();
 
-    // Top-Left: Brand Watermark
-    ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-    ctx.shadowBlur = 6;
-    ctx.fillText('AIR BENDER v1', 16, 24);
+    const scale = Math.max(1, w / 1280);
 
-    ctx.font = '500 9.5px "Plus Jakarta Sans", sans-serif';
-    ctx.fillStyle = 'rgba(203, 213, 225, 0.75)';
+    // Top-Left: Brand Watermark
+    const fontSizeTitle = Math.round(13 * scale);
+    const fontSizeSub = Math.round(10 * scale);
+    const padX = Math.round(20 * scale);
+    const topY1 = Math.round(28 * scale);
+    const topY2 = Math.round(44 * scale);
+
+    ctx.font = `bold ${fontSizeTitle}px "Plus Jakarta Sans", sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.85)';
+    ctx.shadowBlur = Math.round(6 * scale);
+    ctx.fillText('AIR BENDER v1 · 4K UHD', padX, topY1);
+
+    ctx.font = `500 ${fontSizeSub}px "Plus Jakarta Sans", sans-serif`;
+    ctx.fillStyle = 'rgba(203, 213, 225, 0.85)';
     const kattaiName = (this.audio && this.audio.kattai) ? `${this.audio.kattai} Kattai` : '1.5 Kattai (C#)';
-    ctx.fillText(kattaiName, 16, 38);
+    ctx.fillText(kattaiName, padX, topY2);
 
     // Top-Right: Rec Indicator & Live Timer
     const elapsedSecs = Math.max(0, Math.floor((Date.now() - this.startTime) / 1000));
@@ -321,15 +378,20 @@ class FluteVideoRecorder {
     const timerStr = `REC ${mins}:${secs}`;
 
     const pulse = (Math.sin(Date.now() / 180) + 1) / 2;
+    const dotRadius = Math.round(4.5 * scale);
+    const dotX = w - Math.round(92 * scale);
+    const dotY = Math.round(25 * scale);
+
     ctx.fillStyle = `rgba(239, 68, 68, ${0.4 + 0.6 * pulse})`;
     ctx.beginPath();
-    ctx.arc(w - 78, 22, 4.5, 0, 2 * Math.PI);
+    ctx.arc(dotX, dotY, dotRadius, 0, 2 * Math.PI);
     ctx.fill();
 
-    ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+    const fontTimer = Math.round(12 * scale);
+    ctx.font = `bold ${fontTimer}px "Plus Jakarta Sans", sans-serif`;
     ctx.fillStyle = '#ffffff';
     ctx.textAlign = 'right';
-    ctx.fillText(timerStr, w - 16, 26);
+    ctx.fillText(timerStr, w - padX, Math.round(29 * scale));
 
     // Active Swara Pill at Top-Center
     const curSw = this.getCurrentSwara();
@@ -338,26 +400,32 @@ class FluteVideoRecorder {
       const octLabel = oct > 0 ? '▲ Tara' : (oct < 0 ? '▼ Mandra' : '◆ Madhya');
       const text = `${curSw.short || ''} · ${curSw.swara || ''} (${octLabel})`;
 
-      ctx.font = 'bold 11px "Plus Jakarta Sans", sans-serif';
+      const pillFont = Math.round(12 * scale);
+      ctx.font = `bold ${pillFont}px "Plus Jakarta Sans", sans-serif`;
       const m = ctx.measureText(text);
-      const pw = m.width + 24;
+      const pw = m.width + Math.round(28 * scale);
+      const ph = Math.round(28 * scale);
       const px = (w - pw) / 2;
+      const py = Math.round(14 * scale);
+      const pillRadius = ph / 2;
 
       ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = Math.max(1, Math.round(1.5 * scale));
       ctx.beginPath();
       if (typeof ctx.roundRect === 'function') {
-        ctx.roundRect(px, 12, pw, 24, 12);
+        ctx.roundRect(px, py, pw, ph, pillRadius);
       } else {
-        ctx.rect(px, 12, pw, 24);
+        ctx.rect(px, py, pw, ph);
       }
       ctx.fill();
       ctx.stroke();
 
       ctx.fillStyle = '#ffffff';
       ctx.textAlign = 'center';
-      ctx.fillText(text, w / 2, 28);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, w / 2, py + ph / 2);
+      ctx.textBaseline = 'alphabetic';
     }
 
     // Sleek Audio Spectrum Visualizer at Bottom Edge of Video
@@ -365,17 +433,18 @@ class FluteVideoRecorder {
       try {
         this.audio.analyser.getByteFrequencyData(this.spectrumData);
         const barCount = 32;
-        const totalW = Math.min(260, w * 0.4);
+        const totalW = Math.min(Math.round(280 * scale), w * 0.45);
         const startX = (w - totalW) / 2;
-        const barW = (totalW / barCount) - 1.5;
-        const maxH = 22;
-        const bottomY = h - 12;
+        const barGap = Math.max(1.5, Math.round(2 * scale));
+        const barW = (totalW / barCount) - barGap;
+        const maxH = Math.round(26 * scale);
+        const bottomY = h - Math.round(14 * scale);
 
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.75)';
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.8)';
         for (let i = 0; i < barCount; i++) {
           const val = this.spectrumData[i] / 255;
-          const barH = Math.max(2, val * maxH);
-          ctx.fillRect(startX + i * (barW + 1.5), bottomY - barH, barW, barH);
+          const barH = Math.max(Math.round(2 * scale), val * maxH);
+          ctx.fillRect(startX + i * (barW + barGap), bottomY - barH, barW, barH);
         }
       } catch (e) {}
     }

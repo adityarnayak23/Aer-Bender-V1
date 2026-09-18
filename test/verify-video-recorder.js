@@ -112,7 +112,10 @@ global.MediaStream = MockMediaStream;
 class MockMediaRecorder {
   constructor(stream, options = {}) {
     this.stream = stream;
+    this.options = options;
     this.mimeType = options.mimeType || 'video/webm;codecs=vp9,opus';
+    this.videoBitsPerSecond = options.videoBitsPerSecond;
+    this.audioBitsPerSecond = options.audioBitsPerSecond;
     this.state = 'inactive';
     this.ondataavailable = null;
     this.onstop = null;
@@ -174,7 +177,7 @@ Object.defineProperty(global.navigator, 'mediaDevices', {
 });
 
 // Load FluteVideoRecorder
-const repoDir = '/Users/adityanayak/.gemini/antigravity/scratch/air-flute';
+const repoDir = path.resolve(__dirname, '..');
 const recorderCode = fs.readFileSync(path.join(repoDir, 'src/flute-video-recorder.js'), 'utf8');
 eval(recorderCode);
 
@@ -214,8 +217,8 @@ assert(bestMime.length > 0, 'Best MIME type should be resolved');
 assert(bestMime.includes('video/'), 'MIME type should be a video format');
 console.log(`✅ PASS: Best MIME type detected: "${bestMime}"`);
 
-// --- Test 3: Camera Viewport Recording & Continuous Animation Loop ---
-console.log('\n--- 3. Testing Camera Viewport Recording & Compositing Loop ---');
+// --- Test 3: Camera Viewport Recording, 4K Resolution & 40 Mbps Bitrate ---
+console.log('\n--- 3. Testing Camera Viewport Recording & 4K UHD Compositing ---');
 let stateChanges = [];
 recorder.onStateChange = (state) => stateChanges.push(state);
 
@@ -224,6 +227,16 @@ recorder.onStateChange = (state) => stateChanges.push(state);
   assert.strictEqual(started, true, 'start("camera") should succeed');
   assert.strictEqual(recorder.isRecording, true, 'recorder.isRecording should be true');
   assert.strictEqual(recorder.mode, 'camera', 'Recorder mode should be camera');
+
+  // Verify 4K Ultra-HD dimensions on composite canvas
+  assert.strictEqual(recorder.compCanvas.width, 3840, 'Composite canvas width must be 3840 (4K UHD)');
+  assert.strictEqual(recorder.compCanvas.height, 2160, 'Composite canvas height must be 2160 (4K UHD)');
+  console.log(`✅ PASS: Canvas resolution locked to 4K Ultra-HD (${recorder.compCanvas.width}x${recorder.compCanvas.height})`);
+
+  // Verify 40 Mbps studio bitrate and 320 kbps studio audio
+  assert.strictEqual(recorder.mediaRecorder.videoBitsPerSecond, 40000000, 'Video bitrate must be 40 Mbps for 4K studio quality');
+  assert.strictEqual(recorder.mediaRecorder.audioBitsPerSecond, 320000, 'Audio bitrate must be 320 kbps for master studio audio');
+  console.log('✅ PASS: MediaRecorder bitrate set to 40 Mbps video + 320 kbps audio');
 
   // Verify compositing loop is ALIVE and running
   assert(rafCallbacks.length > 0, 'Compositing loop should have scheduled requestAnimationFrame');
@@ -256,8 +269,14 @@ recorder.onStateChange = (state) => stateChanges.push(state);
   assert(stoppedState.blobSize > 0, 'Recorded blob size should be > 0 bytes');
   console.log(`✅ PASS: Performance video stopped and saved cleanly (${stoppedState.blobSize} bytes, ext: .${stoppedState.ext})`);
 
-  // --- Test 5: Screen Recording Mode ---
+  // --- Test 5: Screen Recording Mode (4K 60fps) ---
   console.log('\n--- 5. Testing Pure Hardware Screen Recording Mode ---');
+  let requestedDisplayConstraints = null;
+  global.navigator.mediaDevices.getDisplayMedia = async (constraints) => {
+    requestedDisplayConstraints = constraints;
+    return new MockMediaStream([screenTrack]);
+  };
+
   const screenRecorder = new FluteVideoRecorder({
     audioEngine: mockAudio
   });
@@ -266,6 +285,11 @@ recorder.onStateChange = (state) => stateChanges.push(state);
   assert.strictEqual(screenStarted, true, 'start("screen") should succeed');
   assert.strictEqual(screenRecorder.isRecording, true, 'isRecording should be true in screen mode');
   assert.strictEqual(screenRecorder.mode, 'screen', 'mode should be screen');
+
+  assert.strictEqual(requestedDisplayConstraints.video.width.ideal, 3840, 'Screen capture should request ideal width 3840');
+  assert.strictEqual(requestedDisplayConstraints.video.height.ideal, 2160, 'Screen capture should request ideal height 2160');
+  assert.strictEqual(requestedDisplayConstraints.video.frameRate.ideal, 60, 'Screen capture should request ideal frameRate 60');
+  console.log('✅ PASS: Screen recording configured for 4K UHD (3840x2160) @ 60 FPS');
 
   const screenTracks = screenRecorder.mediaRecorder.stream.getTracks();
   assert(screenTracks.some(t => t.kind === 'video'), 'Screen stream should have video track');

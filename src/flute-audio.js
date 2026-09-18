@@ -183,6 +183,7 @@ class FluteAudioEngine {
 
   playSwara(swaraObj, transitionMeta = null, prevFreq = null, prevSwaraObj = null) {
     this.resume();
+    const previousSwara = prevSwaraObj || this.currentSwaraObj;
     this.currentSwaraObj = swaraObj;
 
     const family = (swaraObj.family || swaraObj.id || 'sa').toLowerCase();
@@ -196,6 +197,15 @@ class FluteAudioEngine {
       effectiveOctaveShift,
       this.isOverblown
     );
+
+    // Detect Ga <-> Ma transition (User requirement: "remove ma ga, ga ma move gamakas - rest all remain")
+    const fromFamily = (
+      (transitionMeta && transitionMeta.fromSwaraId) ? transitionMeta.fromSwaraId :
+      (previousSwara ? (previousSwara.family || previousSwara.id) : '')
+    ).toLowerCase();
+    const toFamily = family;
+    const isGaMaTransition = (fromFamily.startsWith('ga') && toFamily.startsWith('ma')) ||
+                             (fromFamily.startsWith('ma') && toFamily.startsWith('ga'));
 
     // Base sample family ratios from Aditya's original Shankarabharanam flute recordings:
     // Sa=1.0, Ri=R2 (9/8), Ga=G3 (5/4), Ma=M1 (4/3), Pa=3/2, Dha=D2 (5/3), Ni=N3 (15/8)
@@ -228,21 +238,21 @@ class FluteAudioEngine {
     }
 
     if (this.isElectricMode) {
-      this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, prevSwaraObj || this.currentSwaraObj, swaraObj);
+      this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, previousSwara, swaraObj, isGaMaTransition);
     } else if (this.samplesLoaded && this.sampleBuffers[sampleId]) {
-      this.playAcousticSample(sampleId, freq, swaraDetuneCents);
+      this.playAcousticSample(sampleId, freq, swaraDetuneCents, isGaMaTransition);
     } else {
       // Instant physical modeling fallback
       if (!this.isPlaying || !this.activeVoice) {
         this.startVoice(freq);
       } else {
-        this.updatePitch(freq);
+        this.updatePitch(freq, isGaMaTransition);
       }
     }
     this.currentFreq = freq;
   }
 
-  playAcousticSample(sampleId, targetFreq, swaraDetuneCents = 0) {
+  playAcousticSample(sampleId, targetFreq, swaraDetuneCents = 0, isGaMaTransition = false) {
     const now = this.ctx.currentTime;
     const item = this.manifest[sampleId];
     const buffer = this.sampleBuffers[sampleId];
@@ -332,8 +342,8 @@ class FluteAudioEngine {
 
     source.start(now);
 
-    // Fade out previous voices cleanly: 16ms in Carnatic mode so rapid ornament notes (e.g. Ni in Sa-Ni-Sa) stop promptly
-    this.fadePreviousVoice(this.isJazzMode ? 0.080 : 0.016);
+    // Fade out previous voices cleanly: 8ms on Ga-Ma to eliminate pitch drag, 16ms in Carnatic mode for other notes
+    this.fadePreviousVoice(isGaMaTransition ? 0.008 : (this.isJazzMode ? 0.080 : 0.016));
 
     this.activeSampleVoice = {
       source,
@@ -349,17 +359,34 @@ class FluteAudioEngine {
   // -------------------------------------------------------------------------
   // ⚡ ELECTRIC FLUTE AUDIO SYNTHESIZER ENGINE (EWI / Synth Lead Fusion)
   // -------------------------------------------------------------------------
-  playElectricFlute(sampleId, targetFreq, swaraDetuneCents = 0, transitionMeta = null, prevFreq = null, prevSwaraObj = null, swaraObj = null) {
+  playElectricFlute(sampleId, targetFreq, swaraDetuneCents = 0, transitionMeta = null, prevFreq = null, prevSwaraObj = null, swaraObj = null, isGaMaTransition = false) {
     const now = this.ctx.currentTime;
     const fromFreq = prevFreq || this.currentFreq;
     const fromSwara = prevSwaraObj || this.currentSwaraObj;
-    const isLegato = Boolean(
+    const isLegato = !isGaMaTransition && Boolean(
       (transitionMeta && transitionMeta.isLegato) ||
       (this.isPlaying && fromSwara && fromFreq && targetFreq && Math.abs(fromFreq - targetFreq) > 3)
     );
 
     // If currently playing the electric voice and pitch is identical, skip
     if (this.isPlaying && this.activeElectricVoice && Math.abs(this.activeElectricVoice.targetFreq - targetFreq) < 1) {
+      return;
+    }
+
+    // Ga <-> Ma transition: zero glide/gamaka (instant crisp pitch snap)
+    if (this.isPlaying && this.activeElectricVoice && isGaMaTransition) {
+      this.activeElectricVoice.oscillators.forEach(osc => {
+        const mult = osc._freqMultiplier || 1.0;
+        osc.frequency.cancelScheduledValues(now);
+        osc.frequency.setValueAtTime(Math.max(20, targetFreq * mult), now);
+      });
+      const baseCutoff = Math.min(8800, Math.max(1600, targetFreq * 4.2));
+      this.activeElectricVoice.filter.frequency.setValueAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now);
+      if (this.activeElectricVoice.boreBreathFilter) {
+        this.activeElectricVoice.boreBreathFilter.frequency.setValueAtTime(targetFreq, now);
+      }
+      this.activeElectricVoice.targetFreq = targetFreq;
+      this.currentFreq = targetFreq;
       return;
     }
 
@@ -795,9 +822,9 @@ class FluteAudioEngine {
   }
 
   // Smooth pitch update during note transitions
-  updatePitch(targetFreq) {
+  updatePitch(targetFreq, isGaMaTransition = false) {
     const now = this.ctx.currentTime;
-    if (this.activeSampleVoice && this.isPlaying) {
+    if (this.activeSampleVoice && this.activeSampleVoice.source) {
       const nativeRoot = 276.36;
       const currentRoot = (window.SwarasData && window.SwarasData.KATTAI_ROOTS[this.kattai]) 
         ? window.SwarasData.KATTAI_ROOTS[this.kattai].freq 
@@ -813,10 +840,16 @@ class FluteAudioEngine {
     }
 
     if (this.activeVoice && this.isPlaying) {
-      const glideTime = this.isJazzMode ? 0.12 : 0.06;
-      this.activeVoice.primaryOsc.frequency.setTargetAtTime(targetFreq, now, glideTime);
-      this.activeVoice.bodyOsc.frequency.setTargetAtTime(targetFreq, now, glideTime);
-      this.activeVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, glideTime);
+      if (isGaMaTransition) {
+        this.activeVoice.primaryOsc.frequency.setValueAtTime(targetFreq, now);
+        this.activeVoice.bodyOsc.frequency.setValueAtTime(targetFreq, now);
+        this.activeVoice.boreBreathFilter.frequency.setValueAtTime(targetFreq, now);
+      } else {
+        const glideTime = this.isJazzMode ? 0.12 : 0.06;
+        this.activeVoice.primaryOsc.frequency.setTargetAtTime(targetFreq, now, glideTime);
+        this.activeVoice.bodyOsc.frequency.setTargetAtTime(targetFreq, now, glideTime);
+        this.activeVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, glideTime);
+      }
       this.activeVoice.baseFreq = targetFreq;
     }
   }

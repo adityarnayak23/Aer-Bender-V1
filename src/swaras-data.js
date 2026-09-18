@@ -458,18 +458,44 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
     }
   }
 
-  // 2. All-Closed is MA (Carnatic Venu rule: all closed is Ma)
+  // 2. All-Closed / 6-Closed / Classical Venu is MA
   const closedCount = fingerStates.filter(v => v === true || v === 'half').length;
-  if (closedCount === 7 || (fingerStates[0] && fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] && fingerStates[5])) {
+  const isMaFingering = (closedCount === 7) ||
+    (!fingerStates[0] && fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] && fingerStates[5]) ||
+    (fingerStates[0] && fingerStates[1] && fingerStates[2] && fingerStates[3] && fingerStates[4] && fingerStates[5]);
+  if (isMaFingering) {
     const maCandidate = candidates.find(s => s.family === 'ma') || SWARA_BY_ID['ma1'];
     if (maCandidate && candidates.includes(maCandidate)) {
       return { swara: maCandidate, exact: true, distance: 0 };
     }
   }
 
+  // -------------------------------------------------------------------------
+  // GA <-> MA TRANSITION DIRECT PROTECTION (ZERO INTERMEDIATE FLICKERS/GAMAKAS)
+  // -------------------------------------------------------------------------
+  const prevFamily = (previousSwaraId || '').toLowerCase();
+  const isFromGa = prevFamily === 'ga' || prevFamily.startsWith('ga');
+  const isFromMa = prevFamily === 'ma' || prevFamily.startsWith('ma');
+
+  // GA -> MA: Closing 5+ holes from Ga towards Ma resolves directly to Ma!
+  if (isFromGa && closedCount >= 5) {
+    const maCandidate = candidates.find(s => s.family === 'ma') || SWARA_BY_ID['ma1'];
+    if (maCandidate && candidates.includes(maCandidate)) {
+      return { swara: maCandidate, exact: true, distance: 0 };
+    }
+  }
+
+  // MA -> GA: Opening holes from Ma towards Ga (closedCount <= 2 with open upper holes) resolves directly to Ga!
+  if (isFromMa && closedCount <= 2 && (!fingerStates[0] || !fingerStates[1])) {
+    const gaCandidate = candidates.find(s => s.family === 'ga') || SWARA_BY_ID['ga3'];
+    if (gaCandidate && candidates.includes(gaCandidate)) {
+      return { swara: gaCandidate, exact: true, distance: 0 };
+    }
+  }
+
   // 3. Authentic Standing Wave Rules for Open Holes:
-  // "when finger is not curled - or is open, then there is no role for that in the note playing - so remove any noise if it is coming from there"
-  // - First hole (L1) open => Ga (all open)
+  // In physical woodwind acoustic physics, the fundamental note is governed by the FIRST open hole:
+  // - First hole (L1) open => Ga (all open; Rule 2 already caught Ma)
   if (!fingerStates[0]) {
     const gaCandidate = candidates.find(s => s.family === 'ga') || SWARA_BY_ID['ga3'];
     if (gaCandidate && candidates.includes(gaCandidate)) {
@@ -477,7 +503,7 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
     }
   }
 
-  // - L1 closed, L2 open => Ri
+  // - L1 closed, L2 open => Ri (air column vents at Hole 1)
   if (fingerStates[0] && !fingerStates[1]) {
     const riCandidate = candidates.find(s => s.family === 'ri') || SWARA_BY_ID['ri2'];
     if (riCandidate && candidates.includes(riCandidate)) {
@@ -485,7 +511,7 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
     }
   }
 
-  // - L1 & L2 closed, L3 open => Sa
+  // - L1 & L2 closed, L3 open => Sa (air column vents at Hole 2)
   if (fingerStates[0] && fingerStates[1] && !fingerStates[2]) {
     const saCandidate = candidates.find(s => s.id === 'sa') || SWARA_BY_ID['sa'];
     if (saCandidate && candidates.includes(saCandidate)) {
@@ -495,7 +521,6 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
 
   // - Left hand all closed: sound radiates from right hand
   if (Boolean(fingerStates[0]) && Boolean(fingerStates[1]) && Boolean(fingerStates[2])) {
-    const wasNi = previousSwaraId && (previousSwaraId === 'ni' || previousSwaraId.startsWith('ni'));
     const r1Closed = Boolean(fingerStates[3]);
     if (!r1Closed) {
       const niCandidate = candidates.find(s => s.family === 'ni') || SWARA_BY_ID['ni3'];
@@ -529,7 +554,7 @@ function matchSwara(fingerStates, previousSwaraId = null, allowedSwaraIds = null
 
     // Hysteresis preference for previous note to prevent flutter
     if (previousSwaraId && (sw.id === previousSwaraId || sw.family === previousSwaraId)) {
-      d -= 0.25;
+      d -= 0.60;
     }
 
     if (d < minDiff) {
