@@ -3982,6 +3982,77 @@ body {
   box-shadow: 0 8px 24px rgba(225, 48, 108, 0.45);
 }
 
+/* Visitor & Unique Counter at Bottom-Right of Get in Touch Modal */
+.creator-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.creator-visitor-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 999px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 9.5px;
+  color: #64748b;
+  letter-spacing: 0.2px;
+  user-select: none;
+  transition: opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.creator-visitor-counter:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.creator-visitor-counter .counter-pulse-dot {
+  width: 4.5px;
+  height: 4.5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.7);
+  animation: counterPulseDot 2.2s infinite ease-in-out;
+}
+
+@keyframes counterPulseDot {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+.creator-visitor-counter .counter-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.5px;
+}
+
+.creator-visitor-counter .counter-label {
+  color: #64748b;
+  font-size: 8.5px;
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 0.4px;
+}
+
+.creator-visitor-counter .counter-val {
+  color: #cbd5e1;
+  font-weight: 700;
+  font-size: 9.5px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+}
+
+.creator-visitor-counter .counter-sep {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 9px;
+  margin: 0 1px;
+}
+
 /* ============================================================== */
 /* MOBILE & MOBILE DESKTOP RESPONSIVENESS                         */
 /* ============================================================== */

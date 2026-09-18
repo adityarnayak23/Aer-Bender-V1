@@ -1616,6 +1616,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function openCreatorModal() {
     if (creatorModal) {
       creatorModal.classList.remove("hidden");
+      if (window.visitorAnalytics && typeof window.visitorAnalytics.refresh === "function") {
+        window.visitorAnalytics.refresh();
+      }
     }
   }
 
@@ -1635,6 +1638,17 @@ document.addEventListener('DOMContentLoaded', () => {
     creatorModal.addEventListener("click", (e) => {
       if (e.target === creatorModal) closeCreatorModal();
     });
+  }
+
+  // Initialize Live Visitor & Unique Visitor Analytics
+  try {
+    if (typeof window !== "undefined" && window.VisitorAnalytics) {
+      const analytics = new window.VisitorAnalytics();
+      analytics.init();
+      window.visitorAnalytics = analytics;
+    }
+  } catch (err) {
+    console.warn("VisitorAnalytics init note:", err);
   }
 
   // Initialize first note visual state
