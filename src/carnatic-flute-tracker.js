@@ -862,9 +862,9 @@ class CarnaticFluteTracker {
             .finally(() => { this.isProcessingFrame = false; });
         }
 
-        // Interleave FaceMesh every 4th frame (~15 FPS) via isolated worker iframe or direct detector
-        // FaceMesh is only used for slow head tilt octave tracking; interleaving at ~15 FPS preserves 100% GPU for hands
-        if (this.frameCount % 4 === 0 && !this.isProcessingFace) {
+        // 0-LAG REAL-TIME TRACKING: Dispatch FaceMesh as soon as previous frame finishes
+        // Eliminates artificial 4-frame latency (~66ms delay) for instantaneous eyeball reaction
+        if (!this.isProcessingFace) {
           if (this.faceIframe && this.faceIframe.contentWindow && typeof createImageBitmap === 'function') {
             this.isProcessingFace = true;
             createImageBitmap(this.videoElement).then(bitmap => {
@@ -2939,28 +2939,29 @@ class CarnaticFluteTracker {
   // Features 60 FPS temporal smoothing, natural blink attenuation, and breath pulse
   // ==============================================================
   // ==============================================================
-  // 👁️ CYBER-SPIRITUAL EYEBALL OCTAVE GLOW ENGINE (SOFT & TRANSLUCENT)
+  // 👁️ ZERO-LAG CYBER-SPIRITUAL EYEBALL OCTAVE LINE ENGINE (SOFT LINE, NOT FULLY COLOR)
   // Real-time iris & eyelid tracking from MediaPipe FaceMesh
+  // - 0-Lag Ultra-Quick Tracking: Instantaneous motion snap (alpha 1.0 on movement)
+  // - Soft Glowing Line: Elegant, ethereal limbal ring line (no filled color wash!)
+  //   Leaves the interior pupil & iris 100% natural, untouched, and uncolored
   // - Clipped strictly to real eyelid opening path (ZERO bleed onto eyelids or skin)
-  // - Soft, translucent natural tint allowing user's real pupil & iris texture to show through
-  // - Subtly radiates in octave resonance:
-  //     Mandra (-1): Deep Velvet Amethyst / Indigo wash
-  //     Madhya (0):  Ethereal Ocean Cyan / Jade Air wash
-  //     Tara (+1):   Warm Sunset Honey Coral wash
-  // - Features 60 FPS temporal smoothing, blink attenuation, and breath pulse
+  // - Radiates in octave resonance:
+  //     Mandra (-1): Royal Velvet Indigo soft line
+  //     Madhya (0):  Celestial Ocean Cyan soft line
+  //     Tara (+1):   Warm Sunset Honey Coral soft line
   // ==============================================================
   renderEyeballOctaveGlow(ctx, width, height, scale, toScreen, now) {
     if (!this.lastFaceLandmarks || this.lastFaceLandmarks.length < 153) {
       if (this.eyeGlowOpacity > 0) {
-        this.eyeGlowOpacity = Math.max(0, this.eyeGlowOpacity - 0.08);
+        this.eyeGlowOpacity = Math.max(0, this.eyeGlowOpacity - 0.15);
       }
       if (this.eyeGlowOpacity <= 0) return;
     } else {
       if (this.faceMissFrames && this.faceMissFrames > 12) {
-        this.eyeGlowOpacity = Math.max(0, (this.eyeGlowOpacity || 0) - 0.08);
+        this.eyeGlowOpacity = Math.max(0, (this.eyeGlowOpacity || 0) - 0.15);
         if (this.eyeGlowOpacity <= 0) return;
       } else {
-        this.eyeGlowOpacity = Math.min(1.0, (this.eyeGlowOpacity || 0) + 0.12);
+        this.eyeGlowOpacity = Math.min(1.0, (this.eyeGlowOpacity || 0) + 0.40);
       }
     }
 
@@ -3019,76 +3020,75 @@ class CarnaticFluteTracker {
       rRadius = Math.max(2.8 * scale, rSpan * 0.185);
     }
 
-    // 3. Silky 60fps Temporal Smoothing to eliminate landmark micro-jitter
+    // 3. ZERO-LAG ULTRA-QUICK ADAPTIVE TRACKING
+    // Snaps immediately (alpha = 1.0) on any movement (>1.2px) for zero lag,
+    // while stabilizing micro-jitter when holding gaze.
     if (!this.smoothedEyes) {
       this.smoothedEyes = {
         left: { x: lCenter.x, y: lCenter.y, r: lRadius, open: lOpen },
         right: { x: rCenter.x, y: rCenter.y, r: rRadius, open: rOpen }
       };
     } else {
-      const alpha = 0.52;
-      this.smoothedEyes.left.x += (lCenter.x - this.smoothedEyes.left.x) * alpha;
-      this.smoothedEyes.left.y += (lCenter.y - this.smoothedEyes.left.y) * alpha;
-      this.smoothedEyes.left.r += (lRadius - this.smoothedEyes.left.r) * alpha;
-      this.smoothedEyes.left.open += (lOpen - this.smoothedEyes.left.open) * 0.35;
+      const dLeft = Math.hypot(lCenter.x - this.smoothedEyes.left.x, lCenter.y - this.smoothedEyes.left.y);
+      const alphaL = dLeft > 1.2 ? 1.0 : 0.85; // 0-lag snap on motion
+      this.smoothedEyes.left.x += (lCenter.x - this.smoothedEyes.left.x) * alphaL;
+      this.smoothedEyes.left.y += (lCenter.y - this.smoothedEyes.left.y) * alphaL;
+      this.smoothedEyes.left.r += (lRadius - this.smoothedEyes.left.r) * 0.90;
+      this.smoothedEyes.left.open += (lOpen - this.smoothedEyes.left.open) * 0.85;
 
-      this.smoothedEyes.right.x += (rCenter.x - this.smoothedEyes.right.x) * alpha;
-      this.smoothedEyes.right.y += (rCenter.y - this.smoothedEyes.right.y) * alpha;
-      this.smoothedEyes.right.r += (rRadius - this.smoothedEyes.right.r) * alpha;
-      this.smoothedEyes.right.open += (rOpen - this.smoothedEyes.right.open) * 0.35;
+      const dRight = Math.hypot(rCenter.x - this.smoothedEyes.right.x, rCenter.y - this.smoothedEyes.right.y);
+      const alphaR = dRight > 1.2 ? 1.0 : 0.85; // 0-lag snap on motion
+      this.smoothedEyes.right.x += (rCenter.x - this.smoothedEyes.right.x) * alphaR;
+      this.smoothedEyes.right.y += (rCenter.y - this.smoothedEyes.right.y) * alphaR;
+      this.smoothedEyes.right.r += (rRadius - this.smoothedEyes.right.r) * 0.90;
+      this.smoothedEyes.right.open += (rOpen - this.smoothedEyes.right.open) * 0.85;
     }
 
-    // 4. Resolve Soft & Translucent Octave Palette
+    // 4. Resolve Soft Line Octave Palette (Linear & Radial Feathers)
     let octaveColors;
     if (this.currentOctave === 1) {
-      // Tara (+1): Warm Sunset Honey Coral
+      // Tara (+1): Warm Sunset Honey Coral Soft Line
       octaveColors = {
         name: 'Tara',
-        pupilWash: 'rgba(251, 146, 60, 0.05)',
-        irisGlow: 'rgba(251, 146, 60, 0.24)',
-        limbusRing: 'rgba(249, 115, 22, 0.32)',
-        limbusStroke: 'rgba(251, 146, 60, 0.22)',
-        scleraSoft: 'rgba(251, 146, 60, 0.08)',
-        glintColor: 'rgba(255, 237, 213, 0.35)'
+        lineHalo: 'rgba(251, 146, 60, 0.28)',
+        lineCore: 'rgba(251, 146, 60, 0.72)',
+        shadow: 'rgba(249, 115, 22, 0.60)',
+        glint: 'rgba(255, 237, 213, 0.45)'
       };
     } else if (this.currentOctave === -1) {
-      // Mandra (-1): Deep Velvet Indigo / Amethyst
+      // Mandra (-1): Deep Velvet Indigo Soft Line
       octaveColors = {
         name: 'Mandra',
-        pupilWash: 'rgba(129, 140, 248, 0.05)',
-        irisGlow: 'rgba(129, 140, 248, 0.24)',
-        limbusRing: 'rgba(99, 102, 241, 0.32)',
-        limbusStroke: 'rgba(129, 140, 248, 0.22)',
-        scleraSoft: 'rgba(129, 140, 248, 0.08)',
-        glintColor: 'rgba(238, 242, 255, 0.35)'
+        lineHalo: 'rgba(129, 140, 248, 0.28)',
+        lineCore: 'rgba(129, 140, 248, 0.72)',
+        shadow: 'rgba(99, 102, 241, 0.60)',
+        glint: 'rgba(238, 242, 255, 0.45)'
       };
     } else {
-      // Madhya (0): Celestial Ocean Cyan / Jade Air
+      // Madhya (0): Celestial Ocean Cyan Soft Line
       octaveColors = {
         name: 'Madhya',
-        pupilWash: 'rgba(0, 240, 255, 0.05)',
-        irisGlow: 'rgba(0, 240, 255, 0.22)',
-        limbusRing: 'rgba(16, 185, 129, 0.30)',
-        limbusStroke: 'rgba(0, 240, 255, 0.22)',
-        scleraSoft: 'rgba(0, 240, 255, 0.07)',
-        glintColor: 'rgba(224, 247, 255, 0.35)'
+        lineHalo: 'rgba(0, 240, 255, 0.28)',
+        lineCore: 'rgba(0, 240, 255, 0.72)',
+        shadow: 'rgba(0, 240, 255, 0.60)',
+        glint: 'rgba(224, 247, 255, 0.45)'
       };
     }
 
     const breathEnergy = (typeof this.breathPressure === 'number') ? this.breathPressure : 0.5;
-    const breathPulse = Math.sin(now * 0.004) * 0.08 + breathEnergy * 0.10; // Settled, gentle breath expansion
+    const breathPulse = Math.sin(now * 0.004) * 0.04 + breathEnergy * 0.05; // Settled, delicate breath pulse
     const globalAlpha = this.eyeGlowOpacity;
 
     const drawEye = (eye, contourIndices) => {
       if (eye.open < 0.10) return; // Eye closed / blinking
-      const r = eye.r * (1.0 + breathPulse * 0.08);
+      const r = eye.r * (1.0 + breathPulse * 0.04);
       if (r <= 0) return;
 
       ctx.save();
       ctx.globalAlpha = globalAlpha * Math.min(1.0, eye.open * 1.4);
 
       // 1. CLIP TO REAL EYELID CONTOUR PATH:
-      // Glow strictly conforms to visible eyeball surface — NEVER bleeds onto eyelids or skin!
+      // Soft line strictly conforms to visible eyeball surface — NEVER bleeds onto eyelids or skin!
       ctx.beginPath();
       for (let i = 0; i < contourIndices.length; i++) {
         const lm = landmarks[contourIndices[i]];
@@ -3100,43 +3100,33 @@ class CarnaticFluteTracker {
       ctx.closePath();
       ctx.clip();
 
-      // 2. Soft Sclera Ambient Diffusion (Very subtle inner luminescence inside eye aperture)
-      const scleraGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.5, eye.x, eye.y, r * 2.4);
-      scleraGrad.addColorStop(0.0, octaveColors.scleraSoft);
-      scleraGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = scleraGrad;
+      // 2. SOFT GLOWING LINE RING (Feathered annular band along iris edge — NOT fully color inside!)
+      // Interior iris and pupil remain 100% natural, untouched, and uncolored
+      const rInner = Math.max(1, r * 0.88);
+      const rOuter = r * 1.12;
+      const lineRingGrad = ctx.createRadialGradient(eye.x, eye.y, rInner, eye.x, eye.y, rOuter);
+      lineRingGrad.addColorStop(0.0, 'rgba(0, 0, 0, 0)');
+      lineRingGrad.addColorStop(0.35, octaveColors.lineHalo);
+      lineRingGrad.addColorStop(0.50, octaveColors.lineCore);
+      lineRingGrad.addColorStop(0.65, octaveColors.lineHalo);
+      lineRingGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
+
+      // Draw the feathered soft ring band (donut cutout: inside stays clean)
+      ctx.fillStyle = lineRingGrad;
       ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 2.4, 0, 2 * Math.PI);
+      ctx.arc(eye.x, eye.y, rOuter, 0, 2 * Math.PI, false);
+      ctx.arc(eye.x, eye.y, rInner, 0, 2 * Math.PI, true);
+      ctx.closePath();
       ctx.fill();
 
-      // 3. Translucent Iris Tone Wash (Soft, settle, letting natural pupil & eye texture show through)
-      const irisGrad = ctx.createRadialGradient(eye.x, eye.y, r * 0.25, eye.x, eye.y, r * 1.05);
-      irisGrad.addColorStop(0.0, octaveColors.pupilWash);
-      irisGrad.addColorStop(0.55, octaveColors.irisGlow);
-      irisGrad.addColorStop(0.92, octaveColors.limbusRing);
-      irisGrad.addColorStop(1.0, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = irisGrad;
+      // 3. DELICATE CORE SOFT LINE STROKE (Clean, crisp-soft limbal contour)
       ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 1.05, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // 4. Soft Limbal Ring (Subtle outer boundary of the iris)
-      ctx.beginPath();
-      ctx.arc(eye.x, eye.y, r * 0.98, 0, 2 * Math.PI);
-      ctx.strokeStyle = octaveColors.limbusStroke;
-      ctx.lineWidth = Math.max(0.7 * scale, r * 0.10);
+      ctx.arc(eye.x, eye.y, r, 0, 2 * Math.PI);
+      ctx.strokeStyle = octaveColors.lineCore;
+      ctx.lineWidth = Math.max(0.85 * scale, r * 0.08);
+      ctx.shadowColor = octaveColors.shadow;
+      ctx.shadowBlur = 4 * scale;
       ctx.stroke();
-
-      // 5. Delicate Corneal Glint (Natural moist light catch)
-      const glintX = eye.x - r * 0.24;
-      const glintY = eye.y - r * 0.24;
-      const glintGrad = ctx.createRadialGradient(glintX, glintY, 0, glintX, glintY, r * 0.40);
-      glintGrad.addColorStop(0.0, octaveColors.glintColor);
-      glintGrad.addColorStop(1.0, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = glintGrad;
-      ctx.beginPath();
-      ctx.arc(glintX, glintY, r * 0.40, 0, 2 * Math.PI);
-      ctx.fill();
 
       ctx.restore();
     };
