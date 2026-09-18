@@ -19,7 +19,7 @@ const indexHtml = fs.readFileSync(path.join(baseDir, 'index.html'), 'utf8');
 assert(indexHtml.includes('id="creatorVisitorCounter"'), 'creatorVisitorCounter container must exist in index.html');
 assert(indexHtml.includes('id="totalVisitsCount"'), 'totalVisitsCount element must exist in index.html');
 assert(indexHtml.includes('id="uniqueVisitsCount"'), 'uniqueVisitsCount element must exist in index.html');
-assert(indexHtml.includes('class="creator-modal-footer"'), 'creator-modal-footer must exist in index.html');
+assert(indexHtml.includes('app-discreet-counter') || indexHtml.includes('creator-visitor-counter'), 'Discreet counter class must be present in index.html');
 assert(indexHtml.includes('<script src="src/visitor-analytics.js"></script>'), 'visitor-analytics.js script must be linked in index.html');
 
 console.log('✅ PASS: HTML elements and script tag verified in index.html');
@@ -28,13 +28,12 @@ console.log('✅ PASS: HTML elements and script tag verified in index.html');
 console.log('\n--- 2. Testing CSS Styling in style.css ---');
 const styleCss = fs.readFileSync(path.join(baseDir, 'style.css'), 'utf8');
 
-assert(styleCss.includes('.creator-modal-footer {'), 'creator-modal-footer class must be defined in style.css');
-assert(styleCss.includes('justify-content: flex-end;'), 'creator-modal-footer must align content to bottom right');
-assert(styleCss.includes('.creator-visitor-counter {'), 'creator-visitor-counter class must be defined in style.css');
-assert(styleCss.includes('.counter-pulse-dot {'), 'counter-pulse-dot class must be defined in style.css');
-assert(styleCss.includes('@keyframes counterPulseDot'), 'counterPulseDot keyframe animation must exist in style.css');
+assert(styleCss.includes('.app-discreet-counter') || styleCss.includes('.creator-visitor-counter'), 'Discreet counter class must be defined in style.css');
+assert(styleCss.includes('position: fixed;'), 'Counter must be fixed-position at bottom-right of page');
+assert(styleCss.includes('bottom: 6px;'), 'Counter must be anchored at bottom of page');
+assert(styleCss.includes('right: 12px;'), 'Counter must be anchored at right of page');
 
-console.log('✅ PASS: Bottom-right alignment, subtle styling, and pulse animation confirmed in style.css');
+console.log('✅ PASS: Fixed bottom-right positioning and discreet styling confirmed in style.css');
 
 // 3. Verify app.js integration
 console.log('\n--- 3. Testing app.js Integration ---');
