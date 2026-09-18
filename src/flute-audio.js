@@ -301,35 +301,23 @@ class FluteAudioEngine {
     const isMandraOctave = sampleId.startsWith('bass_') || this.octaveShift === -1 || targetFreq < 240;
     const voiceGain = this.ctx.createGain();
     voiceGain.gain.setValueAtTime(0.0001, now);
-    // Boosted acoustic output across all 3 octaves: Mandra lower octave (1.15), Madhya mid octave (1.05), Tara higher octave (0.95)
-    const targetGain = (isTaraOctave ? 0.95 : (isMandraOctave ? 1.15 : 1.05)) * this.breathPressure;
+    // Smooth acoustic balance: Scale Tara higher octave (0.54), Madhya (0.65), Mandra lower octave (0.85) for good physical weight
+    const targetGain = (isTaraOctave ? 0.54 : (isMandraOctave ? 0.85 : 0.65)) * this.breathPressure;
     // Crisp 8ms attack in Carnatic classical mode (55ms warm attack in Jazz Mode)
     const attackTime = this.isJazzMode ? 0.055 : 0.008;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
-    // Warm body shaping, Massive Bass Weight, and Tamed Highs across all octaves
-    const bodyBassFilter = this.ctx.createBiquadFilter();
-    bodyBassFilter.type = 'lowshelf';
+    // Warm body shaping & Mandra Bass Weight (+8.5dB low shelf in lower octave)
     if (isMandraOctave) {
-      bodyBassFilter.frequency.setValueAtTime(240, now);
-      bodyBassFilter.gain.setValueAtTime(10.5, now);
-    } else if (isTaraOctave) {
-      bodyBassFilter.frequency.setValueAtTime(340, now);
-      bodyBassFilter.gain.setValueAtTime(8.0, now); // Warm foundational bass for high notes
+      const mandraBassFilter = this.ctx.createBiquadFilter();
+      mandraBassFilter.type = 'lowshelf';
+      mandraBassFilter.frequency.setValueAtTime(240, now);
+      mandraBassFilter.gain.setValueAtTime(8.5, now);
+      source.connect(mandraBassFilter);
+      mandraBassFilter.connect(voiceGain);
     } else {
-      bodyBassFilter.frequency.setValueAtTime(280, now);
-      bodyBassFilter.gain.setValueAtTime(9.2, now); // Rich woody bass weight for mid notes
+      source.connect(voiceGain);
     }
-
-    // High Cut: Tames harsh treble glare, sibilance, and room reflection highs
-    const highCutFilter = this.ctx.createBiquadFilter();
-    highCutFilter.type = 'highshelf';
-    highCutFilter.frequency.setValueAtTime(3400, now);
-    highCutFilter.gain.setValueAtTime(-6.0, now);
-
-    source.connect(bodyBassFilter);
-    bodyBassFilter.connect(highCutFilter);
-    highCutFilter.connect(voiceGain);
     voiceGain.connect(this.dryGain);
 
     // Tara higher octave gets spacious concert hall bloom (warm Sabha acoustics)
@@ -385,40 +373,16 @@ class FluteAudioEngine {
         osc.frequency.setValueAtTime(osc.frequency.value, now);
         osc.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq * mult), now + glideTime);
       });
-      const baseCutoff = Math.min(3600, Math.max(1000, targetFreq * 2.2));
-      this.activeElectricVoice.filter.frequency.setTargetAtTime(baseCutoff * (0.65 + 0.45 * this.breathPressure), now, 0.015);
-      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || targetFreq > 600);
+      const baseCutoff = Math.min(8800, Math.max(1600, targetFreq * 4.2));
+      this.activeElectricVoice.filter.frequency.setTargetAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now, 0.015);
       if (this.activeElectricVoice.bassEQ) {
-        const targetBassGain = isLowerOctave ? 11.5 : (isTaraOctave ? 9.0 : 10.2);
-        const targetBassFreq = isLowerOctave ? 220 : (isTaraOctave ? 360 : 300);
-        this.activeElectricVoice.bassEQ.frequency.setTargetAtTime(targetBassFreq, now, 0.015);
-        this.activeElectricVoice.bassEQ.gain.setTargetAtTime(targetBassGain, now, 0.015);
-      }
-      if (this.activeElectricVoice.bodyWeightEQ) {
-        const bodyFreq = isLowerOctave ? 280 : (isTaraOctave ? 440 : 340);
-        this.activeElectricVoice.bodyWeightEQ.frequency.setTargetAtTime(bodyFreq, now, 0.015);
-        this.activeElectricVoice.bodyWeightEQ.gain.setTargetAtTime(isLowerOctave ? 5.0 : 6.8, now, 0.015);
+        this.activeElectricVoice.bassEQ.gain.setTargetAtTime(isLowerOctave ? 9.0 : 1.5, now, 0.015);
       }
       if (this.activeElectricVoice.oscMixGainSub) {
-        const targetSubGain = isLowerOctave ? 0.82 : (isTaraOctave ? 0.58 : 0.66);
-        this.activeElectricVoice.oscMixGainSub.gain.setTargetAtTime(targetSubGain, now, 0.015);
+        this.activeElectricVoice.oscMixGainSub.gain.setTargetAtTime(isLowerOctave ? 0.72 : 0.22, now, 0.015);
       }
       if (this.activeElectricVoice.boreBreathFilter) {
         this.activeElectricVoice.boreBreathFilter.frequency.setTargetAtTime(targetFreq, now, 0.015);
-      }
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.source) {
-        const nativeRoot = 276.36;
-        const currentRoot = (window.SwarasData && window.SwarasData.KATTAI_ROOTS[this.kattai]) 
-          ? window.SwarasData.KATTAI_ROOTS[this.kattai].freq 
-          : 276.36;
-        let layerRate = currentRoot / nativeRoot;
-        if ((this.octaveShift === 1 || this.isOverblown) && !sampleId.endsWith('_high')) {
-          layerRate *= 2.0;
-        } else if (this.octaveShift === -1 && !sampleId.startsWith('bass_')) {
-          layerRate *= 0.5;
-        }
-        this.activeElectricVoice.acousticLayer.source.playbackRate.setTargetAtTime(layerRate, now, 0.035);
-        this.activeElectricVoice.acousticLayer.source.detune.setTargetAtTime(this.gamakaCents + swaraDetuneCents, now, 0.035);
       }
       this.activeElectricVoice.targetFreq = targetFreq;
       this.currentFreq = targetFreq;
@@ -429,8 +393,7 @@ class FluteAudioEngine {
     this.fadePreviousVoice(isLegato ? 0.032 : 0.012);
     this.startElectricVoice(targetFreq, isLegato, fromFreq, swaraObj);
 
-    // 🪈 30% Continuous Earthy Indian Bamboo Flute Acoustic Layer
-    // Continuous blend of Aditya's authentic recorded C# bamboo flute master samples (30% gain)
+    // Layer organic acoustic sample chiff attack if sample is available
     if (this.samplesLoaded && this.sampleBuffers[sampleId] && this.manifest && this.manifest[sampleId]) {
       try {
         const item = this.manifest[sampleId];
@@ -446,54 +409,20 @@ class FluteAudioEngine {
           playbackRate *= 0.5;
         }
 
-        const acousticSource = this.ctx.createBufferSource();
-        acousticSource.buffer = buffer;
-        acousticSource.loop = true;
-        acousticSource.loopStart = item.loopStart || 0.22;
-        acousticSource.loopEnd = item.loopEnd || (buffer.duration - 0.08);
-        acousticSource.playbackRate.setValueAtTime(playbackRate, now);
-        acousticSource.detune.setValueAtTime(this.gamakaCents + swaraDetuneCents, now);
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+        source.loop = false;
+        source.playbackRate.setValueAtTime(playbackRate, now);
+        source.detune.setValueAtTime(this.gamakaCents + swaraDetuneCents, now);
 
-        // Warm earthy wood tone shaping filter (+4.5dB at 520Hz)
-        const acousticEarthFilter = this.ctx.createBiquadFilter();
-        acousticEarthFilter.type = 'peaking';
-        acousticEarthFilter.frequency.setValueAtTime(520, now);
-        acousticEarthFilter.Q.setValueAtTime(1.4, now);
-        acousticEarthFilter.gain.setValueAtTime(4.5, now);
+        const chiffGain = this.ctx.createGain();
+        chiffGain.gain.setValueAtTime(0.001, now);
+        chiffGain.gain.linearRampToValueAtTime(0.24 * this.breathPressure, now + 0.012);
+        chiffGain.gain.exponentialRampToValueAtTime(0.001, now + 0.095);
 
-        // High shelf cut to keep tone warm and velvety
-        const acousticHighCut = this.ctx.createBiquadFilter();
-        acousticHighCut.type = 'highshelf';
-        acousticHighCut.frequency.setValueAtTime(3400, now);
-        acousticHighCut.gain.setValueAtTime(-6.0, now);
-
-        // Exactly 30% Indian flute sound layer
-        const acousticLayerGain = this.ctx.createGain();
-        acousticLayerGain.gain.setValueAtTime(0.001, now);
-        acousticLayerGain.gain.linearRampToValueAtTime(0.30 * this.breathPressure, now + (isLegato ? 0.015 : 0.008));
-
-        acousticSource.connect(acousticEarthFilter);
-        acousticEarthFilter.connect(acousticHighCut);
-        acousticHighCut.connect(acousticLayerGain);
-        acousticLayerGain.connect(this.dryGain);
-
-        // Room reverb bloom for natural hall acoustic presence
-        const acousticReverbSend = this.ctx.createGain();
-        acousticReverbSend.gain.setValueAtTime(0.35, now);
-        acousticLayerGain.connect(acousticReverbSend);
-        acousticReverbSend.connect(this.reverbNode);
-
-        acousticSource.start(now);
-
-        if (this.activeElectricVoice) {
-          this.activeElectricVoice.acousticLayer = {
-            source: acousticSource,
-            gain: acousticLayerGain,
-            sampleId,
-            playbackRate,
-            swaraDetuneCents
-          };
-        }
+        source.connect(chiffGain);
+        chiffGain.connect(this.dryGain);
+        source.start(now);
       } catch (e) {}
     }
 
@@ -527,17 +456,14 @@ class FluteAudioEngine {
     oscSub._baseDetune = 0;
     oscSub._freqMultiplier = 0.5;
 
-    const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || targetFreq > 600);
-
     const oscMixGainSaw = this.ctx.createGain();
-    oscMixGainSaw.gain.setValueAtTime(isLowerOctave ? 0.55 : 0.40, now);
+    oscMixGainSaw.gain.setValueAtTime(isLowerOctave ? 0.58 : 0.50, now);
 
     const oscMixGainSquare = this.ctx.createGain();
-    oscMixGainSquare.gain.setValueAtTime(isLowerOctave ? 0.48 : 0.44, now);
+    oscMixGainSquare.gain.setValueAtTime(isLowerOctave ? 0.48 : 0.35, now);
 
     const oscMixGainSub = this.ctx.createGain();
-    // Sub-Harmonic Bass Weight: Heavy physical weight in Mandra (0.82), deep bass foundation in Madhya (0.66) and Tara (0.58)
-    oscMixGainSub.gain.setValueAtTime(isLowerOctave ? 0.82 : (isTaraOctave ? 0.58 : 0.66), now);
+    oscMixGainSub.gain.setValueAtTime(isLowerOctave ? 0.72 : 0.22, now);
 
     if (isLegato && fromFreq && Math.abs(fromFreq - targetFreq) > 3) {
       oscSaw.frequency.setValueAtTime(fromFreq, now);
@@ -566,12 +492,12 @@ class FluteAudioEngine {
     oscMixGainSquare.connect(oscSum);
     oscMixGainSub.connect(oscSum);
 
-    // 2. Warm Lowpass Filter (Ceiling capped at 3600Hz, gentle Q = 1.8 to eliminate harsh shrillness)
+    // 2. Resonant 24dB Lowpass Ladder Filter with Breath Envelope
     const filter = this.ctx.createBiquadFilter();
     filter.type = 'lowpass';
-    const baseCutoff = Math.min(3600, Math.max(1000, targetFreq * 2.2));
-    filter.frequency.setValueAtTime(baseCutoff * (0.65 + 0.45 * this.breathPressure), now);
-    filter.Q.setValueAtTime(1.8, now); // Smooth velvety resonant roll-off
+    const baseCutoff = Math.min(8800, Math.max(1600, targetFreq * 4.2));
+    filter.frequency.setValueAtTime(baseCutoff * (0.65 + 0.7 * this.breathPressure), now);
+    filter.Q.setValueAtTime(4.2, now); // Sweet resonant singing peak
 
     // 3. Tube Preamp Saturation Waveshaper
     if (!this.electricDistortionCurve) {
@@ -581,46 +507,21 @@ class FluteAudioEngine {
     waveShaper.curve = this.electricDistortionCurve;
     waveShaper.oversample = '2x';
 
-    // 3b. Mandra & Mid/High Bass Weight: Resonant Low-Shelf Boost (+10.2dB Mid, +9.0dB High)
+    // 3b. Mandra Bass Weight: Resonant Low-Shelf Boost (+9.0dB in lower octave)
     const bassEQ = this.ctx.createBiquadFilter();
     bassEQ.type = 'lowshelf';
-    if (isLowerOctave) {
-      bassEQ.frequency.setValueAtTime(220, now);
-      bassEQ.gain.setValueAtTime(11.5, now);
-    } else if (isTaraOctave) {
-      bassEQ.frequency.setValueAtTime(360, now);
-      bassEQ.gain.setValueAtTime(9.0, now); // Foundational bass warmth for high notes
-    } else {
-      bassEQ.frequency.setValueAtTime(300, now);
-      bassEQ.gain.setValueAtTime(10.2, now); // Enormous bass weight for mid notes
-    }
-
-    // 3c. Acoustic Flute Wood & Bore Body Weight: Peaking Warmth Filter (+6.8dB)
-    const bodyWeightEQ = this.ctx.createBiquadFilter();
-    bodyWeightEQ.type = 'peaking';
-    const bodyFreq = isLowerOctave ? 280 : (isTaraOctave ? 440 : 340);
-    bodyWeightEQ.frequency.setValueAtTime(bodyFreq, now);
-    bodyWeightEQ.Q.setValueAtTime(1.3, now);
-    bodyWeightEQ.gain.setValueAtTime(isLowerOctave ? 5.0 : 6.8, now);
-
-    // 3d. High Frequency Taming: Smooth High-Shelf Cut (-7.5dB above 3200Hz to eliminate digital harshness)
-    const highCutEQ = this.ctx.createBiquadFilter();
-    highCutEQ.type = 'highshelf';
-    highCutEQ.frequency.setValueAtTime(3200, now);
-    highCutEQ.gain.setValueAtTime(-7.5, now);
+    bassEQ.frequency.setValueAtTime(240, now);
+    bassEQ.gain.setValueAtTime(isLowerOctave ? 9.0 : 1.5, now);
 
     oscSum.connect(filter);
     filter.connect(waveShaper);
     waveShaper.connect(bassEQ);
-    bassEQ.connect(bodyWeightEQ);
-    bodyWeightEQ.connect(highCutEQ);
-    highCutEQ.connect(voiceGain);
+    bassEQ.connect(voiceGain);
 
-    // 4. 🌬️ CONTINUOUS ORGANIC FLUTE WIND & BORE TURBULENCE ENGINE (30% Earthy Indian Flute Breath)
+    // 4. 🌬️ CONTINUOUS ORGANIC FLUTE WIND & BORE TURBULENCE ENGINE
     // Breathes life into the electric sound with natural bamboo wind texture!
     let windNoise = null;
     let boreBreathFilter = null;
-    let earthyWoodFilter = null;
     let windGain = null;
     if (this.noiseBuffer) {
       try {
@@ -628,55 +529,34 @@ class FluteAudioEngine {
         windNoise.buffer = this.noiseBuffer;
         windNoise.loop = true;
 
-        // Bore column resonant air tracking fundamental swara pitch (rich hollow air core)
+        // Bore column resonant air tracking fundamental swara pitch
         boreBreathFilter = this.ctx.createBiquadFilter();
         boreBreathFilter.type = 'bandpass';
         boreBreathFilter.frequency.setValueAtTime(targetFreq, now);
-        boreBreathFilter.Q.setValueAtTime(2.8, now);
+        boreBreathFilter.Q.setValueAtTime(3.6, now);
 
-        // Earthy bamboo wood cavity node resonance (warm hollow organic body ~540Hz)
-        earthyWoodFilter = this.ctx.createBiquadFilter();
-        earthyWoodFilter.type = 'bandpass';
-        earthyWoodFilter.frequency.setValueAtTime(540, now);
-        earthyWoodFilter.Q.setValueAtTime(2.2, now);
-
-        const earthyWoodGain = this.ctx.createGain();
-        earthyWoodGain.gain.setValueAtTime(0.35, now);
-        earthyWoodFilter.connect(earthyWoodGain);
-
-        // Embouchure lip-plate edge wind rush filter (soft warm chiff, tamed highs)
+        // Embouchure lip-plate edge wind rush filter (airy chiff sheen)
         const edgeBreathFilter = this.ctx.createBiquadFilter();
         edgeBreathFilter.type = 'bandpass';
-        edgeBreathFilter.frequency.setValueAtTime(2200, now);
-        edgeBreathFilter.Q.setValueAtTime(1.5, now);
+        edgeBreathFilter.frequency.setValueAtTime(3500, now);
+        edgeBreathFilter.Q.setValueAtTime(1.6, now);
 
         const edgeGain = this.ctx.createGain();
-        edgeGain.gain.setValueAtTime(0.22, now);
+        edgeGain.gain.setValueAtTime(0.65, now);
         edgeBreathFilter.connect(edgeGain);
 
         windGain = this.ctx.createGain();
-        // Exactly 30% organic Indian flute breath texture
-        const initialWindGain = Math.max(0.001, 0.30 * this.breathPressure);
+        const initialWindGain = Math.max(0.001, 0.085 * this.breathPressure);
         windGain.gain.setValueAtTime(initialWindGain, now);
 
         windNoise.connect(boreBreathFilter);
         boreBreathFilter.connect(windGain);
 
-        windNoise.connect(earthyWoodFilter);
-        earthyWoodGain.connect(windGain);
-
         windNoise.connect(edgeBreathFilter);
         edgeGain.connect(windGain);
 
-        // Feed natural earthy wind turbulence into voiceGain
+        // Feed natural wind turbulence into voiceGain
         windGain.connect(voiceGain);
-
-        // Add subtle hall bloom to the breath turbulence
-        const windReverb = this.ctx.createGain();
-        windReverb.gain.setValueAtTime(0.25, now);
-        windGain.connect(windReverb);
-        windReverb.connect(this.reverbNode);
-
         windNoise.start(now);
       } catch (e) {
         windNoise = null;
@@ -700,8 +580,8 @@ class FluteAudioEngine {
     voiceGain.connect(electricReverbSend);
     electricReverbSend.connect(this.reverbNode);
 
-    // 7. Volume Attack Envelope (Equal-loudness compensated: high punch across all 3 octaves)
-    const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+    // 7. Volume Attack Envelope (Equal-loudness compensated: +35% energy in lower octave for thick chest weight)
+    const targetGain = (isLowerOctave ? 0.70 : 0.52) * this.breathPressure;
     const attackTime = isLegato ? 0.012 : 0.005;
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + attackTime);
 
@@ -714,18 +594,14 @@ class FluteAudioEngine {
       oscillators: [oscSaw, oscSquare, oscSub],
       windNoise,
       boreBreathFilter,
-      earthyWoodFilter,
       windGain,
       vibratoOsc,
       gain: voiceGain,
       filter,
       bassEQ,
-      bodyWeightEQ,
-      highCutEQ,
       oscMixGainSub,
       baseCutoff,
-      targetFreq,
-      acousticLayer: null
+      targetFreq
     };
   }
 
@@ -807,7 +683,7 @@ class FluteAudioEngine {
     if (this.activeSampleVoice) {
       const g = this.activeSampleVoice.gain.gain;
       const d = this.activeSampleVoice.source.detune;
-      const baseGain = 0.95 * this.breathPressure;
+      const baseGain = 0.65 * this.breathPressure;
 
       // Volume envelope:
       // t0 -> t0+10ms: micro-dip to mark strike boundary (down to 35%)
@@ -839,7 +715,7 @@ class FluteAudioEngine {
 
     if (this.activeElectricVoice) {
       const g = this.activeElectricVoice.gain.gain;
-      const baseGain = 0.85 * this.breathPressure;
+      const baseGain = 0.52 * this.breathPressure;
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value || baseGain, now);
       g.linearRampToValueAtTime(0.32 * baseGain, now + 0.010);
@@ -864,7 +740,7 @@ class FluteAudioEngine {
     // 2. Physical Modeling Voice Fallback
     if (this.activeVoice) {
       const g = this.activeVoice.gain.gain;
-      const baseGain = 0.90 * this.breathPressure;
+      const baseGain = 0.70 * this.breathPressure;
 
       g.cancelScheduledValues(now);
       g.setValueAtTime(g.value, now);
@@ -980,13 +856,6 @@ class FluteAudioEngine {
           if (oldElectric.vibratoOsc) {
             try { oldElectric.vibratoOsc.stop(); oldElectric.vibratoOsc.disconnect(); } catch (e) {}
           }
-          if (oldElectric.acousticLayer && oldElectric.acousticLayer.source) {
-            try {
-              oldElectric.acousticLayer.source.stop();
-              oldElectric.acousticLayer.source.disconnect();
-              oldElectric.acousticLayer.gain.disconnect();
-            } catch (e) {}
-          }
           oldElectric.gain.disconnect();
         } catch (e) {}
       }, 160);
@@ -1047,13 +916,6 @@ class FluteAudioEngine {
           if (oldElectric.vibratoOsc) {
             try { oldElectric.vibratoOsc.stop(); oldElectric.vibratoOsc.disconnect(); } catch (e) {}
           }
-          if (oldElectric.acousticLayer && oldElectric.acousticLayer.source) {
-            try {
-              oldElectric.acousticLayer.source.stop();
-              oldElectric.acousticLayer.source.disconnect();
-              oldElectric.acousticLayer.gain.disconnect();
-            } catch (e) {}
-          }
           oldElectric.gain.disconnect();
         } catch (e) {}
       }, Math.round((rel + 0.02) * 1000));
@@ -1098,10 +960,6 @@ class FluteAudioEngine {
         const baseDetune = osc._baseDetune || 0;
         osc.detune.setTargetAtTime(this.gamakaCents + baseDetune, now, 0.035);
       });
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.source) {
-        const swDetune = this.activeElectricVoice.acousticLayer.swaraDetuneCents || 0;
-        this.activeElectricVoice.acousticLayer.source.detune.setTargetAtTime(this.gamakaCents + swDetune, now, 0.035);
-      }
     }
     if (this.activeVoice && this.ctx) {
       this.activeVoice.primaryOsc.detune.setTargetAtTime(this.gamakaCents, now, 0.035);
@@ -1113,35 +971,24 @@ class FluteAudioEngine {
     this.breathPressure = Math.max(0, Math.min(1.0, pressure));
     const now = this.ctx.currentTime;
     if (this.activeSampleVoice && this.isPlaying) {
-      const isTaraOctave = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.endsWith('_high')) || this.octaveShift === 1 || this.isOverblown;
-      const isMandraOctave = (this.activeSampleVoice.sampleId && this.activeSampleVoice.sampleId.startsWith('bass_')) || this.octaveShift === -1 || (this.activeSampleVoice.targetFreq && this.activeSampleVoice.targetFreq < 240);
-      const targetGain = (isTaraOctave ? 0.95 : (isMandraOctave ? 1.15 : 1.05)) * this.breathPressure;
+      const targetGain = 0.58 * this.breathPressure;
       this.activeSampleVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
     if (this.activeElectricVoice && this.isPlaying) {
-      const freq = this.activeElectricVoice.targetFreq || this.currentFreq;
-      const isLowerOctave = (this.octaveShift === -1 || (freq && freq < 240));
-      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || (freq && freq > 600));
-      const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+      const targetGain = 0.52 * this.breathPressure;
       this.activeElectricVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
       if (this.activeElectricVoice.filter) {
         const baseCutoff = this.activeElectricVoice.baseCutoff || 2200;
-        const dynamicCutoff = Math.min(3600, baseCutoff * (0.65 + 0.45 * this.breathPressure));
+        const dynamicCutoff = Math.min(12000, baseCutoff * (0.65 + 0.7 * this.breathPressure));
         this.activeElectricVoice.filter.frequency.setTargetAtTime(dynamicCutoff, now, 0.03);
       }
       if (this.activeElectricVoice.windGain) {
-        const targetWind = Math.max(0.001, 0.30 * this.breathPressure);
+        const targetWind = Math.max(0.001, 0.085 * this.breathPressure);
         this.activeElectricVoice.windGain.gain.setTargetAtTime(targetWind, now, 0.03);
-      }
-      if (this.activeElectricVoice.acousticLayer && this.activeElectricVoice.acousticLayer.gain) {
-        this.activeElectricVoice.acousticLayer.gain.gain.setTargetAtTime(0.30 * this.breathPressure, now, 0.03);
       }
     }
     if (this.activeVoice && this.isPlaying) {
-      const freq = this.activeVoice.baseFreq || this.currentFreq;
-      const isLowerOctave = (this.octaveShift === -1 || (freq && freq < 240));
-      const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || (freq && freq > 600));
-      const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+      const targetGain = 0.42 * this.breathPressure;
       this.activeVoice.gain.gain.setTargetAtTime(targetGain, now, 0.03);
     }
   }
@@ -1296,7 +1143,7 @@ class FluteAudioEngine {
     bodyOsc.type = 'sine';
     bodyOsc.frequency.setValueAtTime(freq, now);
     const bodyGain = this.ctx.createGain();
-    bodyGain.gain.setValueAtTime(isLowerOctave ? 0.52 : 0.40, now);
+    bodyGain.gain.setValueAtTime(isLowerOctave ? 0.52 : 0.22, now);
     bodyOsc.connect(bodyGain);
 
     const waveShaper = this.ctx.createWaveShaper();
@@ -1353,11 +1200,11 @@ class FluteAudioEngine {
     bambooDamping.frequency.setValueAtTime(cutoff, now);
     bambooDamping.Q.setValueAtTime(0.65, now);
 
-    // Mandra & Mid/High Bass Weight Filter (+8.5dB lower octave, +6.2dB mid/high)
+    // Mandra Bass Weight Filter (+8.5dB low shelf in lower octave)
     const bassWeightFilter = this.ctx.createBiquadFilter();
     bassWeightFilter.type = 'lowshelf';
-    bassWeightFilter.frequency.setValueAtTime(isLowerOctave ? 240 : 300, now);
-    bassWeightFilter.gain.setValueAtTime(isLowerOctave ? 8.5 : 6.2, now);
+    bassWeightFilter.frequency.setValueAtTime(240, now);
+    bassWeightFilter.gain.setValueAtTime(isLowerOctave ? 8.5 : 1.5, now);
 
     voiceGain.connect(woodResonance);
     woodResonance.connect(holeRadiation);
@@ -1367,8 +1214,7 @@ class FluteAudioEngine {
     bassWeightFilter.connect(this.dryGain);
     bassWeightFilter.connect(this.reverbNode);
 
-    const isTaraOctave = (this.octaveShift === 1 || this.isOverblown || freq > 600);
-    const targetGain = (isLowerOctave ? 0.98 : (isTaraOctave ? 0.86 : 0.92)) * this.breathPressure;
+    const targetGain = (isLowerOctave ? 0.62 : 0.42) * this.breathPressure;
     voiceGain.gain.cancelScheduledValues(now);
     voiceGain.gain.linearRampToValueAtTime(targetGain, now + 0.032);
 
