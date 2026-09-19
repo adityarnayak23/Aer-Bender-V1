@@ -728,29 +728,11 @@ class CarnaticFluteTracker {
     this.onTrackingStatus({ status: 'loading', message: 'Starting dual-hand AI tracking...' });
 
     try {
-      // Multi-tier camera constraints for 4K/studio webcams, desktop & mobile (iOS Safari / Android Chrome)
+      // Camera constraints: start at a sensible 1280×720 so the driver
+      // uses the full camera sensor (no digital crop / zoom). High-res tiers
+      // like 4K can cause webcams to crop into a small area and appear zoomed.
       const constraintTiers = [
-        // Tier 1: 4K Ultra-HD 60fps for studio 4K webcams
-        {
-          video: {
-            width: { ideal: 3840 },
-            height: { ideal: 2160 },
-            frameRate: { ideal: 60 },
-            facingMode: 'user'
-          },
-          audio: false
-        },
-        // Tier 2: 1440p QHD 60fps
-        {
-          video: {
-            width: { ideal: 2560 },
-            height: { ideal: 1440 },
-            frameRate: { ideal: 60 },
-            facingMode: 'user'
-          },
-          audio: false
-        },
-        // Tier 3: 1080p Full HD 60fps
+        // Tier 1: Full HD — best balance of quality and no-zoom on most webcams
         {
           video: {
             width: { ideal: 1920 },
@@ -760,7 +742,7 @@ class CarnaticFluteTracker {
           },
           audio: false
         },
-        // Tier 4: Ideal HD 60fps for desktop & high-end mobile
+        // Tier 2: HD — reliable on all desktop webcams and laptops
         {
           video: {
             width: { ideal: 1280 },
@@ -770,7 +752,7 @@ class CarnaticFluteTracker {
           },
           audio: false
         },
-        // Tier 5: Standard ideal dimensions (no strict frameRate)
+        // Tier 3: HD without strict frameRate
         {
           video: {
             width: { ideal: 1280 },
@@ -779,14 +761,14 @@ class CarnaticFluteTracker {
           },
           audio: false
         },
-        // Tier 6: Universal front camera (works on all iOS/Android portrait orientations)
+        // Tier 4: Universal front camera (iOS Safari / Android Chrome)
         {
           video: {
             facingMode: 'user'
           },
           audio: false
         },
-        // Tier 7: Universal fallback
+        // Tier 5: Universal fallback
         {
           video: true,
           audio: false
