@@ -120,16 +120,15 @@ class FluteVideoRecorder {
 
     const mimeType = this.getBestMimeType();
 
-    // Studio 4K UHD Bitrate Ladder:
-    // Tier 1: 40 Mbps (Studio 4K UHD 60fps) + 320 kbps Pristine Studio Audio
-    // Tier 2: 28 Mbps (High-Bitrate 4K / QHD) + 256 kbps Audio
-    // Tier 3: 16 Mbps (Crisp FHD 60fps) + 192 kbps Audio
-    // Tier 4: 8 Mbps (Standard HD) + 128 kbps Audio
+    // Bitrate ladder targeting ~15–25 MB/min (shareable, not bloated):
+    // Tier 1: 6 Mbps (crisp 1080p) + 192 kbps audio  → ~50 MB/min
+    // Tier 2: 4 Mbps (clean 720p)  + 128 kbps audio  → ~33 MB/min
+    // Tier 3: 2.5 Mbps (solid HD)  + 128 kbps audio  → ~22 MB/min
+    // Tier 4: browser default
     const bitrateTiers = [
-      { videoBitsPerSecond: 40000000, audioBitsPerSecond: 320000 },
-      { videoBitsPerSecond: 28000000, audioBitsPerSecond: 256000 },
-      { videoBitsPerSecond: 16000000, audioBitsPerSecond: 192000 },
-      { videoBitsPerSecond: 8000000, audioBitsPerSecond: 128000 },
+      { videoBitsPerSecond: 6000000,  audioBitsPerSecond: 192000 },
+      { videoBitsPerSecond: 4000000,  audioBitsPerSecond: 128000 },
+      { videoBitsPerSecond: 2500000,  audioBitsPerSecond: 128000 },
       {}
     ];
 
