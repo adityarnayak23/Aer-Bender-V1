@@ -93,13 +93,13 @@
             </button>
           </div>
           <span id="recTimer" class="rec-timer" style="display: none;">00:00</span>
-          <div class="timbre-segmented-control" id="timbreSegmentedControl" role="group" aria-label="Sound Mode">
-            <select id="timbreModeSelect" class="record-mode-select timbre-mode-select" title="Choose instrument sound mode">
-              <option value="electric" selected>⚡ Electric Flute</option>
-              <option value="carnatic">🪈 Carnatic</option>
-              <option value="sax">🎷 Electric Sax</option>
-            </select>
-            <span id="timbreModeBadge" class="timbre-mode-badge electric-active">⚡</span>
+          <div class="timbre-segmented-control" id="timbreSegmentedControl" role="group" aria-label="Flute Sound Mode">
+            <button type="button" id="modeElectricBtn" class="segmented-btn active" title="Synth Flute Mode" aria-pressed="true">
+              <span class="btn-icon">⚡</span>
+            </button>
+            <button type="button" id="modeCarnaticBtn" class="segmented-btn" title="Acoustic Carnatic Venu Mode" aria-pressed="false" style="display: none !important;" aria-hidden="true">
+              <span class="btn-icon">🪈</span> Carnatic
+            </button>
           </div>
           <button id="tanpuraToggleBtn" class="btn btn-pill">
             🪕 Tanpura Drone: Off
