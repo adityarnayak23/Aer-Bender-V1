@@ -516,8 +516,8 @@ class CarnaticFluteTracker {
     const baseRatio = this.restingPitchRatio || 1.00;
     const delta = combinedPitch - baseRatio;
 
-    // Sensitivity tuning: ~5°-8° head tilt readily crosses threshold
-    const sensitivity = 2.4;
+    // Sensitivity tuning: ~10°-15° head tilt needed to cross threshold (was 5°-8°, too sensitive)
+    const sensitivity = 1.6;
     const normScore = 0.50 + delta * sensitivity;
     return Math.max(0.0, Math.min(1.0, normScore));
   }
@@ -597,27 +597,27 @@ class CarnaticFluteTracker {
     this.smoothedMouthRatio = smoothScore;
     this.mouthApertureRatio = rawScore;
 
-    // 3-State Schmitt Trigger with 0.07 hysteresis deadband:
-    // - Bass (Mandra, -1): score < 0.35 (leave > 0.42)
-    // - Mid (Madhya, 0): 0.38 <= score <= 0.62
-    // - High (Tara, +1): score > 0.65 (leave < 0.58)
+    // 3-State Schmitt Trigger with widened mid zone — Madhya is now a large comfortable range:
+    // - Bass (Mandra, -1): score < 0.28  (leave > 0.36)
+    // - Mid (Madhya,  0): 0.32 <= score <= 0.68
+    // - High (Tara,  +1): score > 0.72  (leave < 0.64)
     let targetOctave = this.currentOctave;
     if (this.currentOctave === -1) {
-      if (smoothScore > 0.65) {
+      if (smoothScore > 0.72) {
         targetOctave = 1;
-      } else if (smoothScore > 0.42) {
+      } else if (smoothScore > 0.36) {
         targetOctave = 0;
       }
     } else if (this.currentOctave === 0) {
-      if (smoothScore < 0.35) {
+      if (smoothScore < 0.28) {
         targetOctave = -1;
-      } else if (smoothScore > 0.65) {
+      } else if (smoothScore > 0.72) {
         targetOctave = 1;
       }
     } else if (this.currentOctave === 1) {
-      if (smoothScore < 0.35) {
+      if (smoothScore < 0.28) {
         targetOctave = -1;
-      } else if (smoothScore < 0.58) {
+      } else if (smoothScore < 0.64) {
         targetOctave = 0;
       }
     }
