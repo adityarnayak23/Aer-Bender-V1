@@ -900,10 +900,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Master Volume
   if (masterVolumeSlider) {
+    const masterVolumeVal = document.getElementById('masterVolumeVal');
     masterVolumeSlider.addEventListener('input', (e) => {
+      const v = parseFloat(e.target.value);
       if (audio.masterGain) {
-        audio.masterGain.gain.setValueAtTime(parseFloat(e.target.value), audio.ctx.currentTime);
+        audio.masterGain.gain.setValueAtTime(v, audio.ctx.currentTime);
       }
+      if (masterVolumeVal) masterVolumeVal.textContent = v.toFixed(1);
     });
   }
 
@@ -965,8 +968,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (tanpuraVolumeSlider) {
+    const tanpuraVolumeVal = document.getElementById('tanpuraVolumeVal');
     tanpuraVolumeSlider.addEventListener('input', (e) => {
-      audio.setTanpuraVolume(parseFloat(e.target.value));
+      const v = parseFloat(e.target.value);
+      audio.setTanpuraVolume(v);
+      if (tanpuraVolumeVal) tanpuraVolumeVal.textContent = v.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
     });
   }
 
@@ -1456,15 +1462,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Tab & Dot Clicks - user can review previous steps, but forward progression requires clicking 'Next'
+  // Tab & Dot Clicks - user can jump to any step freely
   if (learnStepTabs) {
     const tabBtns = learnStepTabs.querySelectorAll('.step-tab-btn');
     tabBtns.forEach(btn => {
       btn.addEventListener("click", () => {
         audio.resume();
         const step = parseInt(btn.dataset.step, 10);
-        // Only allow clicking to current or previous steps (cannot skip forward without pressing Next)
-        if (step && step <= currentLearnStep) {
+        if (step) {
+          if (step > currentLearnStep) currentLearnStep = step;
           showLearnStep(step);
         }
       });
@@ -1477,7 +1483,8 @@ document.addEventListener('DOMContentLoaded', () => {
       dot.addEventListener("click", () => {
         audio.resume();
         const step = parseInt(dot.dataset.step, 10);
-        if (step && step <= currentLearnStep) {
+        if (step) {
+          if (step > currentLearnStep) currentLearnStep = step;
           showLearnStep(step);
         }
       });
@@ -2073,13 +2080,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 360);
   }
 
-  // Mobile Portrait Orientation Tip Dismissal
+  // Mobile Portrait Orientation Tip Dismissal (persisted)
   const mobileLandscapeHint = document.getElementById('mobileLandscapeHint');
   const closeMobileHintBtn = document.getElementById('closeMobileHintBtn');
-  if (closeMobileHintBtn && mobileLandscapeHint) {
-    closeMobileHintBtn.addEventListener('click', () => {
+  if (mobileLandscapeHint) {
+    // Hide immediately if previously dismissed
+    if (localStorage.getItem('aerbender_landscape_hint_dismissed') === '1') {
       mobileLandscapeHint.classList.add('dismissed');
-    });
+    }
+    if (closeMobileHintBtn) {
+      closeMobileHintBtn.addEventListener('click', () => {
+        mobileLandscapeHint.classList.add('dismissed');
+        localStorage.setItem('aerbender_landscape_hint_dismissed', '1');
+      });
+    }
   }
 
   // Initial render: Build 16 Swarasthanas Matrix, active Raga, Tala, and tone holes
