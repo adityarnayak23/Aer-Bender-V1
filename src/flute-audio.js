@@ -859,7 +859,6 @@ class FluteAudioEngine {
 
   // Smooth crossfade of previous voice without interrupting playback
   fadePreviousVoice(releaseTime = 0.040) {
-    if (!this.ctx) return;
     const now = this.ctx.currentTime;
     if (this.activeSampleVoice) {
       const oldSample = this.activeSampleVoice;
@@ -918,7 +917,6 @@ class FluteAudioEngine {
 
   // Smooth release when stopping
   stopVoice() {
-    if (!this.ctx) return;
     const now = this.ctx.currentTime;
     const rel = this.isJazzMode ? 0.060 : 0.010;
 
@@ -1007,7 +1005,6 @@ class FluteAudioEngine {
 
   setBreathPressure(pressure) {
     this.breathPressure = Math.max(0, Math.min(1.0, pressure));
-    if (!this.ctx) return;
     const now = this.ctx.currentTime;
     if (this.activeSampleVoice && this.isPlaying) {
       const targetGain = 0.58 * this.breathPressure;
@@ -1035,7 +1032,7 @@ class FluteAudioEngine {
   setKattai(kattaiId) {
     this.kattai = kattaiId;
     this.updateTanpuraPitch();
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
+    if (this.isPlaying && this.currentSwaraObj) {
       this.playSwara(this.currentSwaraObj);
     }
   }
@@ -1045,14 +1042,14 @@ class FluteAudioEngine {
     const newShift = Math.max(-1, Math.min(1, parseInt(shift, 10) || 0));
     if (this.octaveShift === newShift) return;
     this.octaveShift = newShift;
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
+    if (this.isPlaying && this.currentSwaraObj) {
       this.playSwara(this.currentSwaraObj);
     }
   }
 
   setOverblown(isOver) {
     this.isOverblown = isOver;
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
+    if (this.isPlaying && this.currentSwaraObj) {
       this.playSwara(this.currentSwaraObj);
     }
   }
@@ -1060,10 +1057,7 @@ class FluteAudioEngine {
   // ⚡ Electric Flute Mode: expressive EWI synth lead fusion
   setElectricMode(enabled) {
     this.isElectricMode = Boolean(enabled);
-    if (this.isElectricMode) {
-      this.isSaxMode = false;
-    }
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
+    if (this.isPlaying && this.currentSwaraObj) {
       this.playSwara(this.currentSwaraObj);
     }
     return this.isElectricMode;
@@ -1075,9 +1069,7 @@ class FluteAudioEngine {
 
   // 🎷 Universal mode setter: 'electric' | 'carnatic' | 'sax'
   setMode(mode) {
-    if (this.ctx && this.isPlaying) {
-      this.stopVoice();
-    }
+    this.stopVoice();
     if (mode === 'sax') {
       this.isElectricMode = false;
       this.isSaxMode = true;
@@ -1089,9 +1081,6 @@ class FluteAudioEngine {
       this.isElectricMode = false;
       this.isSaxMode = false;
     }
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
-      this.playSwara(this.currentSwaraObj);
-    }
   }
 
   // 🎷 Electric Sax Mode: reedy, honky, formant-rich synth saxophone
@@ -1100,7 +1089,7 @@ class FluteAudioEngine {
     if (this.isSaxMode) {
       this.isElectricMode = false;
     }
-    if (this.isPlaying && this.currentSwaraObj && this.ctx) {
+    if (this.isPlaying && this.currentSwaraObj) {
       this.stopVoice();
       this.playSwara(this.currentSwaraObj);
     }
