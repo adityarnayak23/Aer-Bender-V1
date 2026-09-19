@@ -28,6 +28,7 @@ class FluteAudioEngine {
     this.allowedSwaraIds = null;
     this.isJazzMode = false;
     this.isElectricMode = true;
+    this.isSaxMode = false;
     this.activeElectricVoice = null;
     this.electricDistortionCurve = null;
 
@@ -237,7 +238,9 @@ class FluteAudioEngine {
       }
     }
 
-    if (this.isElectricMode) {
+    if (this.isSaxMode) {
+      this.playSax(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, previousSwara, swaraObj, isGaMaTransition);
+    } else if (this.isElectricMode) {
       this.playElectricFlute(sampleId, freq, swaraDetuneCents, transitionMeta, prevFreq || this.currentFreq, previousSwara, swaraObj, isGaMaTransition);
     } else if (this.samplesLoaded && this.sampleBuffers[sampleId]) {
       this.playAcousticSample(sampleId, freq, swaraDetuneCents, isGaMaTransition);
@@ -1062,6 +1065,259 @@ class FluteAudioEngine {
 
   toggleElectricMode() {
     return this.setElectricMode(!this.isElectricMode);
+  }
+
+  // 🎷 Universal mode setter: 'electric' | 'carnatic' | 'sax'
+  setMode(mode) {
+    this.stopVoice();
+    if (mode === 'sax') {
+      this.isElectricMode = false;
+      this.isSaxMode = true;
+    } else if (mode === 'electric') {
+      this.isElectricMode = true;
+      this.isSaxMode = false;
+    } else {
+      // carnatic / acoustic
+      this.isElectricMode = false;
+      this.isSaxMode = false;
+    }
+  }
+
+  // 🎷 Electric Sax Mode: reedy, honky, formant-rich synth saxophone
+  setSaxMode(enabled) {
+    this.isSaxMode = Boolean(enabled);
+    if (this.isSaxMode) {
+      this.isElectricMode = false;
+    }
+    if (this.isPlaying && this.currentSwaraObj) {
+      this.stopVoice();
+      this.playSwara(this.currentSwaraObj);
+    }
+    return this.isSaxMode;
+  }
+
+  // -------------------------------------------------------------------------
+  // 🎷 ELECTRIC SAX VOICE (Formant-Filtered Reed Synthesis)
+  // -------------------------------------------------------------------------
+  playSax(sampleId, targetFreq, swaraDetuneCents = 0, transitionMeta = null, prevFreq = null, prevSwaraObj = null, swaraObj = null, isGaMaTransition = false) {
+    const now = this.ctx.currentTime;
+    const fromFreq = prevFreq || this.currentFreq;
+    const isLegato = !isGaMaTransition && Boolean(
+      this.isPlaying && fromFreq && targetFreq && Math.abs(fromFreq - targetFreq) > 3
+    );
+
+    // If same freq already playing, skip
+    if (this.isPlaying && this.activeElectricVoice && Math.abs(this.activeElectricVoice.targetFreq - targetFreq) < 1) {
+      return;
+    }
+
+    // Instant snap on Ga<->Ma
+    if (this.isPlaying && this.activeElectricVoice && isGaMaTransition) {
+      this.activeElectricVoice.oscillators.forEach(osc => {
+        const mult = osc._freqMultiplier || 1.0;
+        osc.frequency.cancelScheduledValues(now);
+        osc.frequency.setValueAtTime(Math.max(20, targetFreq * mult), now);
+      });
+      if (this.activeElectricVoice.filter) {
+        this.activeElectricVoice.filter.frequency.setValueAtTime(targetFreq * 3.0, now);
+      }
+      this.activeElectricVoice.targetFreq = targetFreq;
+      this.currentFreq = targetFreq;
+      return;
+    }
+
+    // Legato glide on existing voice
+    if (this.isPlaying && this.activeElectricVoice && isLegato) {
+      const glideTime = 0.022;
+      this.activeElectricVoice.oscillators.forEach(osc => {
+        const mult = osc._freqMultiplier || 1.0;
+        osc.frequency.cancelScheduledValues(now);
+        osc.frequency.setValueAtTime(osc.frequency.value, now);
+        osc.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq * mult), now + glideTime);
+      });
+      if (this.activeElectricVoice.filter) {
+        this.activeElectricVoice.filter.frequency.setTargetAtTime(targetFreq * 3.0, now, 0.018);
+      }
+      if (this.activeElectricVoice.formant1) {
+        this.activeElectricVoice.formant1.frequency.setTargetAtTime(targetFreq * 2.4, now, 0.018);
+      }
+      if (this.activeElectricVoice.formant2) {
+        this.activeElectricVoice.formant2.frequency.setTargetAtTime(targetFreq * 4.2, now, 0.018);
+      }
+      this.activeElectricVoice.targetFreq = targetFreq;
+      this.currentFreq = targetFreq;
+      return;
+    }
+
+    this.fadePreviousVoice(isLegato ? 0.030 : 0.010);
+    this.startSaxVoice(targetFreq, isLegato, fromFreq, swaraObj);
+    this.isPlaying = true;
+    this.currentFreq = targetFreq;
+  }
+
+  startSaxVoice(targetFreq, isLegato = false, fromFreq = null, swaraObj = null) {
+    const now = this.ctx.currentTime;
+    const isLowerOctave = (this.octaveShift === -1 || targetFreq < 240);
+
+    const voiceGain = this.ctx.createGain();
+    voiceGain.gain.setValueAtTime(0.0001, now);
+
+    // 1. Reed source: sawtooth (rich odd+even harmonics like a reed instrument)
+    const oscSaw = this.ctx.createOscillator();
+    oscSaw.type = 'sawtooth';
+    oscSaw._freqMultiplier = 1.0;
+
+    // 2. Square wave adds extra odd-harmonic "honk" character
+    const oscSq = this.ctx.createOscillator();
+    oscSq.type = 'square';
+    oscSq._freqMultiplier = 1.0;
+
+    // 3. Sub-octave for body weight (lower level than flute)
+    const oscSub = this.ctx.createOscillator();
+    oscSub.type = 'triangle';
+    oscSub._freqMultiplier = 0.5;
+
+    const gainSaw = this.ctx.createGain();
+    gainSaw.gain.setValueAtTime(isLowerOctave ? 0.65 : 0.55, now);
+
+    const gainSq = this.ctx.createGain();
+    gainSq.gain.setValueAtTime(isLowerOctave ? 0.35 : 0.28, now);
+
+    const gainSub = this.ctx.createGain();
+    gainSub.gain.setValueAtTime(isLowerOctave ? 0.45 : 0.18, now);
+
+    const setFreqs = (f) => {
+      oscSaw.frequency.setValueAtTime(f, now);
+      oscSq.frequency.setValueAtTime(f, now);
+      oscSub.frequency.setValueAtTime(f * 0.5, now);
+    };
+
+    if (isLegato && fromFreq && Math.abs(fromFreq - targetFreq) > 3) {
+      oscSaw.frequency.setValueAtTime(fromFreq, now);
+      oscSq.frequency.setValueAtTime(fromFreq, now);
+      oscSub.frequency.setValueAtTime(fromFreq * 0.5, now);
+      oscSaw.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq), now + 0.04);
+      oscSq.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq), now + 0.04);
+      oscSub.frequency.exponentialRampToValueAtTime(Math.max(20, targetFreq * 0.5), now + 0.04);
+    } else {
+      setFreqs(targetFreq);
+    }
+
+    oscSaw.detune.setValueAtTime(this.gamakaCents, now);
+    oscSq.detune.setValueAtTime(this.gamakaCents + 4, now); // Slight chorus detune for richness
+    oscSub.detune.setValueAtTime(this.gamakaCents, now);
+
+    oscSaw.connect(gainSaw);
+    oscSq.connect(gainSq);
+    oscSub.connect(gainSub);
+
+    const oscSum = this.ctx.createGain();
+    gainSaw.connect(oscSum);
+    gainSq.connect(oscSum);
+    gainSub.connect(oscSum);
+
+    // 4. Reed waveshaper: soft saturation for that characteristic sax "honk"
+    if (!this.saxDistortionCurve) {
+      const n = 44100;
+      this.saxDistortionCurve = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const x = (i * 2) / n - 1;
+        // Asymmetric soft-clip — more upper-harmonic content like a real reed
+        this.saxDistortionCurve[i] = x > 0
+          ? Math.tanh(x * 2.8)
+          : Math.tanh(x * 2.2);
+      }
+    }
+    const waveShaper = this.ctx.createWaveShaper();
+    waveShaper.curve = this.saxDistortionCurve;
+    waveShaper.oversample = '2x';
+
+    // 5. Formant filter 1: "ah" vowel peak (~1x–2.4x fundamental) — sax body resonance
+    const formant1 = this.ctx.createBiquadFilter();
+    formant1.type = 'peaking';
+    formant1.frequency.setValueAtTime(targetFreq * 2.4, now);
+    formant1.Q.setValueAtTime(3.5, now);
+    formant1.gain.setValueAtTime(7, now); // dB boost at formant centre
+
+    // 6. Formant filter 2: "ee" brightness peak (~4–5x fundamental) — sax bell brightness
+    const formant2 = this.ctx.createBiquadFilter();
+    formant2.type = 'peaking';
+    formant2.frequency.setValueAtTime(targetFreq * 4.2, now);
+    formant2.Q.setValueAtTime(2.8, now);
+    formant2.gain.setValueAtTime(5, now);
+
+    // 7. Main bandpass to tighten the spectrum like a real sax bore
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(targetFreq * 3.0, now);
+    filter.Q.setValueAtTime(0.9, now);
+
+    // 8. Low-shelf bass boost for lower octave weight
+    const bassEQ = this.ctx.createBiquadFilter();
+    bassEQ.type = 'lowshelf';
+    bassEQ.frequency.setValueAtTime(280, now);
+    bassEQ.gain.setValueAtTime(isLowerOctave ? 8 : 2, now);
+
+    oscSum.connect(waveShaper);
+    waveShaper.connect(formant1);
+    formant1.connect(formant2);
+    formant2.connect(filter);
+    filter.connect(bassEQ);
+    bassEQ.connect(voiceGain);
+
+    // 9. Reed breath noise (narrower, warmer than flute)
+    let windNoise = null, windGain = null, boreBreathFilter = null;
+    if (this.noiseBuffer) {
+      try {
+        windNoise = this.ctx.createBufferSource();
+        windNoise.buffer = this.noiseBuffer;
+        windNoise.loop = true;
+
+        boreBreathFilter = this.ctx.createBiquadFilter();
+        boreBreathFilter.type = 'bandpass';
+        boreBreathFilter.frequency.setValueAtTime(targetFreq * 1.5, now);
+        boreBreathFilter.Q.setValueAtTime(5.0, now);
+
+        windGain = this.ctx.createGain();
+        windGain.gain.setValueAtTime(Math.max(0.001, 0.05 * this.breathPressure), now);
+
+        windNoise.connect(boreBreathFilter);
+        boreBreathFilter.connect(windGain);
+        windGain.connect(voiceGain);
+        windNoise.start(now);
+      } catch (e) { windNoise = null; }
+    }
+
+    // 10. Connect to dry + reverb (more reverb for sax — room presence)
+    voiceGain.connect(this.dryGain);
+    const saxReverbSend = this.ctx.createGain();
+    saxReverbSend.gain.setValueAtTime(0.50, now);
+    voiceGain.connect(saxReverbSend);
+    saxReverbSend.connect(this.reverbNode);
+
+    // 11. Attack envelope with slight pluck transient
+    const targetGainVal = (isLowerOctave ? 0.68 : 0.55) * this.breathPressure;
+    const attackTime = isLegato ? 0.016 : 0.008;
+    voiceGain.gain.linearRampToValueAtTime(targetGainVal, now + attackTime);
+
+    oscSaw.start(now);
+    oscSq.start(now);
+    oscSub.start(now);
+
+    this.activeElectricVoice = {
+      oscillators: [oscSaw, oscSq, oscSub],
+      windNoise,
+      boreBreathFilter,
+      windGain,
+      gain: voiceGain,
+      filter,
+      formant1,
+      formant2,
+      bassEQ,
+      oscMixGainSub: gainSub,
+      baseCutoff: targetFreq * 3.0,
+      targetFreq
+    };
   }
 
   // 🎷 Jazz Flute Mode: smooth dragged legato notes (glissando / portamento)

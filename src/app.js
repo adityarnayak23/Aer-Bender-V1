@@ -910,46 +910,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ⚡ Electric Flute Engine (Permanent Default, Carnatic Mode Removed)
-  const modeElectricBtn = document.getElementById('modeElectricBtn');
-  const modeCarnaticBtn = document.getElementById('modeCarnaticBtn');
+  // 🎵 Sound Mode Dropdown (Electric Flute / Carnatic / Electric Sax)
+  const timbreModeSelect = document.getElementById('timbreModeSelect');
 
-  function setTimbreMode(isElectric = true, shouldResumeAudio = true) {
-    if (shouldResumeAudio) {
-      audio.resume();
-    }
-    // Carnatic mode removed: permanently lock to Electric mode
-    state.isElectricMode = true;
-    audio.setElectricMode(true);
+  const MODE_BADGES = {
+    electric: '⚡',
+    carnatic: '🪈',
+    sax: '🎷'
+  };
 
-    if (modeElectricBtn && modeCarnaticBtn) {
-      modeElectricBtn.classList.add('active');
-      modeElectricBtn.setAttribute('aria-pressed', 'true');
-      modeCarnaticBtn.classList.remove('active');
-      modeCarnaticBtn.setAttribute('aria-pressed', 'false');
+  function setTimbreMode(mode, shouldResumeAudio = true) {
+    if (shouldResumeAudio) audio.resume();
+    if (typeof audio.setMode === 'function') {
+      audio.setMode(mode);
+    } else {
+      // Fallback for older audio engine
+      audio.setElectricMode(mode === 'electric');
     }
+    state.isElectricMode = (mode === 'electric');
+    state.activeMode = mode;
+
+    if (timbreModeSelect) timbreModeSelect.value = mode;
     if (timbreModeBadge) {
-      timbreModeBadge.classList.add('electric-active');
-      timbreModeBadge.textContent = '⚡';
+      timbreModeBadge.textContent = MODE_BADGES[mode] || '⚡';
+      timbreModeBadge.className = 'timbre-mode-badge electric-active';
     }
   }
 
   function toggleElectricMode() {
-    setTimbreMode(true);
+    setTimbreMode('electric');
   }
 
-  if (modeElectricBtn) {
-    modeElectricBtn.addEventListener('click', () => setTimbreMode(true));
-  }
-  if (modeCarnaticBtn) {
-    modeCarnaticBtn.addEventListener('click', () => setTimbreMode(true));
+  if (timbreModeSelect) {
+    timbreModeSelect.addEventListener('change', (e) => {
+      setTimbreMode(e.target.value);
+    });
   }
   if (timbreModeBadge) {
-    timbreModeBadge.addEventListener('click', () => toggleElectricMode());
+    timbreModeBadge.addEventListener('click', () => {
+      // Cycle through modes on badge click
+      const modes = ['electric', 'carnatic', 'sax'];
+      const current = state.activeMode || 'electric';
+      const next = modes[(modes.indexOf(current) + 1) % modes.length];
+      setTimbreMode(next);
+    });
   }
 
-  // Set default Electric mode UI state (skip audio resume on load)
-  setTimbreMode(true, false);
+  // Set default Electric mode on load
+  setTimbreMode('electric', false);
 
   // Tanpura Drone Toggle
   if (tanpuraToggleBtn) {
